@@ -1,0 +1,23 @@
+Bytecode: SIMD=539060 B | SCALAR=5762843 B | matWords=13840
+[CHECK 1] 16 different images, both paths bit-exact: 16/16 PASSED
+[N= 1] SIMD cold=32815219 warm=5135219 | SCALAR cold=39997519 warm=12317519 | K3(cold-warm==27.68M):OK K4(MSIZE==PREDS+N*32):OK
+[N= 2] SIMD cold=34808181 warm=7128181 | SCALAR cold=50281791 warm=22601791 | K3(cold-warm==27.68M):OK K4(MSIZE==PREDS+N*32):OK
+[N= 4] SIMD cold=38794105 warm=11114105 | SCALAR cold=70850335 warm=43170335 | K3(cold-warm==27.68M):OK K4(MSIZE==PREDS+N*32):OK
+[N= 8] SIMD cold=46765953 warm=19085953 | SCALAR cold=111987423 warm=84307423 | K3(cold-warm==27.68M):OK K4(MSIZE==PREDS+N*32):OK
+[N=16] SIMD cold=62709649 warm=35029649 | SCALAR cold=194261600 warm=166581600 | K3(cold-warm==27.68M):OK K4(MSIZE==PREDS+N*32):OK
+[CHECK 2] SIMD   warm marginal (memory-stripped): 1992849 1992849 1992849 1992849 -> EXACTLY CONSTANT, PASSED
+[CHECK 2] SCALAR warm marginal (memory-stripped): 10284208 10284208 10284208 10284208 -> EXACTLY CONSTANT, PASSED
+[CHECK 2] SIMD   cold marginal (memory-stripped): 1992849 1992849 1992849 1992849 -> EXACTLY CONSTANT, PASSED
+[CHECK 2] SCALAR cold marginal (memory-stripped): 10284208 10284208 10284208 10284208 -> EXACTLY CONSTANT, PASSED
+
+================ BATCH / MARGINAL COST (per image) ================
+  N=1 warm:   SIMD 5135219 | SCALAR 12317519  (previous anchors 5,134,719 / 12,317,165; diff=outer-loop overhead: +500 / +354)
+  MARGINAL:   SIMD 1992962 | SCALAR 10284272  ->  RATIO C/B = 5.16x
+  (pure-compute buckets: 2,117,326 / 10,408,685 -> marginal-minus-compute = per-image harness: -124364 / -124413)
+  N=16 amortized total/image: SIMD warm 2189353 | cold 3919353  (cold weight load divided by 16)
+  N=16 end-to-end C/B: cold 194261600/62709649 = 3.10x | warm 166581600/35029649 = 4.76x
+  linear model G_tx(N) = G_0 + N*marginal (memory included): intercept G_0 = G_tx(1) - marginal
+    SIMD   : cold G_0 30822257 (marginal 1992962) | warm G_0 3142257 (marginal 1992962) | cold-warm G_0 diff 27680000 (= 13,840 slots x 2,000)
+    SCALAR : cold G_0 29713247 (marginal 10284272) | warm G_0 2033247 (marginal 10284272)
+
+*** ALL CHECKS PASSED ***

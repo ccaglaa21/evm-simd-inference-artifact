@@ -1,0 +1,27 @@
+Segment scan: 5 segments found (expected 5)
+  slot     0..12543 -> mem 10000..411376
+  slot 12544..12671 -> mem 420000..424064
+  slot 12672..13695 -> mem 440000..472736
+  slot 13696..13759 -> mem 480000..482016
+  slot 13760..13839 -> mem 495000..497528
+
+Bytecode: UNROLLED=538979 bytes (loader 538024) | LOOPED=1264 bytes (loader 316)
+[EIP-170] looped variant under 24,576B: YES (1264 bytes)
+[CHECK 1] three-way prediction (C++ == UNROLLED == LOOPED): 20/20 PASSED
+[CHECK 5] MSIZE U==L: 901152/901152 PASSED
+[CHECK 6] repeat run identical: U OK, L OK
+[CHECK 2] coldU == 32,814,719 (mnist_e2e_cb anchor): 32814719 PASSED
+[CHECK 3] cold-warm==matWords*2000 (27680000): U 27680000 OK | L 27680000 OK
+[CHECK 4] compute_cold==compute_warm: U 2117326/2117326 OK | L 3280081/3280081 OK
+
+================ UNROLLED vs LOOPED LOADER ================
+  variant  |  code size  |  cold TOTAL  |  warm TOTAL  |  compute
+ UNROLLED  |     538979 |     32814719 |      5134719 |    2117326
+  LOOPED   |       1264 |     33977474 |      6297474 |    3280081
+  DIFF     |    -537715 |     +1162755 |     +1162755 |   +1162755  (loop overhead)
+  loop overhead per slot: 84.01 gas | share of the cold total: 3.42%
+
+  TX LEVEL (image 0 calldata: 3020 zero + 116 non-zero bytes):
+  intrinsic 21,000 + calldata 13936 = 34936 extra; LOOPED tx total: cold 34012410 | warm 6332410
+
+*** ALL CHECKS PASSED ***

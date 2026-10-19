@@ -1,0 +1,12 @@
+diff --git a/include/evmc/instructions.h b/include/evmc/instructions.h
+index 1c22f84..2661639 100644
+--- a/include/evmc/instructions.h
++++ b/include/evmc/instructions.h
+@@ -26,6 +26,7 @@ enum evmc_opcode
+ {
+     OP_STOP = 0x00,
+     OP_ADD = 0x01,
++    OP_XADD = 0xc0,
+     OP_MUL = 0x02,
+     OP_SUB = 0x03,
+     OP_DIV = 0x04,

@@ -1,0 +1,10 @@
+=== MATRIXHEADER / XTRANSPOSE SECURITY ===
+
+1. XTRANSPOSE offset=0 (normal, memory present): status=0 gas=25
+2. XTRANSPOSE empty memory offset=0: status=0 gas=16
+3. XTRANSPOSE offset=4096 (no memory): status=0 gas=432
+
+(Note: the huge-offset test risks a segfault, done separately/carefully)
+
+=== FINDING ===
+Testing the XTRANSPOSE offset bounds check.

@@ -1,0 +1,149 @@
+# Artifact: integer SIMD instructions and a memory-view descriptor for on-chain inference in the EVM
+
+This repository is the reproducibility artifact of the manuscript
+*"[TITLE]"* (Ç. Nazar, S. Topal; submitted to the Journal of Parallel and
+Distributed Computing). It contains the evmone patch that adds the
+`MatrixHeader` descriptor and the SIMD instruction family, every measurement
+program behind the numbers reported in the paper, the canonical trained
+weights, and the reference outputs of a complete run.
+
+The work extends the first author's M.Sc. thesis *Data Vectorization in
+Blockchain Smart Contracts* (Gebze Technical University, May 2026).
+
+## Contents
+
+| Path | What it is |
+|---|---|
+| `EVMONE_COMMIT.txt`, `EVMC_COMMIT.txt` | pinned upstream commits: evmone `4938c0a3`, EVMC `496ce0f` |
+| `simd_opcodes.patch` | the extension (647 lines): instruction bodies, gas table, traits, build glue |
+| `evmc_changes.patch` | one enum entry added to the EVMC header |
+| `numpy_simd.hpp` | `MatrixHeader` operations (copied into `lib/evmone/` before the patch is applied) |
+| `libsimdpp-2.1/` | header-only SIMD library, vendored from github.com/p12tic/libsimdpp @ `55860b50` (Boost Software License 1.0, see `THIRD_PARTY_LICENSES`) |
+| `experiments/` | 23 C++ measurement programs and the Solidity baseline contract (`ATVBaseline.sol`) |
+| `training/` | 10 Python scripts: training, quantization, seed sweeps, calibration experiment, int8 study |
+| `data/` | canonical seed-42 weights and biases, 500-image batches, float reference predictions, seed-31337 spot-check weights |
+| `Dockerfile`, `run_selftest.sh` | isolated build of the patched interpreter and the closed-form self-test |
+| `run_all.sh` | compiles and runs every program and writes one output file per program |
+| `outputs/` | reference outputs of `run_all.sh` on the declared machine, with `MANIFEST.txt` (date, commits, compiler, CPU, sha256 of every file) |
+
+## Build and self-test (about 10 minutes, Docker)
+
+```
+docker build -t evmone-simd .
+docker run --rm -m 6g evmone-simd
+```
+
+The image clones evmone and EVMC at the pinned commits, applies the two
+patches, builds `libevmone.so` from scratch and runs `atv_kapaliform`, which
+reproduces the closed-form gas model: 10 problem sizes x 2 paths with
+predicted == measured gas (difference 0), the coefficients
+78.5625/10.125/23 and 4.1875/22.125/36, and the asymptote 18.76. The last
+line must be `SELFTEST: OK (closed-form reproduced, zero error)`.
+
+## Reproducing every number in the paper
+
+```
+mkdir -p outputs
+docker run --rm -m 6g -v "$PWD/outputs:/out" evmone-simd sh /work/evmone/run_all.sh
+```
+
+This runs the 23 C++ programs and the 3 Python scripts that need only the
+shipped `data/` (about 2 minutes) and writes `outputs/<program>.txt` plus
+`outputs/MANIFEST.txt`. Three optional stages are enabled with environment
+variables:
+
+| Variable | Stage | Needs | Time |
+|---|---|---|---|
+| `-e RUN_PRICE=1` | rebuilds `libevmone` with the `XMACC_S` price set to 26 and then 84 and reruns `atv_3kova` at each price (`atv_3kova_xmaccs26.txt`, `atv_3kova_xmaccs84.txt`) | nothing | about 2 x 2 min |
+| `-e RUN_TIMING=1` | `atv_zaman`: wall-clock time vs gas, with the time-neutral price `g*` | nothing | about 1 min (adaptive sampling) |
+| `-e RUN_SWEEPS=1` | `seed_sweep.py`, `seed_sweep_fashion.py`, `seed_sweep_fashion_cal.py` (five seeds each) | the raw MNIST and Fashion-MNIST IDX files mounted at `/work/evmone/mnist_data` and `/work/evmone/fashion_data` | about 50 min |
+
+Example with everything enabled:
+
+```
+docker run --rm -m 6g -e RUN_PRICE=1 -e RUN_TIMING=1 -e RUN_SWEEPS=1 \
+  -v "$PWD/outputs:/out" \
+  -v "$HOME/mnist_data:/work/evmone/mnist_data:ro" \
+  -v "$HOME/fashion_data:/work/evmone/fashion_data:ro" \
+  evmone-simd sh /work/evmone/run_all.sh
+```
+
+All gas values are deterministic: the `outputs/` shipped here were produced
+on an Intel i5-1135G7 (AVX2) inside a VirtualBox virtual machine and match
+the values measured on the original development host bit for bit. Only the
+wall-clock figures in `atv_zaman.txt` depend on the machine.
+
+## Where each reported number comes from
+
+| Paper item | Program | Output file |
+|---|---|---|
+| Pure-compute scaling table, closed-form coefficients, asymptote 18.76, static prediction with zero deviation | `experiments/atv_kapaliform.cpp` | `atv_kapaliform.txt` |
+| Three-bucket split (SLOAD / memory / compute) at K = 256, 1024, 4096; ratios 18.39 / 18.67 / 18.74; memory cost of the physical-copy path | `experiments/atv_3kova.cpp` | `atv_3kova.txt` |
+| End-to-end ratios 15.71 / 6.86 / 1.56 | `experiments/atv_full_3yol.cpp` | `atv_full_3yol.txt` |
+| Price sensitivity: measured rows at 26 and 84 gas (interpreter rebuilt) | `experiments/atv_3kova.cpp` via `RUN_PRICE=1` | `atv_3kova_xmaccs26.txt`, `atv_3kova_xmaccs84.txt` |
+| Price sensitivity: instruction count `K^2/8` and the derived sweep (cross-check of the measured rows) | `experiments/atv_gaz_tarama.cpp` | `atv_gaz_tarama.txt` |
+| Wall-clock time vs gas, throughput, time-neutral price `g*` | `experiments/atv_zaman.cpp` via `RUN_TIMING=1` | `atv_zaman.txt` |
+| int8 storage trade-off | `experiments/atv_int8.cpp` | `atv_int8.txt` |
+| Inner-product gas of the scalar path (320,064) and the reference outputs for the Solidity comparison | `experiments/atv_solidity_esitleme.cpp` | `atv_solidity_esitleme.txt` |
+| Solidity baseline (see "Solidity measurement record" below) | `experiments/ATVBaseline.sol` | recorded below |
+| Cold single-image cost anatomy (32,814,719; 88.6 % weight read) | `experiments/mnist_sload.cpp` | `mnist_sload.txt` |
+| Per-layer compute profile (layer 1 share) | `experiments/mnist_katman.cpp` | `mnist_katman.txt` |
+| End-to-end cold / warm / pure-compute ratios 1.22 / 2.40 / 4.92 | `experiments/mnist_e2e_cb.cpp` | `mnist_e2e_cb.txt` |
+| Batch processing: marginal cost per image, 5.16, linear model intercept, N = 16 ratios | `experiments/mnist_batch_marj.cpp` | `mnist_batch_marj.txt` |
+| Deployable contracts: 1,344 B / 1,774 B, 10.06, scalar loop factor | `experiments/mnist_deploy_cb.cpp` | `mnist_deploy_cb.txt` |
+| Looped weight loader: 538,979 B to 1,264 B, 84.01 gas per slot, 3.42 % | `experiments/mnist_loader_loop.cpp` | `mnist_loader_loop.txt` |
+| Unrolled SIMD upper bound 23.29, 3,462,418 gas, loop factor 4.74, gas per multiply-accumulate | `experiments/mnist_unrolled_simd.cpp` | `mnist_unrolled_simd.txt` |
+| MNIST fidelity and accuracy (500/500, 490/500) | `experiments/test_fullnet_500_acc.cpp` | `test_fullnet_500_acc.txt` |
+| Fashion-MNIST fidelity, quantization match and accuracy (500/500, 466/500, 434/500, 443/500) | `experiments/fashion_onchain_acc.cpp` | `fashion_onchain_acc.txt` |
+| Seed-31337 spot check (100/100) | `experiments/seedchk_evm.cpp` (weights from `training/seedchk_write.py`) | `seedchk_evm.txt` |
+| Quantization loss over five seeds and 10,000 images; calibration experiment | `training/seed_sweep.py`, `training/seed_sweep_fashion.py`, `training/seed_sweep_fashion_cal.py` via `RUN_SWEEPS=1` | `seed_sweep.txt`, `seed_sweep_fashion.txt`, `seed_sweep_fashion_cal.txt` |
+| int8 accuracy study | `training/int8_accuracy.py`, `training/int8_accuracy_fashion.py` | `int8_accuracy.txt`, `int8_accuracy_fashion.txt` |
+| Memory-safety suite | `experiments/sec_oob.cpp`, `sec_xgather.cpp`, `sec_xgather2.cpp`, `sec_xtranspose_big.cpp`, `test_security_opcodes.cpp`, `test_security_matrix.cpp` | `sec_*.txt`, `test_security_*.txt` |
+| Canonical weights in `data/` | `training/train_deep.py`, `training/train_deep_fashion.py`, `training/deep_reference.py` (need the raw datasets) | `data/` |
+
+Programs that need the raw datasets read them from `mnist_data/` and
+`fashion_data/` (the standard IDX files `train-images-idx3-ubyte`,
+`train-labels-idx1-ubyte`, `t10k-images-idx3-ubyte`, `t10k-labels-idx1-ubyte`).
+
+## Solidity measurement record
+
+The compiler baseline of the paper was measured outside this container.
+`experiments/ATVBaseline.sol` was compiled with solc `0.8.24+commit.e11b9ed9`
+(optimizer enabled, 200 runs) and executed on the Remix VM with the Cancun
+fork. The `gasUsed` return value of `computePacked()` was 1,414,312 gas and
+that of `computeUnpacked()` was 767,144 gas; both functions returned
+`out0, out1, out2 = 6031, 6284, 6137`, which are the reference values printed
+by `atv_solidity_esitleme` (`ref[0..2]`). The paper compares these values with
+the 320,064 gas of the inner-product loop of the manual scalar path
+(`atv_solidity_esitleme.txt`).
+
+## Instruction set
+
+The patch registers twelve opcodes. Nine of them form the family evaluated in
+the paper: `XMACC` (0xcb), `XMACC_S` (0xe5), `XRELU` (0xcc), `XSUM32`
+(0xcd), `XPACK` (0xce), `XGT_IMM` (0xca), `XTRANSPOSE` (0xdd), `XGATHER`
+(0xe3) and `XBCAST` (0xe4). The remaining three, `XADD_IMM` (0xc7),
+`XMUL_IMM` (0xc8) and `XSUB_IMM` (0xc9), are elementwise lane operations
+that are implemented and priced but not used by any experiment. The EVMC
+patch additionally registers an unused enum entry `OP_XADD` (0xc0).
+Experiment programs compile with `g++ -O2 -std=c++17 -I evmc/include X.cpp -o X -ldl`
+from `/work/evmone` inside the container and load `build/lib/libevmone.so` at run time.
+
+## Program naming
+
+The program names are the original working names and mix Turkish and English
+(`kova` = bucket, `kapaliform` = closed form, `gaz tarama` = gas sweep,
+`zaman` = time, `katman` = layer, `esitleme` = matching, `marj` = marginal).
+All comments and all output text are in English.
+
+## License
+
+The files written for this work are released under the Apache License 2.0
+(see `LICENSE`). evmone and EVMC, which the Dockerfile clones, are Apache-2.0;
+libsimdpp is distributed under the Boost Software License 1.0. See
+`THIRD_PARTY_LICENSES`.
+
+## Citation
+
+See `CITATION.cff`. The archived release of this repository is available at
+Zenodo: [DOI to be inserted].

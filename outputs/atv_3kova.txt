@@ -1,0 +1,37 @@
+[meas] COLD K=256 : gA=14181148 gC=13803838 gB=8932683 | msA=271808 msC=140704 msB=140704 | matWords=4096 OK
+[meas] COLD K=1024 : gA=258758697 gC=228904344 gB=150928805 | msA=4231616 msC=2134432 msB=2134432 | matWords=65536 OK
+[meas] COLD K=4096 : gA=12221360454 gC=5689723688 gB=4441967413 | msA=67256768 msC=33702304 msB=33702304 | matWords=1048576 OK
+[meas] WARM K=256 : gA=5989148 gC=5611838 gB=740683 | msA=271808 msC=140704 msB=140704 | matWords=4096 OK
+[meas] WARM K=1024 : gA=127686697 gC=97832344 gB=19856805 | msA=4231616 msC=2134432 msB=2134432 | matWords=65536 OK
+[meas] WARM K=4096 : gA=10124208454 gC=3592571688 gB=2344815413 | msA=67256768 msC=33702304 msB=33702304 | matWords=1048576 OK
+
+========== CLEAN 3-BUCKET SPLIT (memory=MSIZE-MEASURED, NO formula) ==========
+
+K=256 (matWords=4096)
+ path |   SLOAD(cold) |  memory(MSIZE) | compute(pure) |   total(cold) |   MSIZE(byte)
+  ----+---------------+----------------+---------------+---------------+--------------
+    A |       8601600 |         166396 |       5413152 |      14181148 |        271808
+    C |       8601600 |          50951 |       5151287 |      13803838 |        140704
+    B |       8601600 |          50951 |        280132 |       8932683 |        140704
+  --> PURE COMPUTE C/B = 18.39x   (computeC=5151287 / computeB=280132)
+      [memory C==B=50951 -> common mode, cancels from numerator/denominator -> ratio is pure compute]
+
+K=1024 (matWords=65536)
+ path |   SLOAD(cold) |  memory(MSIZE) | compute(pure) |   total(cold) |   MSIZE(byte)
+  ----+---------------+----------------+---------------+---------------+--------------
+    A |     137625600 |       34550793 |      86582304 |     258758697 |       4231616
+    C |     137625600 |        8889601 |      82389143 |     228904344 |       2134432
+    B |     137625600 |        8889601 |       4413604 |     150928805 |       2134432
+  --> PURE COMPUTE C/B = 18.67x   (computeC=82389143 / computeB=4413604)
+      [memory C==B=8889601 -> common mode, cancels from numerator/denominator -> ratio is pure compute]
+
+K=4096 (matWords=1048576)
+ path |   SLOAD(cold) |  memory(MSIZE) | compute(pure) |   total(cold) |   MSIZE(byte)
+  ----+---------------+----------------+---------------+---------------+--------------
+    A |    2202009600 |     8634145062 |    1385205792 |   12221360454 |      67256768
+    C |    2202009600 |     2169612561 |    1318101527 |    5689723688 |      33702304
+    B |    2202009600 |     2169612561 |      70345252 |    4441967413 |      33702304
+  --> PURE COMPUTE C/B = 18.74x   (computeC=1318101527 / computeB=70345252)
+      [memory C==B=2169612561 -> common mode, cancels from numerator/denominator -> ratio is pure compute]
+
+*** ALL CHECKS PASSED -> PURE COMPUTE C/B is valid ***

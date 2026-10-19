@@ -1,0 +1,22 @@
+Bytecode: SIMD=1344 B | SCALAR=1774 B
+[CHECK 2] EIP-170 (<24,576): SIMD PASSED | SCALAR PASSED
+[CHECK 1] 16 different images, both paths bit-exact: 16/16 PASSED
+[N= 1] SIMD c/w=33978313/6298313 | SCALAR c/w=52024421/24344421 | K4:OK K5:OK
+[N= 2] SIMD c/w=35971275/8291275 | SCALAR c/w=72063491/44383491 | K4:OK K5:OK
+[N= 4] SIMD c/w=39957199/12277199 | SCALAR c/w=112141631/84461631 | K4:OK K5:OK
+[N= 8] SIMD c/w=47929047/20249047 | SCALAR c/w=192297911/164617911 | K4:OK K5:OK
+[N=16] SIMD c/w=63872743/36192743 | SCALAR c/w=352610471/324930471 | K4:OK K5:OK
+[CHECK 3] SIMD   warm marginal: 1992849 1992849 1992849 1992849 -> EXACTLY CONSTANT
+[CHECK 3] SCALAR warm marginal: 20038957 20038957 20038957 20038957 -> EXACTLY CONSTANT
+[CHECK 3] SIMD   cold marginal: 1992849 1992849 1992849 1992849 -> EXACTLY CONSTANT
+[CHECK 3] SCALAR cold marginal: 20038957 20038957 20038957 20038957 -> EXACTLY CONSTANT
+[CHECK 6] SIMD marginal(memory-stripped) == 1,992,849 (CHECK-2 value of the batch program): 1992849 PASSED
+
+================ DEPLOYABLE vs DEPLOYABLE ================
+  code: SIMD 1344 B | SCALAR 1774 B (both under EIP-170)
+  MARGINAL/image: SIMD 1992849 | SCALAR 20038957  ->  C/B = 10.06x
+  tx total (N images): 27.68M warm-up + N*marginal + constant; N=1: SIMD 33978313 | SCALAR 52024421 -> 1.53x
+  (previous marginal vs unrolled scalar was 5.16x; the ratio grew because the looped scalar also pays the loop overhead)
+  loop factor of the scalar path: looped marginal 20038957 / unrolled-scalar marginal 10,284,208 (batch program, memory-stripped) = 1.95x
+
+*** ALL CHECKS PASSED ***

@@ -1,0 +1,10 @@
+[CHECK 1] bit-exact: PASSED
+[CHECK 2] pred==meas: 323713/323713 diff=0 PASSED
+[CHECK 3] total==323,713 (closed-form K=64 anchor): PASSED
+
+=== SCOPE MATCHING (K=64, Path C) ===
+data-write: 2385 | INNER-PRODUCT LOOP (PURE): 320064 | tail: 14 | memory: 1250 | TOTAL: 323713
+per element (4096 elements): 78.14 gas
+
+=== REFERENCE VALUES FOR THE REMIX COMPARISON ===
+ref[0]=6031  ref[1]=6284  ref[2]=6137

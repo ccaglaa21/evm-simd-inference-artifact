@@ -1,0 +1,11 @@
+meta: S=4096 SHIFT1=6 SHIFT2=13 H1=128 H2=64
+max|W| per layer: 1808,2196,4003
+batch: tokens consumed=398002, in file=398002
+
+[CHECK] int16 accuracy = 434/500 = 86.8%  (must EQUAL the EVM Fashion: 434/500=86.8%)
+[CHECK] int16 == fashion_ref predictions: 466/500  (500 means the pipeline is EXACTLY right)
+
+=== int8 RESULT (Fashion) ===
+int8 accuracy            = 436/500 = 87.2%
+int8 vs int16 fidelity   = 498/500 = 99.6%
+ACCURACY LOSS (int16->int8) = -0.4 points

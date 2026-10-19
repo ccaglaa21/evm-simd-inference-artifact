@@ -1,0 +1,28 @@
+Bytecode: SIMD=538979 byte | SCALAR=5762762 byte | matWords=13840 = W1:12544 + b1:128 + W2:1024 + b2:64 + W3:80
+[NOTE] Storage layout: 8 lanes x int16 = 16B of data per 32B word (half-word occupancy, required by the SIMD lane alignment)
+
+[CHECK 1] three-way prediction equality (C++ == SIMD-EVM == SCALAR-EVM): 20/20 PASSED
+[CHECK 5] MSIZE cold==warm: SIMD 901152/901152, SCALAR 500384/500384 PASSED
+[CHECK 6] repeat run identical: SIMD OK, SCALAR OK
+[CHECK 2] cold-warm==matWords*2000 (27680000): SIMD 27680000 OK, SCALAR 27680000 OK
+[CHECK 3] compute_cold==compute_warm: SIMD 2117326/2117326 OK, SCALAR 10408685/10408685 OK
+[CHECK 4] compute>0: PASSED
+[INFO  ] load-only I/O (cold) = 29707422 | analytic = 29064000 | diff = 643422 (harness overhead)
+[INFO  ] gas spread (5 images, warm): SIMD 5134596..5134719 (diff 123) | SCALAR 12317165..12317165 (diff 0, branchless->0 expected)
+
+================ MNIST END-TO-END C/B (fair scalar vs SIMD) ================
+  path     |  SLOAD        |  memory(MSIZE) | compute(pure) |  TOTAL
+  ---------+---------------+----------------+---------------+---------------
+  C  cold  |      29064000 |         524480 |      10408685 |      39997165
+  B  cold  |      29064000 |        1633393 |       2117326 |      32814719  <- must EQUAL the mnist_sload cold value
+  C  warm  |       1384000 |         524480 |      10408685 |      12317165
+  B  warm  |       1384000 |        1633393 |       2117326 |       5134719
+
+  END-TO-END C/B:  cold 1.22x   warm 2.40x
+  PURE COMPUTE (MNIST) C/B: 4.92x  (computeC=10408685 / computeB=2117326)
+  [NOTE] This pure-compute ratio is below 18.39x and is a LOWER BOUND: the SIMD path is LOOPED
+        (carries counter/jump overhead), the scalar path is UNROLLED (ZERO loop overhead, generous to scalar).
+        18.39x is the kernel ratio; the gap is loop overhead and can be closed by engineering.
+  [NOTE] The memory bucket is NOT common mode: scalar uses no counter area, smaller footprint (again in favour of scalar).
+
+*** ALL CHECKS PASSED -> numbers are valid ***

@@ -1,0 +1,52 @@
+fashion_meta reference: S=4096 SHIFT1=6 SHIFT2=13 (seed-42 check; canonical 434/443/466)
+[seed 42] training...
+    epoch 0: test acc=0.7357
+    epoch 5: test acc=0.8332
+    epoch 10: test acc=0.8711
+    epoch 15: test acc=0.8703
+    epoch 20: test acc=0.8859
+    epoch 24: test acc=0.8803
+[seed 42] done (237s): SHIFT=6/13 | 500: float 443 q 434 agree 466 | 10k: float 8803 q 8598 agree 9395
+  [CHECK seed42] S/SHIFT == fashion_meta: PASSED | canonical 434/443/466: PASSED
+[seed 7] training...
+    epoch 0: test acc=0.7659
+    epoch 5: test acc=0.8447
+    epoch 10: test acc=0.8690
+    epoch 15: test acc=0.8674
+    epoch 20: test acc=0.8662
+    epoch 24: test acc=0.8828
+[seed 7] done (197s): SHIFT=6/14 | 500: float 438 q 435 agree 467 | 10k: float 8828 q 8587 agree 9365
+[seed 123] training...
+    epoch 0: test acc=0.8015
+    epoch 5: test acc=0.8551
+    epoch 10: test acc=0.8688
+    epoch 15: test acc=0.8766
+    epoch 20: test acc=0.8391
+    epoch 24: test acc=0.8762
+[seed 123] done (194s): SHIFT=6/13 | 500: float 441 q 447 agree 477 | 10k: float 8762 q 8704 agree 9461
+[seed 2024] training...
+    epoch 0: test acc=0.7842
+    epoch 5: test acc=0.8492
+    epoch 10: test acc=0.8636
+    epoch 15: test acc=0.8727
+    epoch 20: test acc=0.8781
+    epoch 24: test acc=0.8698
+[seed 2024] done (185s): SHIFT=6/13 | 500: float 433 q 441 agree 476 | 10k: float 8698 q 8693 agree 9353
+[seed 31337] training...
+    epoch 0: test acc=0.7947
+    epoch 5: test acc=0.8588
+    epoch 10: test acc=0.8552
+    epoch 15: test acc=0.8799
+    epoch 20: test acc=0.8845
+    epoch 24: test acc=0.8723
+[seed 31337] done (195s): SHIFT=7/12 | 500: float 436 q 433 agree 469 | 10k: float 8723 q 8530 agree 9152
+
+================ SEED SWEEP SUMMARY (Fashion-MNIST, 5 seeds) ================
+ seed  | SH1/SH2 | f500 | q500 | agr500 | f10k  | q10k  | agr10k
+    42 |  6/13   | 443  | 434  |  466   |  8803 |  8598 |  9395
+     7 |  6/14   | 438  | 435  |  467   |  8828 |  8587 |  9365
+   123 |  6/13   | 441  | 447  |  477   |  8762 |  8704 |  9461
+  2024 |  6/13   | 433  | 441  |  476   |  8698 |  8693 |  9353
+ 31337 |  7/12   | 436  | 433  |  469   |  8723 |  8530 |  9152
+
+10k: float 87.63%±0.48 | int16 86.22%±0.66 | loss 1.40±0.92 points | agreement 93.45%±1.04

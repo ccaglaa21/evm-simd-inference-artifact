@@ -1,0 +1,7 @@
+=== XGATHER OVERFLOW SECURITY TEST ===
+[S1 sanity (normal header)         ] status=0 gas=155  result=[10,30,50,70] OK
+[S2 max_data_idx overflow (huge rows*cols)] status=3 gas=2000000  (OUT_OF_GAS = caught by check_memory, safe)
+[S3 total_indices overflow (huge IND rows*cols)] status=3 gas=2000000  (OUT_OF_GAS = caught by check_memory, safe)
+
+NOTE: This test MEASURES the behaviour of the 3 scenarios. 'OK/safe' is expected; if we see SUCCESS+wrong
+values or a segfault, there is a vulnerability, to be closed with a uint256/overflow-safe check as in XMACC_S.
