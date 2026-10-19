@@ -1,4 +1,4 @@
-// mnist_katman.cpp — MNIST layer-by-layer COMPUTE gas measurement (prefix method).
+// mnist_layers.cpp — MNIST layer-by-layer COMPUTE gas measurement (prefix method).
 // mnist_sload.cpp was used as the TEMPLATE, the ORIGINAL is UNTOUCHED. emit_layer + argmax are IDENTICAL copies.
 // 4 prefixes: P1=load-only | P2=+layer1 | P3=+layer2 | P4=full(argmax).
 // Each prefix measures its own MSIZE (0x59) separately. compute=total-SLOAD-memgas(MSIZE).
@@ -231,7 +231,7 @@ int main(){
     std::cout<<"Bytecode(full)="<<cp_end<<" byte | matWords="<<matWords<<" | cp_load="<<cp_load<<" cp_l1="<<cp_l1<<" cp_l2="<<cp_l2<<"\n";
 
     int N_MEASURE=32;
-    std::vector<long long> k1v,k2v,koutv,yukv; long long ref_p4=0; int hard_fail=0;
+    std::vector<long long> k1v,k2v,koutv,loadv; long long ref_p4=0; int hard_fail=0;
     long long need=(long long)matWords*2000, sc=(long long)matWords*2100, sw=(long long)matWords*100;
 
     for(int im=0; im<N_MEASURE; ++im){
@@ -262,17 +262,17 @@ int main(){
         long long k1=hc2-hc1, k2=hc3-hc2, kout=hc4-hc3;
         if(k1<=0||k2<=0||kout<=0){ printf("im=%d CHECK3 layer<=0 FAIL: k1=%lld k2=%lld kout=%lld\n",im,k1,k2,kout); hard_fail=1; }
 
-        yukv.push_back(hc1); k1v.push_back(k1); k2v.push_back(k2); koutv.push_back(kout);
+        loadv.push_back(hc1); k1v.push_back(k1); k2v.push_back(k2); koutv.push_back(kout);
         if(im==0){ ref_p4=hc4; printf("[im=0] load=%lld k1=%lld k2=%lld kout=%lld | P4total=%lld | MSIZE m1/m2/m3/m4=%lld/%lld/%lld/%lld | prediction EVM=%d ref=%d | intermediate h1=%s h2=%s\n",hc1,k1,k2,kout,hc4,m1,m2,m3,m4,p4,ref_pred[im],a2ok?"OK":"FAIL",a3ok?"OK":"FAIL"); }
     }
 
     auto stats=[&](std::vector<long long>& v,const char* nm){ long long mn=v[0],mx=v[0]; double s=0; for(auto x:v){ if(x<mn)mn=x; if(x>mx)mx=x; s+=x; } printf("  %-14s mean=%12.1f  min=%12lld  max=%12lld  spread=%lld\n",nm,s/v.size(),mn,mx,mx-mn); };
     printf("\n========== MNIST PER-LAYER COMPUTE PROFILE (%d images, MSIZE-measured) ==========\n",N_MEASURE);
-    stats(yukv,"Load-ovh"); stats(k1v,"Layer1(128x784)"); stats(k2v,"Layer2(64x128)"); stats(koutv,"Output+argmax");
+    stats(loadv,"Load-ovh"); stats(k1v,"Layer1(128x784)"); stats(k2v,"Layer2(64x128)"); stats(koutv,"Output+argmax");
     { double t=0; long long a=k1v[0]+k2v[0]+koutv[0]; for(size_t i=0;i<k1v.size();++i){} (void)t;
       printf("  first image: k1+k2+kout=%lld | compute[P4]=%lld | mnist_sload ref ~2,117,326 (cross-check)\n", a, ref_p4);
       printf("  share of compute[P4] (first image): load-ovh %.2f%% | layer1 %.2f%% | layer2 %.2f%% | output+argmax %.2f%%\n",
-          100.0*yukv[0]/ref_p4, 100.0*k1v[0]/ref_p4, 100.0*k2v[0]/ref_p4, 100.0*koutv[0]/ref_p4); }
+          100.0*loadv[0]/ref_p4, 100.0*k1v[0]/ref_p4, 100.0*k2v[0]/ref_p4, 100.0*koutv[0]/ref_p4); }
     if(hard_fail) printf("\n*** AT LEAST ONE CHECK FAILED -> profile UNRELIABLE ***\n");
     else printf("\n*** ALL CHECKS PASSED -> per-layer compute profile is valid ***\n");
 

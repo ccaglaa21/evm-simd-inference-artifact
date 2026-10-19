@@ -189,7 +189,7 @@ int main(){
 
     std::cout<<"Bytecode: "<<code.size()<<" bytes. Testing 500 images...\n";
 
-    int match=0; long long toplam_gaz=0;
+    int match=0; long long total_gas=0;
     int acc_vs_float=0;  // EVM == float-model prediction -> FIDELITY, NOT accuracy
     int evm_vs_true=0;   // EVM prediction == true label -> TRUE accuracy
     int float_vs_true=0; // float-model prediction == true label -> accuracy of the float model
@@ -218,7 +218,7 @@ int main(){
         evmc_message msg{}; msg.kind=EVMC_CALL; msg.gas=5000000000LL;
         msg.input_data=calldata.data(); msg.input_size=calldata.size();
         auto res=vm->execute(vm,nullptr,nullptr,EVMC_SHANGHAI,&msg,code.data(),code.size());
-        toplam_gaz += (5000000000LL - res.gas_left);
+        total_gas += (5000000000LL - res.gas_left);
 
         int evm_pred=-1;
         if(res.status_code==0 && res.output_data && res.output_size>=32){
@@ -237,6 +237,6 @@ int main(){
     std::cout<<"EVM == float-model prediction: "<<acc_vs_float<<"/"<<N_RUN<<"  ("<<(100.0*acc_vs_float/N_RUN)<<"%) <- FIDELITY (NOT accuracy)\n";
     std::cout<<"EVM == TRUE LABEL: "<<evm_vs_true<<"/"<<N_RUN<<"  ("<<(100.0*evm_vs_true/N_RUN)<<"%) <- TRUE ACCURACY (true accuracy of the EVM model)\n";
     std::cout<<"float-model == TRUE LABEL: "<<float_vs_true<<"/"<<N_RUN<<"  ("<<(100.0*float_vs_true/N_RUN)<<"%) <- accuracy of the float model (reference)\n";
-    std::cout<<"Average gas/image: "<<toplam_gaz/N_RUN<<"\n";
+    std::cout<<"Average gas/image: "<<total_gas/N_RUN<<"\n";
     vm->destroy(vm); dlclose(h); return 0;
 }

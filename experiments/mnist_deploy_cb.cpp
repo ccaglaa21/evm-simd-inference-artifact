@@ -381,30 +381,30 @@ int main(){
             N,GB_c[ni],GB_w[ni],GC_c[ni],GC_w[ni],g4?"OK":"FAILED",g5?"OK":"FAILED");
         if(!g4||!g5) fail=true;
     }
-    auto linCheck=[&](const char* ad, long long G[5], long long MS[5], long long& marj)->bool{
+    auto linCheck=[&](const char* ad, long long G[5], long long MS[5], long long& marg)->bool{
         long long D[5]; for(int i=0;i<5;++i) D[i]=G[i]-memgas(MS[i]);
         long long m01=D[1]-D[0], m12=(D[2]-D[1])/2, m23=(D[3]-D[2])/4, m34=(D[4]-D[3])/8;
         bool okl=(m01==m12&&m12==m23&&m23==m34);
-        marj=m01;
+        marg=m01;
         printf("[CHECK 3] %s marginal: %lld %lld %lld %lld -> %s\n",ad,m01,m12,m23,m34,okl?"EXACTLY CONSTANT":"FAILED");
         return okl;
     };
-    long long marjB,marjC,dB,dC;
-    bool l1=linCheck("SIMD   warm",GB_w,MSB,marjB), l2=linCheck("SCALAR warm",GC_w,MSC,marjC);
+    long long margB,margC,dB,dC;
+    bool l1=linCheck("SIMD   warm",GB_w,MSB,margB), l2=linCheck("SCALAR warm",GC_w,MSC,margC);
     bool l3=linCheck("SIMD   cold",GB_c,MSB,dB),    bool_l4; bool l4=linCheck("SCALAR cold",GC_c,MSC,dC); (void)bool_l4;
     if(!(l1&&l2&&l3&&l4)) fail=true;
-    long long marjBtx=marjB, marjCtx=marjC;
-    printf("[CHECK 6] SIMD marginal(memory-stripped) == 1,992,849 (CHECK-2 value of the batch program): %lld %s\n",marjBtx+0,marjB==1992849LL?"PASSED":"FAILED");
-    if(marjB!=1992849LL) fail=true;
+    long long margBtx=margB, margCtx=margC;
+    printf("[CHECK 6] SIMD marginal(memory-stripped) == 1,992,849 (CHECK-2 value of the batch program): %lld %s\n",margBtx+0,margB==1992849LL?"PASSED":"FAILED");
+    if(margB!=1992849LL) fail=true;
 
     printf("\n================ DEPLOYABLE vs DEPLOYABLE ================\n");
     printf("  code: SIMD %zu B | SCALAR %zu B (both under EIP-170)\n",codeB.size(),codeC.size());
-    printf("  MARGINAL/image: SIMD %lld | SCALAR %lld  ->  C/B = %.2fx\n",marjB,marjC,(double)marjC/marjB);
+    printf("  MARGINAL/image: SIMD %lld | SCALAR %lld  ->  C/B = %.2fx\n",margB,margC,(double)margC/margB);
     printf("  tx total (N images): 27.68M warm-up + N*marginal + constant; N=1: SIMD %lld | SCALAR %lld -> %.2fx\n",
         GB_c[0],GC_c[0],(double)GC_c[0]/GB_c[0]);
     printf("  (previous marginal vs unrolled scalar was 5.16x; the ratio grew because the looped scalar also pays the loop overhead)\n");
     printf("  loop factor of the scalar path: looped marginal %lld / unrolled-scalar marginal 10,284,208 (batch program, memory-stripped) = %.2fx\n",
-        marjC,(double)marjC/10284208.0);
+        margC,(double)margC/10284208.0);
     printf("\n%s\n", fail?"*** AT LEAST ONE CHECK FAILED -> do NOT record ***":"*** ALL CHECKS PASSED ***");
     vm->destroy(vm); dlclose(h); return fail?1:0;
 }

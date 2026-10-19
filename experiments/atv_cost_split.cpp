@@ -1,4 +1,4 @@
-// atv_3kova.cpp — CLEAN 3-BUCKET SPLIT: SLOAD | memory(MSIZE-MEASURED) | compute(=total-SLOAD-memory)
+// atv_cost_split.cpp — CLEAN 3-BUCKET SPLIT: SLOAD | memory(MSIZE-MEASURED) | compute(=total-SLOAD-memory)
 // The original atv_sload.cpp is UNTOUCHED. Memory gas comes from the REAL MSIZE (0x59), NO formula.
 // SLOAD = matWords*(cold 2100/warm 100); VERIFIED via cold-warm==matWords*2000.
 // CHECKS: (1) bit-exact (2) compute>0 (3) cold-warm==matWords*2000 (4) compute_cold==compute_warm.

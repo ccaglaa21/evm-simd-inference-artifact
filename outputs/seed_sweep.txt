@@ -6,7 +6,7 @@ deep_meta reference: S=4096 SHIFT1=7 SHIFT2=13 (seed-42 check)
     epoch 15: test acc=0.9763
     epoch 20: test acc=0.9774
     epoch 24: test acc=0.9779
-[seed 42] done (230s): SHIFT=7/13 | 500: float 490 q 490 agree 500 | 10k: float 9779 q 9779 agree 9958
+[seed 42] done (191s): SHIFT=7/13 | 500: float 490 q 490 agree 500 | 10k: float 9779 q 9779 agree 9958
   [CHECK seed42] S/SHIFT == deep_meta: PASSED | canonical 490/490/500: PASSED
 [seed 7] training...
     epoch 0: test acc=0.9116
@@ -15,7 +15,7 @@ deep_meta reference: S=4096 SHIFT1=7 SHIFT2=13 (seed-42 check)
     epoch 15: test acc=0.9770
     epoch 20: test acc=0.9785
     epoch 24: test acc=0.9742
-[seed 7] done (242s): SHIFT=7/12 | 500: float 490 q 487 agree 496 | 10k: float 9742 q 9720 agree 9934
+[seed 7] done (188s): SHIFT=7/12 | 500: float 490 q 487 agree 496 | 10k: float 9742 q 9720 agree 9934
 [seed 123] training...
     epoch 0: test acc=0.9079
     epoch 5: test acc=0.9643
@@ -23,7 +23,7 @@ deep_meta reference: S=4096 SHIFT1=7 SHIFT2=13 (seed-42 check)
     epoch 15: test acc=0.9764
     epoch 20: test acc=0.9775
     epoch 24: test acc=0.9784
-[seed 123] done (203s): SHIFT=7/13 | 500: float 489 q 490 agree 498 | 10k: float 9784 q 9781 agree 9950
+[seed 123] done (218s): SHIFT=7/13 | 500: float 489 q 490 agree 498 | 10k: float 9784 q 9781 agree 9950
 [seed 2024] training...
     epoch 0: test acc=0.9035
     epoch 5: test acc=0.9675
@@ -31,7 +31,7 @@ deep_meta reference: S=4096 SHIFT1=7 SHIFT2=13 (seed-42 check)
     epoch 15: test acc=0.9764
     epoch 20: test acc=0.9768
     epoch 24: test acc=0.9775
-[seed 2024] done (238s): SHIFT=7/13 | 500: float 492 q 492 agree 499 | 10k: float 9775 q 9771 agree 9965
+[seed 2024] done (193s): SHIFT=7/13 | 500: float 492 q 492 agree 499 | 10k: float 9775 q 9771 agree 9965
 [seed 31337] training...
     epoch 0: test acc=0.9037
     epoch 5: test acc=0.9643
@@ -39,7 +39,7 @@ deep_meta reference: S=4096 SHIFT1=7 SHIFT2=13 (seed-42 check)
     epoch 15: test acc=0.9742
     epoch 20: test acc=0.9751
     epoch 24: test acc=0.9763
-[seed 31337] done (227s): SHIFT=7/13 | 500: float 491 q 490 agree 499 | 10k: float 9763 q 9755 agree 9969
+[seed 31337] done (194s): SHIFT=7/13 | 500: float 491 q 490 agree 499 | 10k: float 9763 q 9755 agree 9969
 
 ================ SEED SWEEP SUMMARY (MNIST, 5 seeds) ================
  seed  | SH1/SH2 | f500  | q500  | agr500 | f10k  | q10k  | agr10k

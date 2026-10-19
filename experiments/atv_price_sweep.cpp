@@ -1,5 +1,5 @@
-// atv_gaz_tarama.cpp — TEMPLATE: atv_3kova.cpp. SWEEPS the pure-compute C/B over the XMACC_S gas price.
-// atv_3kova.cpp is UNTOUCHED. Same 3-bucket split; in addition:
+// atv_price_sweep.cpp — TEMPLATE: atv_cost_split.cpp. SWEEPS the pure-compute C/B over the XMACC_S gas price.
+// atv_cost_split.cpp is UNTOUCHED. Same 3-bucket split; in addition:
 //   (1) the number of XMACC_S (0xE5) calls on path B is COUNTED (nXmacc).
 //   (2) DERIVATION: computeB(g)=computeB(14)+(g-14)*nXmacc, C/B(g)=computeC/computeB(g), g in {14..84}.
 // The DERIVATION IS NOT A MEASUREMENT (constant-gas-per-opcode assumption). Cross-checked at g=84 with a real rebuild.
@@ -181,17 +181,17 @@ int main(){
             if(hcold[p]!=hwarm[p]){ printf("K=%d path %s: compute_cold!=compute_warm\n",K,pn[p]); hard_fail=1; }
         }
 
-        long long hesapC=hcold[1], hesapB14=hcold[2], N=NX[ki];
-        double cb14=(double)hesapC/(double)hesapB14;
+        long long computeC=hcold[1], computeB14=hcold[2], N=NX[ki];
+        double cb14=(double)computeC/(double)computeB14;
         printf("\nK=%d (matWords=%lld, nXmacc=%lld)\n",K,matWords,N);
-        printf("  MEASURED (XMACC_S=14): computeC=%lld computeB=%lld -> pure C/B=%.2fx\n",hesapC,hesapB14,cb14);
+        printf("  MEASURED (XMACC_S=14): computeC=%lld computeB=%lld -> pure C/B=%.2fx\n",computeC,computeB14,cb14);
         if(memv[1]==memv[2]) printf("  [memory C==B -> ratio is pure compute]\n");
         // --- DERIVATION (NOT A MEASUREMENT): constant gas per opcode. computeB(g)=computeB14+(g-14)*N ---
         printf("  --- DERIVATION (not a measurement; to be cross-checked at g=84 with a real measurement) ---\n");
         printf("  g(XMACC_S) | computeB(g)_derived |  C/B(g)_derived\n");
         printf("  -----------+---------------------+------------------\n");
         int gs[]={14,26,28,32,42,56,70,84};   // 26 and 84: measured by rebuilding the interpreter (run_all.sh RUN_PRICE=1); 32: upper end of the time-neutral range
-        for(int gi=0; gi<(int)(sizeof(gs)/sizeof(gs[0])); ++gi){ int g=gs[gi]; long long hb=hesapB14+(long long)(g-14)*N; double cb=(double)hesapC/(double)hb;
+        for(int gi=0; gi<(int)(sizeof(gs)/sizeof(gs[0])); ++gi){ int g=gs[gi]; long long hb=computeB14+(long long)(g-14)*N; double cb=(double)computeC/(double)hb;
             printf("  %10d | %19lld | %14.2fx%s\n",g,hb,cb, g==14?"  <- MEASURED":""); }
     }
     if(hard_fail) printf("\n*** CHECK FAILED -> UNRELIABLE ***\n");

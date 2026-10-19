@@ -47,7 +47,7 @@ int main(){
         int matWords16=(K*K+15)/16, matWords8=(K*K+31)/32, vecWords=(K+7)/8, MAT=0;
         int VEC=(1+matWords16)*32+256, ACC=VEC+vecWords*32+64, OUTV=ACC+64;
         long long peakByte=(long long)OUTV+(long long)K*32; long long mtop=32+2LL*(K*K-1)+1; if(mtop>peakByte)peakByte=mtop;
-        long long aPeak=(peakByte+31)/32, bellek=3*aPeak+(aPeak*aPeak)/512;
+        long long aPeak=(peakByte+31)/32, memoryGas=3*aPeak+(aPeak*aPeak)/512;
 
         evmc_message msg{}; msg.kind=EVMC_CALL; msg.gas=GAS; msg.recipient=ADDR; msg.code_address=ADDR;
 
@@ -96,8 +96,8 @@ int main(){
         auto show=[&](const char* nm,int fmt,long long tc,long long tw,bool ok){
             int mw=(fmt==16)?matWords16:matWords8;
             printf("K=%d %s exact?=%s\n",K,nm,ok?"YES":"NO");
-            printf("   COLD: SLOAD=%lld compute=%lld memory=%lld TOTAL=%lld\n",(long long)mw*2100, tc-(long long)mw*2100-bellek, bellek, tc);
-            printf("   WARM: SLOAD=%lld compute=%lld memory=%lld TOTAL=%lld\n",(long long)mw*100, tw-(long long)mw*100-bellek, bellek, tw);
+            printf("   COLD: SLOAD=%lld compute=%lld memory=%lld TOTAL=%lld\n",(long long)mw*2100, tc-(long long)mw*2100-memoryGas, memoryGas, tc);
+            printf("   WARM: SLOAD=%lld compute=%lld memory=%lld TOTAL=%lld\n",(long long)mw*100, tw-(long long)mw*100-memoryGas, memoryGas, tw);
         };
         show("int16",16,t16c,t16w,ok16); show("int8 ",8,t8c,t8w,ok8);
         printf("   >>> int8/int16 TOTAL:  COLD %.3f | WARM %.3f  (<1 = int8 wins)\n",(double)t8c/t16c,(double)t8w/t16w);

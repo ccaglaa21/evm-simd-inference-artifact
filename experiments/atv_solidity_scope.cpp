@@ -1,8 +1,8 @@
-// atv_solidity_esitleme.cpp — SCOPE MATCHING FOR THE SOLIDITY BASELINE (K=64)
+// atv_solidity_scope.cpp — SCOPE MATCHING FOR THE SOLIDITY BASELINE (K=64)
 // Goal: isolate the "inner-product loop only" gas from the Path C total (323,713).
 // Method: the closed-form gas counter; snapshot before/after the loop emission.
 // CHECKS: (1) bit-exact (2) predicted==measured DIFF 0 (3) total==323,713
-// (atv_kapaliform K=64 anchor). Also prints ref[0..2] for the Remix comparison.
+// (atv_closed_form K=64 anchor). Also prints ref[0..2] for the Remix comparison.
 #include <evmc/evmc.hpp>
 #include <evmc/mocked_host.hpp>
 #include <dlfcn.h>
@@ -61,8 +61,8 @@ int main(){
     for(int blk=0; blk<vecWords; ++blk){ std::vector<uint8_t> d(32,0);
         for(int e=0;e<8;++e){ int idx=blk*8+e; if(idx<K){ uint16_t val=(uint16_t)v[idx]; d[e*2]=val&0xFF; d[e*2+1]=(val>>8)&0xFF; } }
         k.W32(d); k.MS(VEC+blk*32); }
-    long long g_veri = k.g;
-    // INNER-PRODUCT LOOP (identical to atv_3kova/kapaliform Path C, UNROLLED)
+    long long g_data = k.g;
+    // INNER-PRODUCT LOOP (identical to atv_cost_split/kapaliform Path C, UNROLLED)
     for(int r=0;r<K;++r){ k.P1(0);
         for(int c=0;c<K;++c){
             long long eB=MAT+32+((long long)c*K+r)*2;
@@ -74,16 +74,16 @@ int main(){
             k.PUSH(vW); k.op(0x51); k.mem(vW+32); k.P1((uint8_t)(vlo+1)); k.op(0x1a);
             k.P2(256); k.op(0x02); k.op(0x01); k.op(0x02); k.op(0x01); }
         k.MS(OUTV+(long long)r*32); }
-    long long g_hesap = k.g - g_veri;
+    long long g_compute = k.g - g_data;
     // tail
     k.op(0x59); k.PUSH(0); k.op(0x52); k.mem(32);
     k.PUSH(OUTV+(long long)K*32); k.PUSH(0); k.op(0xF3); k.mem(OUTV+(long long)K*32);
-    long long g_kuyruk = k.g - g_veri - g_hesap;
-    long long tahmin = k.g + memgas(k.peakB);
+    long long g_tail = k.g - g_data - g_compute;
+    long long predicted = k.g + memgas(k.peakB);
 
     evmc_message msg{}; msg.kind=EVMC_CALL; msg.gas=GAS; msg.recipient=ADDR; msg.code_address=ADDR;
     auto res=vm->execute(vm,&IF,host.to_context(),EVMC_SHANGHAI,&msg,k.c.data(),k.c.size());
-    long long olcum=GAS-res.gas_left;
+    long long measured=GAS-res.gas_left;
     bool be=true;
     if(res.status_code==0&&res.output_data&&(long long)res.output_size>=OUTV+(long long)K*32){
         for(int r=0;r<K;++r){ long long x=0; for(int j=28;j<32;++j) x=(x<<8)|res.output_data[OUTV+(long long)r*32+j];
@@ -92,13 +92,13 @@ int main(){
     if(res.release)res.release(&res);
 
     printf("[CHECK 1] bit-exact: %s\n",be?"PASSED":"FAILED");
-    printf("[CHECK 2] pred==meas: %lld/%lld diff=%lld %s\n",tahmin,olcum,olcum-tahmin,olcum==tahmin?"PASSED":"FAILED");
-    printf("[CHECK 3] total==323,713 (closed-form K=64 anchor): %s\n",olcum==323713LL?"PASSED":"FAILED");
+    printf("[CHECK 2] pred==meas: %lld/%lld diff=%lld %s\n",predicted,measured,measured-predicted,measured==predicted?"PASSED":"FAILED");
+    printf("[CHECK 3] total==323,713 (closed-form K=64 anchor): %s\n",measured==323713LL?"PASSED":"FAILED");
     printf("\n=== SCOPE MATCHING (K=64, Path C) ===\n");
     printf("data-write: %lld | INNER-PRODUCT LOOP (PURE): %lld | tail: %lld | memory: %lld | TOTAL: %lld\n",
-        g_veri, g_hesap, g_kuyruk, memgas(k.peakB), olcum);
-    printf("per element (4096 elements): %.2f gas\n",(double)g_hesap/(K*K));
+        g_data, g_compute, g_tail, memgas(k.peakB), measured);
+    printf("per element (4096 elements): %.2f gas\n",(double)g_compute/(K*K));
     printf("\n=== REFERENCE VALUES FOR THE REMIX COMPARISON ===\n");
     printf("ref[0]=%lld  ref[1]=%lld  ref[2]=%lld\n",ref[0],ref[1],ref[2]);
-    return (be&&olcum==tahmin&&olcum==323713LL)?0:1;
+    return (be&&measured==predicted&&measured==323713LL)?0:1;
 }

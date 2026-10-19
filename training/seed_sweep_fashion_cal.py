@@ -85,8 +85,8 @@ for sd in seeds:
         gate = shK==(4096,6,13) and fK[4]==434 and fK[3]==443 and fK[5]==466
         print(f"  [CHECK seed42 CANONICAL] SHIFT 6/13 + 434/443/466: {'PASSED' if gate else 'MISMATCH — STOP, report'}", flush=True)
 
-kaybK=np.array([ (r[3][0]-r[3][1])/100.0 for r in rowsK])
-kaybY=np.array([ (r[3][0]-r[3][1])/100.0 for r in rowsY])
-print(f"\nLOSS (10k, points): CANONICAL range [{kaybK.min():.2f},{kaybK.max():.2f}] mean {kaybK.mean():.2f}±{kaybK.std():.2f}")
-print(f"                    NEW       range [{kaybY.min():.2f},{kaybY.max():.2f}] mean {kaybY.mean():.2f}±{kaybY.std():.2f}")
+lossK=np.array([ (r[3][0]-r[3][1])/100.0 for r in rowsK])
+lossY=np.array([ (r[3][0]-r[3][1])/100.0 for r in rowsY])
+print(f"\nLOSS (10k, points): CANONICAL range [{lossK.min():.2f},{lossK.max():.2f}] mean {lossK.mean():.2f}±{lossK.std():.2f}")
+print(f"                    NEW       range [{lossY.min():.2f},{lossY.max():.2f}] mean {lossY.mean():.2f}±{lossY.std():.2f}")
 print("(The NEW method calibrates from TRAINING data -> the test leakage is also removed.)")

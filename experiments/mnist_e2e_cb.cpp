@@ -1,6 +1,6 @@
 // mnist_e2e_cb.cpp — MNIST END-TO-END C/B: fair scalar (Path C, UNROLLED) vs SIMD (mnist_sload PATH, UNTOUCHED)
 // Goal: the MEASURED answer to "what does SIMD save in total in a real application (MNIST)?".
-// The scalar path uses the atv_3kova Path C idiom (MLOAD+BYTE extraction) + SIGNEXTEND (signed weights).
+// The scalar path uses the atv_cost_split Path C idiom (MLOAD+BYTE extraction) + SIGNEXTEND (signed weights).
 // Scalar is UNROLLED (no loop) -> generous to scalar -> the ratio is a LOWER BOUND.
 // The SIMD body is identical to mnist_sload.cpp; the cold total must EQUAL the mnist_sload output (cross-check).
 // CHECKS: (1) 20 images, three-way prediction equality (2) cold-warm==matWords*2000 (3) compute_cold==compute_warm

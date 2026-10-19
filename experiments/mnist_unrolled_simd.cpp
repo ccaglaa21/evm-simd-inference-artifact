@@ -160,7 +160,7 @@ int main(){
     long long g_body=k.g;
     k.PUSH(MAXI); k.op(0x51); k.P1(0); k.op(0x52); k.PUSH(0x20); k.P1(0); k.op(0xF3);
     long long predMS=((k.peakB+31)/32)*32;
-    long long tahminWarm = k.g + memgas(k.peakB);
+    long long predWarm = k.g + memgas(k.peakB);
     std::vector<uint8_t> codeU=k.c;
     std::vector<uint8_t> codeUm(codeU.begin(),codeU.end()-13);
     { uint8_t t[]={0x59,0x60,0x00,0x52,0x60,0x20,0x60,0x00,0xF3}; for(uint8_t x:t) codeUm.push_back(x); }
@@ -316,7 +316,7 @@ int main(){
     setAcc(EVMC_ACCESS_WARM); run(codeLm,cd0,dummy,msL);
 
     printf("[CHECK 2] UNROLLED warm pred==meas: %lld/%lld diff=%lld %s | MSIZE pred/meas: %lld/%lld %s\n",
-        tahminWarm,wU,wU-tahminWarm,wU==tahminWarm?"PASSED":"FAILED",predMS,msU,predMS==msU?"OK":"FAILED");
+        predWarm,wU,wU-predWarm,wU==predWarm?"PASSED":"FAILED",predMS,msU,predMS==msU?"OK":"FAILED");
     printf("[CHECK 3] cold-warm==%lld: UNROLLED %lld %s | LOOPED %lld %s\n",
         (long long)matWords*2000, cU1-wU,(cU1-wU==(long long)matWords*2000)?"OK":"FAILED",
         cL1-wL,(cL1-wL==(long long)matWords*2000)?"OK":"FAILED");
@@ -328,17 +328,17 @@ int main(){
         wL,wL==5134719LL?"PASSED":"FAILED",hL_w,hL_w==2117326LL?"OK":"FAILED");
     printf("[CHECK 6] repeat run identical (UNROLLED cold): %s\n",cU1==cU2?"PASSED":"FAILED");
 
-    long long SCALAR_HESAP=10408685LL; // constant verified three times (mnist_e2e_cb), not re-run here
+    long long SCALAR_COMPUTE=10408685LL; // constant verified three times (mnist_e2e_cb), not re-run here
     printf("\n================ UNROLLED-SIMD RESULT ================\n");
     printf("  UNROLLED-SIMD pure compute: %lld  (layer-1 share ~%lld)\n",hU_w,g_l1-(long long)matWords*100-3-3-3-3-3*(CDIMG/32)-3-3);
     printf("  LOOPED-SIMD pure compute: %lld  ->  loop-overhead factor: %.2fx\n",hL_w,(double)hL_w/hU_w);
-    printf("  SCALAR (unrolled, constant): %lld\n",SCALAR_HESAP);
-    printf("  PURE COMPUTE C/B: looped %.2fx  ->  UNROLLED %.2fx\n",(double)SCALAR_HESAP/hL_w,(double)SCALAR_HESAP/hU_w);
+    printf("  SCALAR (unrolled, constant): %lld\n",SCALAR_COMPUTE);
+    printf("  PURE COMPUTE C/B: looped %.2fx  ->  UNROLLED %.2fx\n",(double)SCALAR_COMPUTE/hL_w,(double)SCALAR_COMPUTE/hU_w);
     printf("  per group (8 elements) unrolled kernel: PUSH+MLOAD+PUSH+MLOAD+XMACC = 23 gas (from the count)\n");
     { long long nmac=784LL*128+128LL*64+64LL*10;   // multiply-accumulate operations per inference (784->128->64->10)
       printf("  per multiply-accumulate (%lld MACs): SCALAR unrolled %.2f gas | UNROLLED-SIMD %.2f gas | 8-way core block 23/8 = %.3f gas\n",
-          nmac,(double)SCALAR_HESAP/nmac,(double)hU_w/nmac,23.0/8.0); }
-    bool all= ok==20 && wU==tahminWarm && predMS==msU && (cU1-wU==(long long)matWords*2000)
+          nmac,(double)SCALAR_COMPUTE/nmac,(double)hU_w/nmac,23.0/8.0); }
+    bool all= ok==20 && wU==predWarm && predMS==msU && (cU1-wU==(long long)matWords*2000)
         && (cL1-wL==(long long)matWords*2000) && hU_c==hU_w && wL==5134719LL && cU1==cU2;
     printf("\n%s\n", all?"*** ALL CHECKS PASSED ***":"*** AT LEAST ONE CHECK FAILED -> do NOT record ***");
     vm->destroy(vm); dlclose(h); return all?0:1;

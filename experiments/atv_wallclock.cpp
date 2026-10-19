@@ -1,9 +1,9 @@
-// atv_zaman.cpp — WALL-CLOCK MEASUREMENT (answer to the "where is the time?" objection)
-// Path C (fair scalar) and Path B (zero-copy+SIMD), IDENTICAL to the atv_kapaliform emitters.
+// atv_wallclock.cpp — WALL-CLOCK MEASUREMENT (answer to the "where is the time?" objection)
+// Path C (fair scalar) and Path B (zero-copy+SIMD), IDENTICAL to the atv_closed_form emitters.
 // Question: does the time ratio C/B track the gas ratio? (gas = proxy for per-node compute argument)
 // Method: steady_clock only around vm->execute; adaptive inner repetition (sample >= 10ms),
 //   7..31 samples (budget 90s/cell, min 3); MEDIAN + min-max + CV% are reported.
-// CHECKS: (1) bit-exact  (2) measured gas == atv_kapaliform 2026-07-06 measurements (20 values, identical)
+// CHECKS: (1) bit-exact  (2) measured gas == atv_closed_form 2026-07-06 measurements (20 values, identical)
 //   (3) gas is identical across repeated runs.
 // NOTE: runs under VirtualBox; CV% is visible in the output, the paper notes the environment.
 #include <evmc/evmc.hpp>
@@ -34,7 +34,7 @@ struct Code {
     void ML(long long a){ PUSH(a); b(0x51); }
 };
 
-// atv_kapaliform 2026-07-06 MEASURED total gas (cross-run anchor)
+// atv_closed_form 2026-07-06 MEASURED total gas (cross-run anchor)
 static const long long EXPC[10]={5211,20442,81158,323713,1294754,5202238,21213475,91278744,466929971,3487714088LL};
 static const long long EXPB[10]={560,1607,5395,19854,77743,331083,1722672,13303205,155003200,2239957813LL};
 

@@ -34,7 +34,7 @@ docker run --rm -m 6g evmone-simd
 ```
 
 The image clones evmone and EVMC at the pinned commits, applies the two
-patches, builds `libevmone.so` from scratch and runs `atv_kapaliform`, which
+patches, builds `libevmone.so` from scratch and runs `atv_closed_form`, which
 reproduces the closed-form gas model: 10 problem sizes x 2 paths with
 predicted == measured gas (difference 0), the coefficients
 78.5625/10.125/23 and 4.1875/22.125/36, and the asymptote 18.76. The last
@@ -54,8 +54,8 @@ variables:
 
 | Variable | Stage | Needs | Time |
 |---|---|---|---|
-| `-e RUN_PRICE=1` | rebuilds `libevmone` with the `XMACC_S` price set to 26 and then 84 and reruns `atv_3kova` at each price (`atv_3kova_xmaccs26.txt`, `atv_3kova_xmaccs84.txt`) | nothing | about 2 x 2 min |
-| `-e RUN_TIMING=1` | `atv_zaman`: wall-clock time vs gas, with the time-neutral price `g*` | nothing | about 1 min (adaptive sampling) |
+| `-e RUN_PRICE=1` | rebuilds `libevmone` with the `XMACC_S` price set to 26 and then 84 and reruns `atv_cost_split` at each price (`atv_cost_split_xmaccs26.txt`, `atv_cost_split_xmaccs84.txt`) | nothing | about 2 x 2 min |
+| `-e RUN_TIMING=1` | `atv_wallclock`: wall-clock time vs gas, with the time-neutral price `g*` | nothing | about 1 min (adaptive sampling) |
 | `-e RUN_SWEEPS=1` | `seed_sweep.py`, `seed_sweep_fashion.py`, `seed_sweep_fashion_cal.py` (five seeds each) | the raw MNIST and Fashion-MNIST IDX files mounted at `/work/evmone/mnist_data` and `/work/evmone/fashion_data` | about 50 min |
 
 Example with everything enabled:
@@ -71,25 +71,25 @@ docker run --rm -m 6g -e RUN_PRICE=1 -e RUN_TIMING=1 -e RUN_SWEEPS=1 \
 All gas values are deterministic: the `outputs/` shipped here were produced
 on an Intel i5-1135G7 (AVX2) inside a VirtualBox virtual machine and match
 the values measured on the original development host bit for bit. Only the
-wall-clock figures in `atv_zaman.txt` depend on the machine.
+wall-clock figures in `atv_wallclock.txt` depend on the machine.
 
 ## Where each reported number comes from
 
 | Paper item | Program | Output file |
 |---|---|---|
-| Pure-compute scaling table, closed-form coefficients, asymptote 18.76, static prediction with zero deviation | `experiments/atv_kapaliform.cpp` | `atv_kapaliform.txt` |
-| Three-bucket split (SLOAD / memory / compute) at K = 256, 1024, 4096; ratios 18.39 / 18.67 / 18.74; memory cost of the physical-copy path | `experiments/atv_3kova.cpp` | `atv_3kova.txt` |
-| End-to-end ratios 15.71 / 6.86 / 1.56 | `experiments/atv_full_3yol.cpp` | `atv_full_3yol.txt` |
-| Price sensitivity: measured rows at 26 and 84 gas (interpreter rebuilt) | `experiments/atv_3kova.cpp` via `RUN_PRICE=1` | `atv_3kova_xmaccs26.txt`, `atv_3kova_xmaccs84.txt` |
-| Price sensitivity: instruction count `K^2/8` and the derived sweep (cross-check of the measured rows) | `experiments/atv_gaz_tarama.cpp` | `atv_gaz_tarama.txt` |
-| Wall-clock time vs gas, throughput, time-neutral price `g*` | `experiments/atv_zaman.cpp` via `RUN_TIMING=1` | `atv_zaman.txt` |
+| Pure-compute scaling table, closed-form coefficients, asymptote 18.76, static prediction with zero deviation | `experiments/atv_closed_form.cpp` | `atv_closed_form.txt` |
+| Three-bucket split (SLOAD / memory / compute) at K = 256, 1024, 4096; ratios 18.39 / 18.67 / 18.74; memory cost of the physical-copy path | `experiments/atv_cost_split.cpp` | `atv_cost_split.txt` |
+| End-to-end ratios 15.71 / 6.86 / 1.56 | `experiments/atv_three_paths.cpp` | `atv_three_paths.txt` |
+| Price sensitivity: measured rows at 26 and 84 gas (interpreter rebuilt) | `experiments/atv_cost_split.cpp` via `RUN_PRICE=1` | `atv_cost_split_xmaccs26.txt`, `atv_cost_split_xmaccs84.txt` |
+| Price sensitivity: instruction count `K^2/8` and the derived sweep (cross-check of the measured rows) | `experiments/atv_price_sweep.cpp` | `atv_price_sweep.txt` |
+| Wall-clock time vs gas, throughput, time-neutral price `g*` | `experiments/atv_wallclock.cpp` via `RUN_TIMING=1` | `atv_wallclock.txt` |
 | int8 storage trade-off | `experiments/atv_int8.cpp` | `atv_int8.txt` |
-| Inner-product gas of the scalar path (320,064) and the reference outputs for the Solidity comparison | `experiments/atv_solidity_esitleme.cpp` | `atv_solidity_esitleme.txt` |
+| Inner-product gas of the scalar path (320,064) and the reference outputs for the Solidity comparison | `experiments/atv_solidity_scope.cpp` | `atv_solidity_scope.txt` |
 | Solidity baseline (see "Solidity measurement record" below) | `experiments/ATVBaseline.sol` | recorded below |
 | Cold single-image cost anatomy (32,814,719; 88.6 % weight read) | `experiments/mnist_sload.cpp` | `mnist_sload.txt` |
-| Per-layer compute profile (layer 1 share) | `experiments/mnist_katman.cpp` | `mnist_katman.txt` |
+| Per-layer compute profile (layer 1 share) | `experiments/mnist_layers.cpp` | `mnist_layers.txt` |
 | End-to-end cold / warm / pure-compute ratios 1.22 / 2.40 / 4.92 | `experiments/mnist_e2e_cb.cpp` | `mnist_e2e_cb.txt` |
-| Batch processing: marginal cost per image, 5.16, linear model intercept, N = 16 ratios | `experiments/mnist_batch_marj.cpp` | `mnist_batch_marj.txt` |
+| Batch processing: marginal cost per image, 5.16, linear model intercept, N = 16 ratios | `experiments/mnist_batch_marginal.cpp` | `mnist_batch_marginal.txt` |
 | Deployable contracts: 1,344 B / 1,774 B, 10.06, scalar loop factor | `experiments/mnist_deploy_cb.cpp` | `mnist_deploy_cb.txt` |
 | Looped weight loader: 538,979 B to 1,264 B, 84.01 gas per slot, 3.42 % | `experiments/mnist_loader_loop.cpp` | `mnist_loader_loop.txt` |
 | Unrolled SIMD upper bound 23.29, 3,462,418 gas, loop factor 4.74, gas per multiply-accumulate | `experiments/mnist_unrolled_simd.cpp` | `mnist_unrolled_simd.txt` |
@@ -113,9 +113,11 @@ The compiler baseline of the paper was measured outside this container.
 fork. The `gasUsed` return value of `computePacked()` was 1,414,312 gas and
 that of `computeUnpacked()` was 767,144 gas; both functions returned
 `out0, out1, out2 = 6031, 6284, 6137`, which are the reference values printed
-by `atv_solidity_esitleme` (`ref[0..2]`). The paper compares these values with
+by `atv_solidity_scope` (`ref[0..2]`). The paper compares these values with
 the 320,064 gas of the inner-product loop of the manual scalar path
-(`atv_solidity_esitleme.txt`).
+(`atv_solidity_scope.txt`). The few tens of gas consumed by the `gasleft()`
+calls themselves and by the loop entry and exit are included in the Remix
+figures and were not subtracted.
 
 ## Instruction set
 
@@ -128,13 +130,6 @@ that are implemented and priced but not used by any experiment. The EVMC
 patch additionally registers an unused enum entry `OP_XADD` (0xc0).
 Experiment programs compile with `g++ -O2 -std=c++17 -I evmc/include X.cpp -o X -ldl`
 from `/work/evmone` inside the container and load `build/lib/libevmone.so` at run time.
-
-## Program naming
-
-The program names are the original working names and mix Turkish and English
-(`kova` = bucket, `kapaliform` = closed form, `gaz tarama` = gas sweep,
-`zaman` = time, `katman` = layer, `esitleme` = matching, `marj` = marginal).
-All comments and all output text are in English.
 
 ## License
 

@@ -220,7 +220,7 @@ int main(){
     std::vector<uint8_t> loadCode(code.begin()+loadCodeStart, code.begin()+loadCodeEnd);
     loadCode.push_back(0x60); loadCode.push_back(0x00); loadCode.push_back(0x60); loadCode.push_back(0x00); loadCode.push_back(0xF3);
 
-    long long aPeak=0, bellek=0;   // to be MEASURED for real with MSIZE (after runFull is defined)
+    long long aPeak=0, memoryGas=0;   // to be MEASURED for real with MSIZE (after runFull is defined)
 
     // representative image (im=0) calldata + C++ ref prediction
     auto buildCalldata=[&](int im, std::vector<uint8_t>& calldata, int& cpp_pred){
@@ -262,8 +262,8 @@ int main(){
         auto r=vm->execute(vm,&IF,host.to_context(),EVMC_SHANGHAI,&m,mcode.data(),mcode.size());
         long long msize=0; if(r.status_code==0&&r.output_data&&r.output_size>=32) for(int b=0;b<32;++b) msize=(msize<<8)|r.output_data[b];
         if(r.release)r.release(&r);
-        aPeak=(msize+31)/32; bellek=3*aPeak+(aPeak*aPeak)/512;
-        std::cout<<"[MSIZE] real memory = "<<msize<<" byte ("<<aPeak<<" words) -> memory gas = "<<bellek<<"\n";
+        aPeak=(msize+31)/32; memoryGas=3*aPeak+(aPeak*aPeak)/512;
+        std::cout<<"[MSIZE] real memory = "<<msize<<" byte ("<<aPeak<<" words) -> memory gas = "<<memoryGas<<"\n";
     }
 
     std::cout<<"\n=== MNIST REAL COST MAP (weights SLOADed from storage) ===\n";
@@ -282,14 +282,14 @@ int main(){
         // WARM
         setAcc(EVMC_ACCESS_WARM); long long fullWarm=runFull(cd,pp);
         long long sloadCold=(long long)matWords*2100, sloadWarm=(long long)matWords*100;
-        long long hesapCold=fullCold-sloadCold-bellek, hesapWarm=fullWarm-sloadWarm-bellek;
-        auto P=[&](const char* ph,long long sload,long long hesap,long long full){ printf("%-5s | SLOAD-read=%-12lld | compute=%-10lld | memory=%-10lld | TOTAL=%-12lld\n",ph,sload,hesap,bellek,full); };
+        long long computeCold=fullCold-sloadCold-memoryGas, computeWarm=fullWarm-sloadWarm-memoryGas;
+        auto P=[&](const char* ph,long long sload,long long compute,long long full){ printf("%-5s | SLOAD-read=%-12lld | compute=%-10lld | memory=%-10lld | TOTAL=%-12lld\n",ph,sload,compute,memoryGas,full); };
         printf("\n--- 3 BUCKETS (one inference) ---\n");
-        P("COLD",sloadCold,hesapCold,fullCold);
-        P("WARM",sloadWarm,hesapWarm,fullWarm);
+        P("COLD",sloadCold,computeCold,fullCold);
+        P("WARM",sloadWarm,computeWarm,fullWarm);
         printf("\n[CHECK] load-only measured I/O (cold) = %lld | analytic SLOAD = %lld | diff = %lld (should be small: header+loop overhead)\n", ioCold, sloadCold, ioCold-sloadCold);
         printf("[CHECK] (cold full - warm full) = %lld | matWords*2000 = %lld | %s\n", fullCold-fullWarm, (long long)matWords*2000, (fullCold-fullWarm==(long long)matWords*2000)?"OK (only difference is SLOAD)":"MISMATCH");
-        printf("\nCOMPUTE/TOTAL: cold %.1f%% | warm %.1f%%  -> SLOAD weight I/O dominates\n", 100.0*hesapCold/fullCold, 100.0*hesapWarm/fullWarm);
+        printf("\nCOMPUTE/TOTAL: cold %.1f%% | warm %.1f%%  -> SLOAD weight I/O dominates\n", 100.0*computeCold/fullCold, 100.0*computeWarm/fullWarm);
     }
         vm->destroy(vm); dlclose(h); return 0;
 }

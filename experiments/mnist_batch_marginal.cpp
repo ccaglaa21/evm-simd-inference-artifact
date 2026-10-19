@@ -1,4 +1,4 @@
-// mnist_batch_marj.cpp — BATCH / MARGINAL COST
+// mnist_batch_marginal.cpp — BATCH / MARGINAL COST
 // Question: the saving a user ACTUALLY pays for = marginal cost per image.
 // Single call, N images in calldata (N=CALLDATASIZE/3136, code fixed); the weight-SLOAD
 // block runs once OUTSIDE the loop; each iteration: CALLDATACOPY -> inference -> prediction into PREDS.
@@ -331,13 +331,13 @@ int main(){
     bool l3=linCheck("SIMD   cold",GB_c,MSB), l4=linCheck("SCALAR cold",GC_c,MSC);
     if(!(l1&&l2&&l3&&l4)) fail=true;
 
-    long long marjB=(GB_w[4]-GB_w[0])/15, marjC=(GC_w[4]-GC_w[0])/15;
+    long long margB=(GB_w[4]-GB_w[0])/15, margC=(GC_w[4]-GC_w[0])/15;
     printf("\n================ BATCH / MARGINAL COST (per image) ================\n");
     printf("  N=1 warm:   SIMD %lld | SCALAR %lld  (previous anchors 5,134,719 / 12,317,165; diff=outer-loop overhead: %+lld / %+lld)\n",
         GB_w[0],GC_w[0],GB_w[0]-5134719LL,GC_w[0]-12317165LL);
-    printf("  MARGINAL:   SIMD %lld | SCALAR %lld  ->  RATIO C/B = %.2fx\n",marjB,marjC,(double)marjC/marjB);
+    printf("  MARGINAL:   SIMD %lld | SCALAR %lld  ->  RATIO C/B = %.2fx\n",margB,margC,(double)margC/margB);
     printf("  (pure-compute buckets: 2,117,326 / 10,408,685 -> marginal-minus-compute = per-image harness: %+lld / %+lld)\n",
-        marjB-2117326LL,marjC-10408685LL);
+        margB-2117326LL,margC-10408685LL);
     printf("  N=16 amortized total/image: SIMD warm %lld | cold %lld  (cold weight load divided by 16)\n",
         GB_w[4]/16, GB_c[4]/16);
     printf("  N=16 end-to-end C/B: cold %lld/%lld = %.2fx | warm %lld/%lld = %.2fx\n",
@@ -345,9 +345,9 @@ int main(){
     { long long mBc=(GB_c[4]-GB_c[0])/15, mCc=(GC_c[4]-GC_c[0])/15;   // cold marginal (memory included)
       printf("  linear model G_tx(N) = G_0 + N*marginal (memory included): intercept G_0 = G_tx(1) - marginal\n");
       printf("    SIMD   : cold G_0 %lld (marginal %lld) | warm G_0 %lld (marginal %lld) | cold-warm G_0 diff %lld (= 13,840 slots x 2,000)\n",
-          GB_c[0]-mBc, mBc, GB_w[0]-marjB, marjB, (GB_c[0]-mBc)-(GB_w[0]-marjB));
+          GB_c[0]-mBc, mBc, GB_w[0]-margB, margB, (GB_c[0]-mBc)-(GB_w[0]-margB));
       printf("    SCALAR : cold G_0 %lld (marginal %lld) | warm G_0 %lld (marginal %lld)\n",
-          GC_c[0]-mCc, mCc, GC_w[0]-marjC, marjC); }
+          GC_c[0]-mCc, mCc, GC_w[0]-margC, margC); }
     printf("\n%s\n", fail?"*** AT LEAST ONE CHECK FAILED -> do NOT record ***":"*** ALL CHECKS PASSED ***");
     vm->destroy(vm); dlclose(h); return fail?1:0;
 }

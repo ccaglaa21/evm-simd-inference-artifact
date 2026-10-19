@@ -1,4 +1,4 @@
-// atv_kapaliform.cpp — CLOSED-FORM GAS MODEL: NO fitting, only COUNTING.
+// atv_closed_form.cpp — CLOSED-FORM GAS MODEL: NO fitting, only COUNTING.
 // Claim: G(K) = opcode_gas(from counting) + memory(3a+a^2/512), 0% error.
 // This program reproduces and documents the claim with the CURRENT opcode version:
 //   PREDICTION = count from the opcode-gas table during emission + canonical formula from the peak memory touched
@@ -107,7 +107,7 @@ int main(){
             if(res.release)res.release(&res); return g;
         };
 
-        // ---- PATH C (fair scalar, identical to the atv_3kova idiom) ----
+        // ---- PATH C (fair scalar, identical to the atv_cost_split idiom) ----
         std::vector<long long> rC(K,-1); long long msC=-1;
         {
             Code k; emitMatMem(k); emitVec(k);
@@ -127,7 +127,7 @@ int main(){
             OG[ki][0]=k.g; PMS[ki][0]=k.peakB; PMEM[ki][0]=memgas(k.peakB); PTOT[ki][0]=k.g+PMEM[ki][0];
             MTOT[ki][0]=run(k,rC,0,msC); MMS[ki][0]=msC; (void)ogC;
         }
-        // ---- PATH B (zero-copy + SIMD, identical to atv_3kova) ----
+        // ---- PATH B (zero-copy + SIMD, identical to atv_cost_split) ----
         std::vector<long long> rB(K,-1); long long msB=-1;
         {
             Code k; emitMatMem(k); emitVec(k);
@@ -181,7 +181,7 @@ int main(){
         std::printf(" %5d | %16lld | %16lld | %6.2f | %12lld | %12lld | %11lld | %10lld\n",
             Ks[ki], pcC, pcB, (double)pcC/(double)pcB, memC, memB, PTOT[ki][0]-MTOT[ki][0], PTOT[ki][1]-MTOT[ki][1]);
     }
-    std::printf("(compare with the MSIZE-measured 18.39/18.67/18.74x of atv_3kova: must agree in direction)\n");
+    std::printf("(compare with the MSIZE-measured 18.39/18.67/18.74x of atv_cost_split: must agree in direction)\n");
 
     if(fail) std::printf("\n*** AT LEAST ONE CHECK FAILED -> closed-form claim NOT DOCUMENTED, do NOT record ***\n");
     else     std::printf("\n*** ALL CHECKS PASSED -> closed form DOCUMENTED: gas = count + canonical memory, diff 0 ***\n");

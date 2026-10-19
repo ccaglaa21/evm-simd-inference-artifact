@@ -22,7 +22,7 @@ struct Code {
 };
 // Single XMACC_S call; hRow/hCol/hSr/hSc = MatrixHeader values (the bad value is injected here)
 static evmc_status_code run_one(uint64_t hRows,uint64_t hCols,uint64_t hSr,uint64_t hSc,
-                                int row,int start_col,const char* etiket){
+                                int row,int start_col,const char* label){
     const int K=8;
     int MAT=0, VEC=512, ACC=576, OUTV=640;
     Code k;
@@ -42,7 +42,7 @@ static evmc_status_code run_one(uint64_t hRows,uint64_t hCols,uint64_t hSr,uint6
     evmc_message msg{}; msg.kind=EVMC_CALL; msg.gas=GAS;
     auto res=VM->execute(VM,nullptr,nullptr,EVMC_SHANGHAI,&msg,k.c.data(),k.c.size());
     auto st=res.status_code;
-    printf("[%s] status=%d %s\n", etiket, (int)st,
+    printf("[%s] status=%d %s\n", label, (int)st,
         st==EVMC_OUT_OF_GAS ? "(EVMC_OUT_OF_GAS = guard triggered, clean stop)" :
         st==EVMC_SUCCESS     ? "(SUCCESS -- WARNING: if vulnerable, host memory was read!)" :
                                "(unexpected)");
