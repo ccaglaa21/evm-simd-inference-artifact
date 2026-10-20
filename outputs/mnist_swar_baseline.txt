@@ -1,0 +1,22 @@
+Bytecode: SWAR=716215 byte | slots=14052 = W1:12544 + b1:128 + W2:1216 + b2:64 + W3:100 | lanes: layer1 8x32-bit, layers 2-3 7x36-bit
+[NOTE] Weights stored with offset 2^15 (non-negative lanes); offset removed once per neuron with the lane sum of the inputs.
+[NOTE] Static prediction of the compute component: 438926 gas (loader 126774, expected MSIZE 454208)
+
+[CHECK 1] prediction equality (C++ reference == SWAR-EVM): 20/20 PASSED
+[CHECK 5] MSIZE cold==warm==map: 454208/454208/454208 PASSED
+[CHECK 6] repeat run identical: OK
+[CHECK 2] cold-warm==slots*2000 (28104000): 28104000 OK
+[CHECK 3] compute_cold==compute_warm: 438926/438926 OK
+[CHECK 4] static prediction == measured compute: 438926/438926 diff=0 PASSED
+[INFO  ] gas spread (5 images, warm): 2280203..2280203 (diff 0, branchless -> 0 expected)
+
+================ PACKED-MULTIPLICATION SCALAR BASELINE (Path S, unrolled, single image) ================
+  path     |  SLOAD        |  memory(MSIZE) | compute(pure) |  TOTAL
+  ---------+---------------+----------------+---------------+---------------
+  S  cold  |      29509200 |         436077 |        438926 |      30384203
+  S  warm  |       1405200 |         436077 |        438926 |       2280203
+  compute per multiply-accumulate (109184 MACs): 4.02 gas including the loader | 2.86 gas without the loader (126774)
+  anchors from the other programs: Path C unrolled compute 10,408,685 | Path B unrolled compute 446,833 | Path B looped compute 2,117,326
+  RATIOS: C/S = 23.71x | B_unrolled/S = 1.018x | B_looped/S = 4.82x
+
+*** ALL CHECKS PASSED -> numbers are valid ***

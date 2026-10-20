@@ -1,0 +1,50 @@
+[K=   8] bytecode C=2707 B=694 bytes, measuring...
+  [K=   8 C] med=0.000005 s  min=0.000005  max=0.000010  CV=15.4%  (samples=31, inner-reps=1788)
+  [K=   8 B] med=0.000001 s  min=0.000001  max=0.000001  CV=3.1%  (samples=31, inner-reps=12286)
+[K=  16] bytecode C=10817 B=1844 bytes, measuring...
+  [K=  16 C] med=0.000020 s  min=0.000020  max=0.000020  CV=0.7%  (samples=31, inner-reps=462)
+  [K=  16 B] med=0.000002 s  min=0.000002  max=0.000002  CV=3.1%  (samples=31, inner-reps=4867)
+[K=  32] bytecode C=43483 B=5662 bytes, measuring...
+  [K=  32 C] med=0.000078 s  min=0.000078  max=0.000080  CV=0.6%  (samples=31, inner-reps=126)
+  [K=  32 B] med=0.000006 s  min=0.000006  max=0.000007  CV=2.6%  (samples=31, inner-reps=1571)
+[K=  64] bytecode C=173807 B=19346 bytes, measuring...
+  [K=  64 C] med=0.000311 s  min=0.000309  max=0.000717  CV=21.8%  (samples=31, inner-reps=25)
+  [K=  64 B] med=0.000024 s  min=0.000024  max=0.000026  CV=1.7%  (samples=31, inner-reps=425)
+[K= 128] bytecode C=694423 B=70906 bytes, measuring...
+  [K= 128 C] med=0.001252 s  min=0.001242  max=0.001389  CV=2.0%  (samples=31, inner-reps=8)
+  [K= 128 B] med=0.000089 s  min=0.000089  max=0.000092  CV=1.0%  (samples=31, inner-reps=115)
+[K= 256] bytecode C=2974505 B=290028 bytes, measuring...
+  [K= 256 C] med=0.005320 s  min=0.005151  max=0.010267  CV=16.2%  (samples=31, inner-reps=2)
+  [K= 256 B] med=0.000358 s  min=0.000356  max=0.000408  CV=2.6%  (samples=31, inner-reps=28)
+[K= 512] bytecode C=12095209 B=1171884 bytes, measuring...
+  [K= 512 C] med=0.021172 s  min=0.020783  max=0.036488  CV=13.5%  (samples=31, inner-reps=1)
+  [K= 512 B] med=0.001616 s  min=0.001588  max=0.001848  CV=3.6%  (samples=31, inner-reps=7)
+[K=1024] bytecode C=48572009 B=4705068 bytes, measuring...
+  [K=1024 C] med=0.108040 s  min=0.105739  max=0.109897  CV=1.0%  (samples=10, inner-reps=1)
+  [K=1024 B] med=0.010573 s  min=0.009595  max=0.017032  CV=16.1%  (samples=31, inner-reps=1)
+[K=2048] bytecode C=194467177 B=18849324 bytes, measuring...
+  [K=2048 C] med=0.541673 s  min=0.491970  max=0.629776  CV=9.5%  (samples=7, inner-reps=1)
+  [K=2048 B] med=0.073044 s  min=0.070196  max=0.080068  CV=3.9%  (samples=14, inner-reps=1)
+[K=4096] bytecode C=828884363 B=80180782 bytes, measuring...
+  [K=4096 C] med=2.465246 s  min=2.448728  max=2.507387  CV=0.8%  (samples=7, inner-reps=1)
+  [K=4096 B] med=0.446845 s  min=0.441725  max=0.476592  CV=2.7%  (samples=7, inner-reps=1)
+
+================ WALL-CLOCK vs GAS (median; VirtualBox environment) ================
+   K   |   tC (ms)   |   tB (ms)   | TIME C/B  |  GAS C/B  | MGas/s C | MGas/s B | CV_C% | CV_B% |   g*
+-------+-------------+-------------+-----------+-----------+----------+----------+-------+-------+------
+     8 |      0.0051 |      0.0007 |      7.65 |      9.31 |   1026.4 |    844.1 |  15.4 |   3.1 |  29.1
+    16 |      0.0198 |      0.0019 |     10.61 |     12.72 |   1032.8 |    861.5 |   0.7 |   3.1 |  24.0
+    32 |      0.0783 |      0.0062 |     12.56 |     15.04 |   1036.6 |    865.8 |   0.6 |   2.6 |  22.3
+    64 |      0.3115 |      0.0238 |     13.06 |     16.30 |   1039.3 |    832.7 |  21.8 |   1.7 |  23.6
+   128 |      1.2517 |      0.0893 |     14.02 |     16.65 |   1034.4 |    870.6 |   2.0 |   1.0 |  21.1
+   256 |      5.3197 |      0.3583 |     14.85 |     15.71 |    977.9 |    924.2 |  16.2 |   2.6 |  16.4
+   512 |     21.1724 |      1.6163 |     13.10 |     12.31 |   1001.9 |   1065.8 |  13.5 |   3.6 |  10.9
+  1024 |    108.0397 |     10.5727 |     10.22 |      6.86 |    844.9 |   1258.3 |   1.0 |  16.1 | -19.3
+  2048 |    541.6732 |     73.0443 |      7.42 |      3.01 |    862.0 |   2122.0 |   9.5 |   3.9 | -161.5
+  4096 |   2465.2463 |    446.8450 |      5.52 |      1.56 |   1414.8 |   5012.8 |   0.8 |   2.7 | -752.7
+
+Reading: if TIME C/B and GAS C/B are of the same order, gas is a valid proxy for per-node compute time.
+The MGas/s columns give the real speed per gas of each path (SIMD opcodes do 'denser' work).
+g* = time-neutral XMACC_S price per K: 14 + (GC/(TIME C/B) - GB) / (K^2/8); the deployed price is 14.
+
+*** ALL CHECKS PASSED (bit-exact + gas==closed-form 20/20 + repeat stable) ***

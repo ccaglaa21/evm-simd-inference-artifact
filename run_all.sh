@@ -11,9 +11,10 @@
 #   RUN_SWEEPS=1    seed_sweep.py, seed_sweep_fashion.py, seed_sweep_fashion_cal.py (about 50 minutes);
 #                   need the raw datasets mounted at /work/evmone/mnist_data and /work/evmone/fashion_data
 #   RUN_FALLBACK=1  builds a second libevmone WITHOUT AVX2 (-O3 only, no -mavx2 and no SIMDPP_ARCH_X86_AVX2,
-#                   so every instruction runs its scalar fallback), reruns the 22 gas programs against it into
-#                   /out/fallback/ and compares each output with the AVX2 run (FALLBACK_COMPARISON.txt);
-#                   about 10 minutes (one more build of libevmone)
+#                   so every instruction runs its scalar fallback), reruns the 24 gas programs against it into
+#                   /out/fallback/ and compares each output with the AVX2 run (FALLBACK_COMPARISON.txt); it also
+#                   runs atv_wallclock against the fallback build (fallback/atv_wallclock.txt, timing only, not
+#                   compared); about 12 minutes (one more build of libevmone)
 #   RUN_PRICE=1     rebuilds libevmone with the XMACC_S price set to 26 and then 84 and reruns
 #                   atv_cost_split at each price (atv_cost_split_xmaccs26.txt, atv_cost_split_xmaccs84.txt);
 #                   about 2 x 2 minutes. Always the last stage, because it changes the gas table.
@@ -39,7 +40,7 @@ MAN="$OUT/MANIFEST.txt"
 } >> "$MAN"
 
 KERNEL_PROGS="atv_closed_form atv_cost_split atv_three_paths atv_price_sweep atv_int8 atv_solidity_scope"
-MNIST_PROGS="mnist_sload mnist_layers mnist_e2e_cb mnist_loader_loop mnist_unrolled_simd mnist_batch_marginal mnist_deploy_cb test_fullnet_500_acc fashion_onchain_acc seedchk_evm"
+MNIST_PROGS="mnist_sload mnist_layers mnist_e2e_cb mnist_loader_loop mnist_unrolled_simd mnist_batch_marginal mnist_deploy_cb mnist_swar_baseline mnist_rowmacc test_fullnet_500_acc fashion_onchain_acc seedchk_evm"
 SEC_PROGS="test_security_opcodes test_security_matrix sec_oob sec_xgather sec_xgather2 sec_xtranspose_big"
 ALL_PROGS="$KERNEL_PROGS $MNIST_PROGS $SEC_PROGS"
 
@@ -87,6 +88,7 @@ echo "== Python (canonical weight files only) =="
 run_py int8_accuracy
 run_py int8_accuracy_fashion
 run_py fashion_diag
+run_py overflow_bound
 
 if [ "${RUN_TIMING:-0}" = "1" ]; then
   echo "== wall-clock vs gas =="
@@ -121,11 +123,14 @@ if [ "${RUN_FALLBACK:-0}" = "1" ]; then
       cp build_noavx2/lib/libevmone.so build/lib/libevmone.so
       echo "fallback library:            build_noavx2/lib/libevmone.so (compiled with -O3 only: no -mavx2, no SIMDPP_ARCH_X86_AVX2)" >> "$MAN"
       for n in $ALL_PROGS; do run_cpp "$n" "$OUT/fallback"; done
+      echo "== wall-clock vs gas on the fallback build (timing only) =="
+      run_cpp atv_wallclock "$OUT/fallback"
       cp /tmp/libevmone_avx2.so build/lib/libevmone.so
       {
         echo "Scalar-fallback run (build_noavx2: -O3 only, no AVX2) compared with the AVX2 run, file by file (cmp):"
         for f in "$OUT"/fallback/*.txt; do
           b=$(basename "$f")
+          [ "$b" = "atv_wallclock.txt" ] && continue
           if cmp -s "$f" "$OUT/$b"; then echo "identical   $b"; else echo "DIFFERENT   $b"; fi
         done
       } > "$OUT/FALLBACK_COMPARISON.txt"
