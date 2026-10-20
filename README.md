@@ -141,5 +141,5 @@ libsimdpp is distributed under the Boost Software License 1.0. See
 
 ## Citation
 
-See `CITATION.cff`. The archived release of this repository is available at
-Zenodo: [DOI to be inserted].
+See `CITATION.cff`. The archived release of this repository (v1.0.0) is
+available at Zenodo: https://doi.org/10.5281/zenodo.23495118
