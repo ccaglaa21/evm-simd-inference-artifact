@@ -1,0 +1,12 @@
+Bytecode(full)=538979 byte | matWords=13840 | cp_load=538032 cp_l1=538388 cp_l2=538691
+[im=0] load=124872 k1=1815735 k2=162671 kout=14048 | P4total=2117326 | MSIZE m1/m2/m3/m4=497568/901152/901152/901152 | prediction EVM=7 ref=7 | intermediate h1=OK h2=OK
+
+========== MNIST PER-LAYER COMPUTE PROFILE (32 images, MSIZE-measured) ==========
+  Load-ovh       mean=    124872.0  min=      124872  max=      124872  spread=0
+  Layer1(128x784) mean=   1815735.0  min=     1815735  max=     1815735  spread=0
+  Layer2(64x128) mean=    162671.0  min=      162671  max=      162671  spread=0
+  Output+argmax  mean=     14013.4  min=       13925  max=       14130  spread=205
+  first image: k1+k2+kout=1992454 | compute[P4]=2117326 | mnist_sload ref ~2,117,326 (cross-check)
+  share of compute[P4] (first image): load-ovh 5.90% | layer1 85.76% | layer2 7.68% | output+argmax 0.66%
+
+*** ALL CHECKS PASSED -> per-layer compute profile is valid ***

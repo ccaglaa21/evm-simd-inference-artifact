@@ -1,0 +1,55 @@
+[meas] COLD K=256 : gA=14181148 gC=13803838 gB=8932683 | msA=271808 msC=140704 msB=140704 | matWords=4096 nXmacc=8192 OK
+[meas] COLD K=1024 : gA=258758697 gC=228904344 gB=150928805 | msA=4231616 msC=2134432 msB=2134432 | matWords=65536 nXmacc=131072 OK
+[meas] COLD K=4096 : gA=12221360454 gC=5689723688 gB=4441967413 | msA=67256768 msC=33702304 msB=33702304 | matWords=1048576 nXmacc=2097152 OK
+[meas] WARM K=256 : gA=5989148 gC=5611838 gB=740683 | msA=271808 msC=140704 msB=140704 | matWords=4096 nXmacc=8192 OK
+[meas] WARM K=1024 : gA=127686697 gC=97832344 gB=19856805 | msA=4231616 msC=2134432 msB=2134432 | matWords=65536 nXmacc=131072 OK
+[meas] WARM K=4096 : gA=10124208454 gC=3592571688 gB=2344815413 | msA=67256768 msC=33702304 msB=33702304 | matWords=1048576 nXmacc=2097152 OK
+
+========== CLEAN 3-BUCKET SPLIT + GAS SWEEP ==========
+
+K=256 (matWords=4096, nXmacc=8192)
+  MEASURED (XMACC_S=14): computeC=5151287 computeB=280132 -> pure C/B=18.39x
+  [memory C==B -> ratio is pure compute]
+  --- DERIVATION (not a measurement; to be cross-checked at g=84 with a real measurement) ---
+  g(XMACC_S) | computeB(g)_derived |  C/B(g)_derived
+  -----------+---------------------+------------------
+          14 |              280132 |          18.39x  <- MEASURED
+          26 |              378436 |          13.61x
+          28 |              394820 |          13.05x
+          32 |              427588 |          12.05x
+          42 |              509508 |          10.11x
+          56 |              624196 |           8.25x
+          70 |              738884 |           6.97x
+          84 |              853572 |           6.03x
+
+K=1024 (matWords=65536, nXmacc=131072)
+  MEASURED (XMACC_S=14): computeC=82389143 computeB=4413604 -> pure C/B=18.67x
+  [memory C==B -> ratio is pure compute]
+  --- DERIVATION (not a measurement; to be cross-checked at g=84 with a real measurement) ---
+  g(XMACC_S) | computeB(g)_derived |  C/B(g)_derived
+  -----------+---------------------+------------------
+          14 |             4413604 |          18.67x  <- MEASURED
+          26 |             5986468 |          13.76x
+          28 |             6248612 |          13.19x
+          32 |             6772900 |          12.16x
+          42 |             8083620 |          10.19x
+          56 |             9918628 |           8.31x
+          70 |            11753636 |           7.01x
+          84 |            13588644 |           6.06x
+
+K=4096 (matWords=1048576, nXmacc=2097152)
+  MEASURED (XMACC_S=14): computeC=1318101527 computeB=70345252 -> pure C/B=18.74x
+  [memory C==B -> ratio is pure compute]
+  --- DERIVATION (not a measurement; to be cross-checked at g=84 with a real measurement) ---
+  g(XMACC_S) | computeB(g)_derived |  C/B(g)_derived
+  -----------+---------------------+------------------
+          14 |            70345252 |          18.74x  <- MEASURED
+          26 |            95511076 |          13.80x
+          28 |            99705380 |          13.22x
+          32 |           108093988 |          12.19x
+          42 |           129065508 |          10.21x
+          56 |           158425636 |           8.32x
+          70 |           187785764 |           7.02x
+          84 |           217145892 |           6.07x
+
+*** ALL CHECKS PASSED. g=14 MEASURED; g>14 DERIVED (to be verified at 84) ***

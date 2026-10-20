@@ -1,0 +1,7 @@
+=== A^T v 3 PATHS (FAIR): A=naive(2 buffers) | C=fair scalar(1 buffer,strided) | B=zero-copy+SIMD | C/B = SIMD gain ===
+The whole matrix is processed. K-element result, bit-exact + end-to-end gas.
+  K  | PathA(naive) | PathC(fair scalar) | PathB(SIMD) |  C/B(FAIR) |  A/B  | exact?
+-----+--------------+--------------------+-------------+------------+-------+-------
+ 256 |      5579540 |            5202230 |      331075 |     15.71x | 16.85x | YES
+1024 |    121133089 |           91278736 |    13303197 |      6.86x | 9.11x | YES
+4096 |  10019350846 |         3487714080 |  2239957805 |      1.56x | 4.47x | YES

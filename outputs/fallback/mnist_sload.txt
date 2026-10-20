@@ -1,0 +1,15 @@
+Bytecode: 538979 bytes. Testing 500 images...
+[MSIZE] real memory = 901152 byte (28161 words) -> memory gas = 1633393
+
+=== MNIST REAL COST MAP (weights SLOADed from storage) ===
+Bytecode(full): 538979 bytes | weight words (matWords): 13840 | peak memory words: 28161
+Prediction check (weights from storage): 5/5 [OK - weights from storage did not change the result]
+
+--- 3 BUCKETS (one inference) ---
+COLD  | SLOAD-read=29064000     | compute=2117326    | memory=1633393    | TOTAL=32814719    
+WARM  | SLOAD-read=1384000      | compute=2117326    | memory=1633393    | TOTAL=5134719     
+
+[CHECK] load-only measured I/O (cold) = 29707422 | analytic SLOAD = 29064000 | diff = 643422 (should be small: header+loop overhead)
+[CHECK] (cold full - warm full) = 27680000 | matWords*2000 = 27680000 | OK (only difference is SLOAD)
+
+COMPUTE/TOTAL: cold 6.5% | warm 41.2%  -> SLOAD weight I/O dominates

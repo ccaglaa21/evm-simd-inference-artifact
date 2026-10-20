@@ -1,0 +1,8 @@
+=== XMACC_S SECURITY TEST ===
+[CONTROL normal stride row=0] status=0 (SUCCESS -- WARNING: if vulnerable, host memory was read!)
+[A  huge stride_col=2^30] status=3 (EVMC_OUT_OF_GAS = guard triggered, clean stop)
+[B  int32-overflowing stride_col=2^29] status=3 (EVMC_OUT_OF_GAS = guard triggered, clean stop)
+[C  huge stride_row=2^30 row=1] status=3 (EVMC_OUT_OF_GAS = guard triggered, clean stop)
+
+--- SUMMARY ---
+[PASSED] normal case ran; all 3 bad scenarios gave a clean OOG (no heap access).

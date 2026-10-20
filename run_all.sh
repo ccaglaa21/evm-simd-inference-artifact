@@ -3,25 +3,24 @@
 # evmone-simd container and stores each program's output under /out.
 #
 # Usage (on the host):
-#   mkdir -p ~/evmone/artifact/outputs
-#   docker run --rm -m 6g \
-#       -v ~/evmone/artifact/outputs:/out \
-#       -v ~/evmone/artifact/run_all.sh:/work/evmone/run_all.sh:ro \
-#       evmone-simd sh /work/evmone/run_all.sh
+#   mkdir -p outputs
+#   docker run --rm -m 6g -v "$PWD/outputs:/out" evmone-simd sh /work/evmone/run_all.sh
 #
-# Optional stages (environment variables, pass with  -e RUN_PRICE=1  -e RUN_TIMING=1  -e RUN_SWEEPS=1 ):
-#   RUN_PRICE=1   price-sensitivity measurements: rebuild libevmone with the XMACC_S gas price set to
-#                 26 and then 84 and rerun atv_cost_split at each price (each rebuild takes a few minutes);
-#                 outputs atv_cost_split_xmaccs26.txt and atv_cost_split_xmaccs84.txt
-#   RUN_TIMING=1  run atv_wallclock (wall-clock vs gas; up to ~30 minutes, environment dependent)
-#   RUN_SWEEPS=1  run the seed sweeps and the calibration experiment (training/seed_sweep*.py);
-#                 these train networks and need the raw datasets mounted into the container:
-#                   -v ~/evmone/mnist_data:/work/evmone/mnist_data:ro
-#                   -v ~/evmone/fashion_data:/work/evmone/fashion_data:ro
-#                 (standard IDX downloads; several minutes per script)
+# Optional stages (environment variables, pass with -e NAME=1):
+#   RUN_TIMING=1    atv_wallclock: wall-clock time vs gas (about 1 minute; machine dependent)
+#   RUN_SWEEPS=1    seed_sweep.py, seed_sweep_fashion.py, seed_sweep_fashion_cal.py (about 50 minutes);
+#                   need the raw datasets mounted at /work/evmone/mnist_data and /work/evmone/fashion_data
+#   RUN_FALLBACK=1  builds a second libevmone WITHOUT AVX2 (-O3 only, no -mavx2 and no SIMDPP_ARCH_X86_AVX2,
+#                   so every instruction runs its scalar fallback), reruns the 22 gas programs against it into
+#                   /out/fallback/ and compares each output with the AVX2 run (FALLBACK_COMPARISON.txt);
+#                   about 10 minutes (one more build of libevmone)
+#   RUN_PRICE=1     rebuilds libevmone with the XMACC_S price set to 26 and then 84 and reruns
+#                   atv_cost_split at each price (atv_cost_split_xmaccs26.txt, atv_cost_split_xmaccs84.txt);
+#                   about 2 x 2 minutes. Always the last stage, because it changes the gas table.
 #
-# The remaining training scripts (train_deep*.py, seedchk_write.py, deep_reference.py) regenerate
-# the canonical files already shipped in data/ and are not run here.
+# A stage that is not requested leaves the output files of an earlier run untouched and notes this in
+# MANIFEST.txt. The remaining training scripts (train_deep*.py, seedchk_write.py, deep_reference.py)
+# regenerate the canonical files already shipped in data/ and are not run here.
 
 cd /work/evmone || exit 1
 OUT=/out
@@ -39,13 +38,22 @@ MAN="$OUT/MANIFEST.txt"
   echo
 } >> "$MAN"
 
-run_cpp() {
+KERNEL_PROGS="atv_closed_form atv_cost_split atv_three_paths atv_price_sweep atv_int8 atv_solidity_scope"
+MNIST_PROGS="mnist_sload mnist_layers mnist_e2e_cb mnist_loader_loop mnist_unrolled_simd mnist_batch_marginal mnist_deploy_cb test_fullnet_500_acc fashion_onchain_acc seedchk_evm"
+SEC_PROGS="test_security_opcodes test_security_matrix sec_oob sec_xgather sec_xgather2 sec_xtranspose_big"
+ALL_PROGS="$KERNEL_PROGS $MNIST_PROGS $SEC_PROGS"
+
+compile_cpp() {
   n=$1
+  g++ -O2 -std=c++17 -I evmc/include "$n.cpp" -o "$n" -ldl 2> "$OUT/$n.compile.log" && rm -f "$OUT/$n.compile.log"
+}
+
+run_cpp() {   # name [outdir]
+  n=$1; d=${2:-$OUT}
   printf '%-28s ' "$n"
-  if g++ -O2 -std=c++17 -I evmc/include "$n.cpp" -o "$n" -ldl 2> "$OUT/$n.compile.log"; then
-    rm -f "$OUT/$n.compile.log"
+  if [ -x "./$n" ] || compile_cpp "$n"; then
     s=$(date +%s)
-    ./"$n" > "$OUT/$n.txt" 2>&1; rc=$?
+    ./"$n" > "$d/$n.txt" 2>&1; rc=$?
     e=$(date +%s)
     echo "rc=$rc  $((e-s)) s"
     printf '%-28s rc=%d  time=%ds\n' "$n" "$rc" "$((e-s))" >> "$MAN"
@@ -65,42 +73,26 @@ run_py() {
   printf '%-28s rc=%d  time=%ds\n' "$n.py" "$rc" "$((e-s))" >> "$MAN"
 }
 
+kept() {   # note an output kept from an earlier run
+  [ -f "$OUT/$1" ] && printf '%-28s kept from an earlier run (%s not set)\n' "$1" "$2" >> "$MAN"
+}
+
 echo "== A^T v kernel programs =="
-run_cpp atv_closed_form
-run_cpp atv_cost_split
-run_cpp atv_three_paths
-run_cpp atv_price_sweep
-run_cpp atv_int8
-run_cpp atv_solidity_scope
-
+for n in $KERNEL_PROGS; do run_cpp "$n"; done
 echo "== MNIST / Fashion-MNIST programs =="
-run_cpp mnist_sload
-run_cpp mnist_layers
-run_cpp mnist_e2e_cb
-run_cpp mnist_loader_loop
-run_cpp mnist_unrolled_simd
-run_cpp mnist_batch_marginal
-run_cpp mnist_deploy_cb
-run_cpp test_fullnet_500_acc
-run_cpp fashion_onchain_acc
-run_cpp seedchk_evm
-
+for n in $MNIST_PROGS; do run_cpp "$n"; done
 echo "== security programs =="
-run_cpp test_security_opcodes
-run_cpp test_security_matrix
-run_cpp sec_oob
-run_cpp sec_xgather
-run_cpp sec_xgather2
-run_cpp sec_xtranspose_big
-
+for n in $SEC_PROGS; do run_cpp "$n"; done
 echo "== Python (canonical weight files only) =="
 run_py int8_accuracy
 run_py int8_accuracy_fashion
 run_py fashion_diag
 
 if [ "${RUN_TIMING:-0}" = "1" ]; then
-  echo "== wall-clock vs gas (slow) =="
+  echo "== wall-clock vs gas =="
   run_cpp atv_wallclock
+else
+  kept atv_wallclock.txt RUN_TIMING
 fi
 
 if [ "${RUN_SWEEPS:-0}" = "1" ]; then
@@ -113,6 +105,43 @@ if [ "${RUN_SWEEPS:-0}" = "1" ]; then
     echo "mnist_data/ or fashion_data/ not mounted; sweeps skipped"
     echo "seed sweeps                  SKIPPED (raw data not mounted)" >> "$MAN"
   fi
+else
+  for f in seed_sweep.txt seed_sweep_fashion.txt seed_sweep_fashion_cal.txt; do kept "$f" RUN_SWEEPS; done
+fi
+
+if [ "${RUN_FALLBACK:-0}" = "1" ]; then
+  echo "== scalar fallback: building libevmone without AVX2 (build_noavx2) =="
+  AVX2_FLAGS="-march=native -mavx2 -mfma -O3 -DSIMDPP_ARCH_X86_AVX2"
+  sed -i "s/add_compile_options($AVX2_FLAGS)/add_compile_options(-O3)/" CMakeLists.txt
+  if grep -q "add_compile_options(-O3)" CMakeLists.txt; then
+    if cmake -S . -B build_noavx2 -DCMAKE_BUILD_TYPE=Release > "$OUT/rebuild_noavx2.log" 2>&1 && \
+       cmake --build build_noavx2 --target evmone -j2 >> "$OUT/rebuild_noavx2.log" 2>&1; then
+      mkdir -p "$OUT/fallback"
+      cp build/lib/libevmone.so /tmp/libevmone_avx2.so
+      cp build_noavx2/lib/libevmone.so build/lib/libevmone.so
+      echo "fallback library:            build_noavx2/lib/libevmone.so (compiled with -O3 only: no -mavx2, no SIMDPP_ARCH_X86_AVX2)" >> "$MAN"
+      for n in $ALL_PROGS; do run_cpp "$n" "$OUT/fallback"; done
+      cp /tmp/libevmone_avx2.so build/lib/libevmone.so
+      {
+        echo "Scalar-fallback run (build_noavx2: -O3 only, no AVX2) compared with the AVX2 run, file by file (cmp):"
+        for f in "$OUT"/fallback/*.txt; do
+          b=$(basename "$f")
+          if cmp -s "$f" "$OUT/$b"; then echo "identical   $b"; else echo "DIFFERENT   $b"; fi
+        done
+      } > "$OUT/FALLBACK_COMPARISON.txt"
+      echo "fallback comparison:         $(grep -c '^identical' "$OUT/FALLBACK_COMPARISON.txt") identical, $(grep -c '^DIFFERENT' "$OUT/FALLBACK_COMPARISON.txt") different (see FALLBACK_COMPARISON.txt)" >> "$MAN"
+      cat "$OUT/FALLBACK_COMPARISON.txt"
+    else
+      echo "BUILD FAIL (see rebuild_noavx2.log)"
+      echo "fallback build               BUILD FAIL (see rebuild_noavx2.log)" >> "$MAN"
+    fi
+    sed -i "s/add_compile_options(-O3)/add_compile_options($AVX2_FLAGS)/" CMakeLists.txt
+  else
+    echo "compile-option line not found; fallback stage skipped"
+    echo "fallback build               SKIPPED (compile-option line not found)" >> "$MAN"
+  fi
+else
+  kept FALLBACK_COMPARISON.txt RUN_FALLBACK
 fi
 
 if [ "${RUN_PRICE:-0}" = "1" ]; then
@@ -136,10 +165,12 @@ if [ "${RUN_PRICE:-0}" = "1" ]; then
       echo "atv_cost_split_xmaccs$g           SKIPPED (gas line not found)" >> "$MAN"
     fi
   done
+else
+  for g in 26 84; do kept "atv_cost_split_xmaccs$g.txt" RUN_PRICE; done
 fi
 
 echo >> "$MAN"
 echo "sha256 of outputs:" >> "$MAN"
-(cd "$OUT" && sha256sum *.txt | grep -v MANIFEST) >> "$MAN"
+(cd "$OUT" && sha256sum *.txt fallback/*.txt 2>/dev/null | grep -v MANIFEST) >> "$MAN"
 echo "== done; outputs in $OUT =="
 cat "$MAN"

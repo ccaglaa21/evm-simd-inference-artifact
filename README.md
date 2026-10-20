@@ -41,6 +41,13 @@ predicted == measured gas (difference 0), the coefficients
 78.5625/10.125/23 and 4.1875/22.125/36, and the asymptote 18.76. The last
 line must be `SELFTEST: OK (closed-form reproduced, zero error)`.
 
+The patched build is compiled with `-march=native -mavx2 -mfma -O3
+-DSIMDPP_ARCH_X86_AVX2` (one `add_compile_options` line in `CMakeLists.txt`),
+so the Docker host must be an x86-64 machine with AVX2. Compiling with `-O3`
+alone instead gives the scalar-fallback build of the same interpreter, in
+which every instruction runs its scalar path; the `RUN_FALLBACK=1` stage
+below produces that build and checks it against the AVX2 build.
+
 ## Reproducing every number in the paper
 
 ```
@@ -50,19 +57,20 @@ docker run --rm -m 6g -v "$PWD/outputs:/out" evmone-simd sh /work/evmone/run_all
 
 This runs the 23 C++ programs and the 3 Python scripts that need only the
 shipped `data/` (about 2 minutes) and writes `outputs/<program>.txt` plus
-`outputs/MANIFEST.txt`. Three optional stages are enabled with environment
+`outputs/MANIFEST.txt`. Four optional stages are enabled with environment
 variables:
 
 | Variable | Stage | Needs | Time |
 |---|---|---|---|
 | `-e RUN_PRICE=1` | rebuilds `libevmone` with the `XMACC_S` price set to 26 and then 84 and reruns `atv_cost_split` at each price (`atv_cost_split_xmaccs26.txt`, `atv_cost_split_xmaccs84.txt`) | nothing | about 2 x 2 min |
 | `-e RUN_TIMING=1` | `atv_wallclock`: wall-clock time vs gas, with the time-neutral price `g*` | nothing | about 1 min (adaptive sampling) |
+| `-e RUN_FALLBACK=1` | builds a second `libevmone` without AVX2 (`-O3` only, directory `build_noavx2`), reruns the 22 gas programs against it into `outputs/fallback/` and compares every file with the AVX2 run (`FALLBACK_COMPARISON.txt`) | nothing | about 10 min |
 | `-e RUN_SWEEPS=1` | `seed_sweep.py`, `seed_sweep_fashion.py`, `seed_sweep_fashion_cal.py` (five seeds each) | the raw MNIST and Fashion-MNIST IDX files mounted at `/work/evmone/mnist_data` and `/work/evmone/fashion_data` | about 50 min |
 
 Example with everything enabled:
 
 ```
-docker run --rm -m 6g -e RUN_PRICE=1 -e RUN_TIMING=1 -e RUN_SWEEPS=1 \
+docker run --rm -m 6g -e RUN_PRICE=1 -e RUN_TIMING=1 -e RUN_FALLBACK=1 -e RUN_SWEEPS=1 \
   -v "$PWD/outputs:/out" \
   -v "$HOME/mnist_data:/work/evmone/mnist_data:ro" \
   -v "$HOME/fashion_data:/work/evmone/fashion_data:ro" \
@@ -73,6 +81,14 @@ All gas values are deterministic: the `outputs/` shipped here were produced
 on an Intel i5-1135G7 (AVX2) inside a VirtualBox virtual machine and match
 the values measured on the original development host bit for bit. Only the
 wall-clock figures in `atv_wallclock.txt` depend on the machine.
+
+The dual-path claim of the paper (the AVX2 path and the scalar fallback of
+every instruction give bit-identical results) is checked by the
+`RUN_FALLBACK=1` stage: the same 22 programs, including the 500 + 500 + 100
+image tests, are rerun against the interpreter built without AVX2, and
+`outputs/FALLBACK_COMPARISON.txt` lists, file by file, whether the output is
+identical to the AVX2 run. The fallback outputs are kept in
+`outputs/fallback/`.
 
 ## Where each reported number comes from
 
@@ -97,6 +113,7 @@ wall-clock figures in `atv_wallclock.txt` depend on the machine.
 | MNIST fidelity and accuracy (500/500, 490/500) | `experiments/test_fullnet_500_acc.cpp` | `test_fullnet_500_acc.txt` |
 | Fashion-MNIST fidelity, quantization match and accuracy (500/500, 466/500, 434/500, 443/500) | `experiments/fashion_onchain_acc.cpp` | `fashion_onchain_acc.txt` |
 | Seed-31337 spot check (100/100) | `experiments/seedchk_evm.cpp` (weights from `training/seedchk_write.py`) | `seedchk_evm.txt` |
+| Dual-path determinism: the AVX2 build and the scalar-fallback build give bit-identical outputs (500 + 500 + 100 images and every gas value) | the 22 gas programs rerun against `build_noavx2/lib/libevmone.so` via `RUN_FALLBACK=1` | `fallback/*.txt`, `FALLBACK_COMPARISON.txt` |
 | Quantization loss over five seeds and 10,000 images; calibration experiment | `training/seed_sweep.py`, `training/seed_sweep_fashion.py`, `training/seed_sweep_fashion_cal.py` via `RUN_SWEEPS=1` | `seed_sweep.txt`, `seed_sweep_fashion.txt`, `seed_sweep_fashion_cal.txt` |
 | int8 accuracy study | `training/int8_accuracy.py`, `training/int8_accuracy_fashion.py` | `int8_accuracy.txt`, `int8_accuracy_fashion.txt` |
 | Memory-safety suite | `experiments/sec_oob.cpp`, `sec_xgather.cpp`, `sec_xgather2.cpp`, `sec_xtranspose_big.cpp`, `test_security_opcodes.cpp`, `test_security_matrix.cpp` | `sec_*.txt`, `test_security_*.txt` |

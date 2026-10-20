@@ -1,0 +1,17 @@
+Bytecode: UNROLLED-SIMD=677730 B | LOOPED-SIMD=538979 B | matWords=13840
+[CHECK 1] 20 images three-way bit-exact: 20/20 PASSED
+[CHECK 2] UNROLLED warm pred==meas: 3462418/3462418 diff=0 PASSED | MSIZE pred/meas: 900640/900640 OK
+[CHECK 3] cold-warm==27680000: UNROLLED 27680000 OK | LOOPED 27680000 OK
+[CHECK 4] compute_cold==compute_warm (UNROLLED): 446833/446833 PASSED
+[CHECK 5] LOOPED warm == 5,134,719 anchor: 5134719 PASSED (compute bucket: 2117326, anchor 2,117,326 OK)
+[CHECK 6] repeat run identical (UNROLLED cold): PASSED
+
+================ UNROLLED-SIMD RESULT ================
+  UNROLLED-SIMD pure compute: 446833  (layer-1 share ~417722)
+  LOOPED-SIMD pure compute: 2117326  ->  loop-overhead factor: 4.74x
+  SCALAR (unrolled, constant): 10408685
+  PURE COMPUTE C/B: looped 4.92x  ->  UNROLLED 23.29x
+  per group (8 elements) unrolled kernel: PUSH+MLOAD+PUSH+MLOAD+XMACC = 23 gas (from the count)
+  per multiply-accumulate (109184 MACs): SCALAR unrolled 95.33 gas | UNROLLED-SIMD 4.09 gas | 8-way core block 23/8 = 2.875 gas
+
+*** ALL CHECKS PASSED ***

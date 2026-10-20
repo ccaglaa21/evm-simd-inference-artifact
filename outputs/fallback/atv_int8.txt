@@ -1,0 +1,27 @@
+=== int8 storage + in-EVM unpack vs int16 | Path B (zero-copy+SIMD) ===
+Same compute (XTRANSPOSE+XMACC_S). int8: half the SLOADs + unpack. Result must equal int16.
+
+K=256 int16 exact?=YES
+   COLD: SLOAD=8601600 compute=280124 memory=50951 TOTAL=8932675
+   WARM: SLOAD=409600 compute=280124 memory=50951 TOTAL=740675
+K=256 int8  exact?=YES
+   COLD: SLOAD=4300800 compute=1236540 memory=50951 TOTAL=5588291
+   WARM: SLOAD=204800 compute=1236540 memory=50951 TOTAL=1492291
+   >>> int8/int16 TOTAL:  COLD 0.626 | WARM 2.015  (<1 = int8 wins)
+------------------------------------------------------------
+K=1024 int16 exact?=YES
+   COLD: SLOAD=137625600 compute=4413596 memory=8889601 TOTAL=150928797
+   WARM: SLOAD=6553600 compute=4413596 memory=8889601 TOTAL=19856797
+K=1024 int8  exact?=YES
+   COLD: SLOAD=68812800 compute=19716252 memory=8889601 TOTAL=97418653
+   WARM: SLOAD=3276800 compute=19716252 memory=8889601 TOTAL=31882653
+   >>> int8/int16 TOTAL:  COLD 0.645 | WARM 1.606  (<1 = int8 wins)
+------------------------------------------------------------
+K=4096 int16 exact?=YES
+   COLD: SLOAD=2202009600 compute=70345244 memory=2169612561 TOTAL=4441967405
+   WARM: SLOAD=104857600 compute=70345244 memory=2169612561 TOTAL=2344815405
+K=4096 int8  exact?=YES
+   COLD: SLOAD=1101004800 compute=315187740 memory=2169612561 TOTAL=3585805101
+   WARM: SLOAD=52428800 compute=315187740 memory=2169612561 TOTAL=2537229101
+   >>> int8/int16 TOTAL:  COLD 0.807 | WARM 1.082  (<1 = int8 wins)
+------------------------------------------------------------

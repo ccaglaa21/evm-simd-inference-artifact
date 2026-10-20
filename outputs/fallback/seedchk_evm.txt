@@ -1,0 +1,8 @@
+seedchk meta: S=4096 SHIFT=7/12 H=128/64 (expected 7/12)
+Bytecode: 538979 bytes | matWords=13840
+
+[CHECK 1] EVM == Python-int16 prediction: 100/100 PASSED
+[CHECK 2] EVM == C++ integer reference: 100/100 PASSED
+[CHECK 3] repeat-run gas identical (im=0): 5134719/5134719 PASSED
+
+*** SPOT-CHECK PASSED: execution fidelity is NOT specific to seed 42 (seed-31337, SHIFT 7/12) ***

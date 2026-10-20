@@ -1,0 +1,35 @@
+[K=   8] bit-exact:OK | C: pred=5211 meas=5211 diff=0 | B: pred=560 meas=560 diff=0 | MSIZE C:832/832 B:832/832
+[K=  16] bit-exact:OK | C: pred=20442 meas=20442 diff=0 | B: pred=1607 meas=1607 diff=0 | MSIZE C:1504/1504 B:1504/1504
+[K=  32] bit-exact:OK | C: pred=81158 meas=81158 diff=0 | B: pred=5395 meas=5395 diff=0 | MSIZE C:3616/3616 B:3616/3616
+[K=  64] bit-exact:OK | C: pred=323713 meas=323713 diff=0 | B: pred=19854 meas=19854 diff=0 | MSIZE C:10912/10912 B:10912/10912
+[K= 128] bit-exact:OK | C: pred=1294754 meas=1294754 diff=0 | B: pred=77743 meas=77743 diff=0 | MSIZE C:37792/37792 B:37792/37792
+[K= 256] bit-exact:OK | C: pred=5202238 meas=5202238 diff=0 | B: pred=331083 meas=331083 diff=0 | MSIZE C:140704/140704 B:140704/140704
+[K= 512] bit-exact:OK | C: pred=21213475 meas=21213475 diff=0 | B: pred=1722672 meas=1722672 diff=0 | MSIZE C:543136/543136 B:543136/543136
+[K=1024] bit-exact:OK | C: pred=91278744 meas=91278744 diff=0 | B: pred=13303205 meas=13303205 diff=0 | MSIZE C:2134432/2134432 B:2134432/2134432
+[K=2048] bit-exact:OK | C: pred=466929971 meas=466929971 diff=0 | B: pred=155003200 meas=155003200 diff=0 | MSIZE C:8462752/8462752 B:8462752/8462752
+[K=4096] bit-exact:OK | C: pred=3487714088 meas=3487714088 diff=0 | B: pred=2239957813 meas=2239957813 diff=0 | MSIZE C:33702304/33702304 B:33702304/33702304
+
+================ CLOSED FORM (opcode gas, excluding memory) ================
+C (scalar): OG(K) = 78.562500*K^2 + 10.125000*K + 23.0
+   polynomial check at the remaining 7 points: EXACT (diff 0)
+B (SIMD): OG(K) = 4.187500*K^2 + 22.125000*K + 36.0
+   polynomial check at the remaining 7 points: EXACT (diff 0)
+
+ASYMPTOTIC PURE-COMPUTE C/B (K->inf) = aC/aB = 78.562500/4.187500 = 18.76x
+
+================ PURE COMPUTE PER K (measured total - memory gas from measured MSIZE) ================
+     K |   pure compute C |   pure compute B |    C/B |     memory C |     memory B | pred-meas C | pred-meas B
+-------+------------------+------------------+--------+--------------+--------------+-------------+------------
+     8 |             5132 |              481 |  10.67 |           79 |           79 |           0 |          0
+    16 |            20297 |             1462 |  13.88 |          145 |          145 |           0 |          0
+    32 |            80795 |             5032 |  16.06 |          363 |          363 |           0 |          0
+    64 |           322463 |            18604 |  17.33 |         1250 |         1250 |           0 |          0
+   128 |          1288487 |            71476 |  18.03 |         6267 |         6267 |           0 |          0
+   256 |          5151287 |           280132 |  18.39 |        50951 |        50951 |           0 |          0
+   512 |         20599895 |          1109092 |  18.57 |       613580 |       613580 |           0 |          0
+  1024 |         82389143 |          4413604 |  18.67 |      8889601 |      8889601 |           0 |          0
+  2048 |        329535767 |         17608996 |  18.71 |    137394204 |    137394204 |           0 |          0
+  4096 |       1318101527 |         70345252 |  18.74 |   2169612561 |   2169612561 |           0 |          0
+(compare with the MSIZE-measured 18.39/18.67/18.74x of atv_cost_split: must agree in direction)
+
+*** ALL CHECKS PASSED -> closed form DOCUMENTED: gas = count + canonical memory, diff 0 ***
