@@ -34,7 +34,7 @@ pred16=infer(W1,W2,W3)
 acc16=(pred16==labels).sum()
 rf=open('deep_ref.txt').read().split(); refpred=np.array([int(rf[1+2*i+1]) for i in range(N)])
 match_ref=(pred16==refpred).sum()
-print(f"\n[CHECK] int16 accuracy = {acc16}/500 = {100*acc16/N:.1f}%  (must EQUAL the EVM: 490/500=98%)")
+print(f"\n[CHECK] int16 accuracy = {acc16}/500 = {100*acc16/N:.1f}%  (must equal the EVM accuracy printed by test_fullnet_500_acc)")
 print(f"[CHECK] int16 == deep_ref predictions: {match_ref}/500  (500 means the pipeline is EXACTLY right)")
 
 # --- int8: round every layer to int8, scale back to the same scale (pipeline unchanged) ---

@@ -7,12 +7,14 @@
 # W*q = round(W * S).  Since a1 ~ a1_float * 255 S / 2^SHIFT1 and W2q ~ W2 * S, the product
 # a1 W2q carries the scale 255 S^2 / 2^SHIFT1, so the bias of layer 2 must carry the same scale:
 #     b2i (consistent) = round(b2 * 255 S^2 / 2^SHIFT1).
-# The training scripts shipped with this artifact wrote  b2i = round(b2 * 255 S / 2^SHIFT1), a factor
-# S smaller, which makes the layer-2 bias of the evaluated networks almost zero. This script measures
-# the effect on the canonical images: predictions with the shipped b2i, with b2i * S (the consistent
-# scale, reconstructed from the shipped integers) and with b2i = 0, each compared with the float
-# prediction stored in the batch file and with the label. It also counts, per layer, the activations
-# clipped at 32767 and the zero activations, which the paper reports as saturation.
+# The training scripts of this artifact write b2i at this scale. Earlier versions of the scripts wrote
+# b2i = round(b2 * 255 S / 2^SHIFT1), a factor S smaller, which made the layer-2 bias of the
+# evaluated networks almost zero. This script measures the effect on the canonical images: predictions
+# with the shipped b2i (consistent scale), with b2i / S (the earlier scale, reconstructed from the shipped
+# integers by integer division) and with b2i = 0, each compared with the float prediction of the
+# reference files deep_ref.txt / fashion_ref.txt (the same references as the C++ accuracy programs) and
+# with the label. It also counts, per layer, the activations clipped at 32767 and the zero activations,
+# which the paper reports as saturation.
 # Reads the files of data/ from the current directory; uses numpy when available.
 import sys
 try:
@@ -24,23 +26,27 @@ def read_ints(path):
     with open(path) as f:
         return [int(t) for t in f.read().split()]
 
-def analyse(prefix, batchfile, label):
+def analyse(prefix, batchfile, reffile, label):
     S, SH1, SH2, H1, H2 = read_ints(prefix + "_meta.txt")[:5]
     I = 784
     W1 = read_ints(prefix + "_W1.txt"); W2 = read_ints(prefix + "_W2.txt"); W3 = read_ints(prefix + "_W3.txt")
     b1 = read_ints(prefix + "_b1.txt"); b2 = read_ints(prefix + "_b2.txt")
     toks = open(batchfile).read().split()
     p = 0; Nb = int(toks[p]); p += 2
-    imgs, labels, pfloat = [], [], []
+    imgs = []
     for im in range(min(Nb, 500)):
-        labels.append(int(toks[p])); pfloat.append(int(toks[p + 1])); p += 2 + 10
+        p += 2 + 10            # label and float prediction of the batch file are not used (see reffile)
         imgs.append([int(t) for t in toks[p:p + I]]); p += I
     n_img = len(imgs)
-    variants = [("b2 as shipped (scale 255 S / 2^SHIFT1)", 1), ("b2 x S (consistent scale 255 S^2 / 2^SHIFT1)", S), ("b2 = 0", 0)]
+    rt = open(reffile).read().split()
+    labels = [int(rt[1 + 2 * k]) for k in range(n_img)]; pfloat = [int(rt[2 + 2 * k]) for k in range(n_img)]
+    variants = [("b2 as shipped (consistent scale 255 S^2 / 2^SHIFT1)", lambda v: v),
+                ("b2 / S (earlier scale 255 S / 2^SHIFT1)", lambda v: int(v / S)),
+                ("b2 = 0", lambda v: 0)]
     print(f"=== {label} ({prefix}_*): S={S} SHIFT1={SH1} SHIFT2={SH2} layers {I}->{H1}->{H2}->10, images={n_img} ===")
-    print(f"  shipped b2 range [{min(b2)}, {max(b2)}]; a1 W2q products reach the scale 255 S^2 / 2^SHIFT1, so the shipped bias is S = {S} times too small")
-    for name, mult in variants:
-        b2v = [v * mult for v in b2]
+    print(f"  shipped b2 range [{min(b2)}, {max(b2)}]; a1 W2q products carry the scale 255 S^2 / 2^SHIFT1 = {255 * S * S // (1 << SH1)}")
+    for name, fn in variants:
+        b2v = [fn(v) for v in b2]
         match = acc = 0; sat1 = sat2 = zero1 = zero2 = 0; z2mag = []
         for k in range(n_img):
             x = imgs[k]
@@ -67,5 +73,5 @@ def analyse(prefix, batchfile, label):
         print(f"    saturation: layer 1 {sat1} of {n_img * H1} activations clipped at 32767, {zero1} zero | layer 2 {sat2} of {n_img * H2} clipped, {zero2} zero | median |z2| {sorted(z2mag)[len(z2mag) // 2]}, median |b2 term| {sorted(abs(v) for v in b2v)[H2 // 2]}")
     print()
 
-analyse("deep", "mnist_batch.txt", "MNIST")
-analyse("fashion", "fashion_batch.txt", "Fashion-MNIST")
+analyse("deep", "mnist_batch.txt", "deep_ref.txt", "MNIST")
+analyse("fashion", "fashion_batch.txt", "fashion_ref.txt", "Fashion-MNIST")

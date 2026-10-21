@@ -2,18 +2,18 @@
   weight ranges: W1 [-1648,1337]  W2 [-2565,2660]  W3 [-4859,4894]
   layer 1: worst-case |accumulator| <= 46888347  over pixels 0..255  -> cannot overflow (bound below 2^31-1)
   layer 1: observed max |accumulator| on the canonical images = 7899135  (0.37% of 2^31-1)
-  layer 2: worst-case |accumulator| <= 2850501988  over inputs 0..32767  -> MAY overflow for some admissible input (bound above 2^31-1)
-  layer 2: observed max |accumulator| on the canonical images = 334841527  (15.59% of 2^31-1)
+  layer 2: worst-case |accumulator| <= 2860153343  over inputs 0..32767  -> MAY overflow for some admissible input (bound above 2^31-1)
+  layer 2: observed max |accumulator| on the canonical images = 334526172  (15.58% of 2^31-1)
   layer 3: worst-case |accumulator| <= 2472368451  over inputs 0..32767  -> MAY overflow for some admissible input (bound above 2^31-1)
-  layer 3: observed max |accumulator| on the canonical images = 580710756  (27.04% of 2^31-1)
+  layer 3: observed max |accumulator| on the canonical images = 593170222  (27.62% of 2^31-1)
 
 === Fashion-MNIST (fashion_*): S=4096 SHIFT1=6 SHIFT2=13 layers 784->128->64->10, images=500 ===
   weight ranges: W1 [-1808,1672]  W2 [-2196,1974]  W3 [-3808,4003]
   layer 1: worst-case |accumulator| <= 52296584  over pixels 0..255  -> cannot overflow (bound below 2^31-1)
   layer 1: observed max |accumulator| on the canonical images = 7226155  (0.34% of 2^31-1)
-  layer 2: worst-case |accumulator| <= 2136083197  over inputs 0..32767  -> cannot overflow (bound below 2^31-1)
-  layer 2: observed max |accumulator| on the canonical images = 362606924  (16.89% of 2^31-1)
+  layer 2: worst-case |accumulator| <= 2146187268  over inputs 0..32767  -> cannot overflow (bound below 2^31-1)
+  layer 2: observed max |accumulator| on the canonical images = 364039121  (16.95% of 2^31-1)
   layer 3: worst-case |accumulator| <= 2820911030  over inputs 0..32767  -> MAY overflow for some admissible input (bound above 2^31-1)
-  layer 3: observed max |accumulator| on the canonical images = 743163434  (34.61% of 2^31-1)
+  layer 3: observed max |accumulator| on the canonical images = 768343797  (35.78% of 2^31-1)
 
 limit 2^31-1 = 2147483647
