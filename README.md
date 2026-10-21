@@ -22,7 +22,7 @@ Blockchain Smart Contracts* (Gebze Technical University, May 2026).
 | `numpy_simd.hpp` | `MatrixHeader` operations (copied into `lib/evmone/` before the patch is applied) |
 | `libsimdpp-2.1/` | header-only SIMD library, vendored from github.com/p12tic/libsimdpp @ `55860b50` (Boost Software License 1.0, see `THIRD_PARTY_LICENSES`) |
 | `experiments/` | 31 C++ measurement programs and the Solidity baseline contract (`ATVBaseline.sol`) |
-| `training/` | 12 Python scripts: training, quantization, seed sweeps, calibration experiment, int8 study, accumulator overflow bound, time-neutral price |
+| `training/` | 13 Python scripts: training, quantization, seed sweeps, calibration experiment, int8 study, accumulator overflow bound, time-neutral price |
 | `data/` | canonical seed-42 weights and biases, 500-image batches, float reference predictions, seed-31337 spot-check weights |
 | `Dockerfile`, `run_selftest.sh` | isolated build of the patched interpreter and the closed-form self-test |
 | `run_all.sh` | compiles and runs every program and writes one output file per program |
@@ -59,7 +59,7 @@ mkdir -p outputs
 docker run --rm -m 6g -v "$PWD/outputs:/out" evmone-simd sh /work/evmone/run_all.sh
 ```
 
-This runs the 31 C++ programs and the 5 Python scripts that need only the
+This runs the 31 C++ programs and the 6 Python scripts that need only the
 shipped `data/` (about 4 minutes) and writes `outputs/<program>.txt` plus
 `outputs/MANIFEST.txt`. Four optional stages are enabled with environment
 variables:
@@ -69,6 +69,7 @@ variables:
 | `-e RUN_PRICE=1` | rebuilds `libevmone` with the `XMACC_S` price set to 26 and then 84 and reruns `atv_cost_split` at each price (`atv_cost_split_xmaccs26.txt`, `atv_cost_split_xmaccs84.txt`) | nothing | about 2 x 2 min |
 | `-e RUN_TIMING=1` | `atv_wallclock` (wall-clock time vs gas, time-neutral price `g*`) and `rowmacc_wallclock` (row-level instruction timing); without it the timing files of an earlier run are kept, so a rerun of the gas programs never changes the reported timing figures | nothing | about 2 min (adaptive sampling) |
 | `-e RUN_FALLBACK=1` | builds a second `libevmone` without AVX2 and without auto-vectorization (`-O3 -fno-tree-vectorize -fno-tree-slp-vectorize`, directory `build_noavx2`), reruns the 29 gas programs against it into `outputs/fallback/` and compares every file with the AVX2 run (`FALLBACK_COMPARISON.txt`); with `RUN_TIMING=1` also runs `atv_wallclock` and `rowmacc_wallclock` on the fallback build (`fallback/atv_wallclock.txt`, `fallback/rowmacc_wallclock.txt`, timing only) | nothing | about 13 min |
+| `-e RUN_TRAIN=1` | `train_deep.py`, `train_deep_fashion.py`, `seedchk_write.py`, `deep_reference.py`: regenerate the canonical weight files into `outputs/data_regen/` (copy them into `data/` to use them) | the raw MNIST and Fashion-MNIST IDX files mounted as for `RUN_SWEEPS` | about 10 min |
 | `-e RUN_SWEEPS=1` | `seed_sweep.py`, `seed_sweep_fashion.py`, `seed_sweep_fashion_cal.py` (five seeds each) | the raw MNIST and Fashion-MNIST IDX files mounted at `/work/evmone/mnist_data` and `/work/evmone/fashion_data` | about 50 min |
 
 Example with everything enabled:
@@ -126,6 +127,7 @@ identical to the AVX2 run. The fallback outputs are kept in
 | Deployable contracts with a loop per neuron and an unrolled inner body, for the fixed-width path (B2) and the packed scalar baseline (S2): marginal cost per image against the per-group loops and the row-level contract | `experiments/mnist_loops.cpp` | `mnist_loops.txt` |
 | Weights as contract code (code-as-storage): the Path N contract with the 13,840 weight words stored in 19 data contracts and read with `EXTCODECOPY`, compact memory map; cold and warm cost, EIP-7825 cap check, deployment cost from the gas schedule | `experiments/mnist_codecopy.cpp` | `mnist_codecopy.txt` |
 | Time-neutral price of `XMACC_N`, `XMACC_N16` and `XMACC` from the row-level timing on both builds: the price at which the gas ratio of the pure computation equals the measured time ratio | `training/price_neutral.py` (reads `rowmacc_wallclock.txt` and `fallback/rowmacc_wallclock.txt`) | `price_neutral.txt` |
+| Scale check of the hidden-layer-2 bias and per-layer saturation counts on the canonical images | `training/bias_scale.py` | `bias_scale.txt` |
 | 32-bit accumulator analysis: worst-case bound per layer over the admissible input range and the largest value reached on the canonical images | `training/overflow_bound.py` | `overflow_bound.txt` |
 | Quantization loss over five seeds and 10,000 images; calibration experiment | `training/seed_sweep.py`, `training/seed_sweep_fashion.py`, `training/seed_sweep_fashion_cal.py` via `RUN_SWEEPS=1` | `seed_sweep.txt`, `seed_sweep_fashion.txt`, `seed_sweep_fashion_cal.txt` |
 | int8 accuracy study | `training/int8_accuracy.py`, `training/int8_accuracy_fashion.py` | `int8_accuracy.txt`, `int8_accuracy_fashion.txt` |

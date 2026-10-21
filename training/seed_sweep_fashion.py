@@ -53,7 +53,8 @@ def train_and_quant(seed):
     SHIFT1=0
     while a1s.max()>>SHIFT1>32767: SHIFT1+=1
     a1_=np.clip(a1s>>SHIFT1,0,32767)
-    b2i=np.round(b2*(255*S/(2**SHIFT1))).astype(np.int64)
+    # layer-2 bias scale: a1_small*W2q carries 255*S^2/2^SHIFT1, so the bias carries the same scale
+    b2i=np.round(b2*(255*S*S/(2**SHIFT1))).astype(np.int64)
     z2s=a1_@W2q+b2i;a2s=np.maximum(0,z2s)
     SHIFT2=0
     while a2s.max()>>SHIFT2>32767: SHIFT2+=1

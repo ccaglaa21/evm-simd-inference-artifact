@@ -1,0 +1,15 @@
+Loading MNIST...
+Training (deep network, 2 hidden layers, ReLU)...
+  epoch 0: test acc=0.9066
+  epoch 5: test acc=0.9636
+  epoch 10: test acc=0.9735
+  epoch 15: test acc=0.9763
+  epoch 20: test acc=0.9774
+  epoch 24: test acc=0.9779
+Final DEEP network test accuracy: 0.9779
+W1q:-1648/1337 W2q:-2565/2660 W3q:-4859/4894
+SHIFT1=7, SHIFT2=13
+
+Quantized accuracy (1000): 974/1000=0.9740
+Quantized==Float (1000): 997/1000
+Files written: deep_W1/W2/W3, deep_b1/b2, deep_meta

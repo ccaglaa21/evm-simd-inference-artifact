@@ -1,67 +1,26 @@
 artifact run_all.sh
-date (UTC): 2026-10-21T11:01:28Z
+date (UTC): 2026-10-21T11:45:42Z
 evmone commit: 4938c0a379da908ff07658a4b970d15fd0a3abb5
 evmc commit:   496ce0f81058378b72d0b592d1c49b935bce3302
 compiler:      g++ (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0
 cpu:           11th Gen Intel(R) Core(TM) i5-1135G7 @ 2.40GHz
 avx2:          avx2
 
-atv_closed_form              rc=0  time=8s
+atv_closed_form              rc=0  time=7s
 atv_cost_split               rc=0  time=22s
-atv_three_paths              rc=0  time=10s
-atv_price_sweep              rc=0  time=22s
+atv_three_paths              rc=0  time=9s
+atv_price_sweep              rc=0  time=21s
 atv_int8                     rc=0  time=5s
 atv_solidity_scope           rc=0  time=0s
 mnist_sload                  rc=0  time=0s
-mnist_layers                 rc=0  time=1s
+mnist_layers                 rc=0  time=0s
 mnist_e2e_cb                 rc=0  time=1s
-mnist_loader_loop            rc=0  time=1s
-mnist_unrolled_simd          rc=0  time=1s
+mnist_loader_loop            rc=0  time=0s
+mnist_unrolled_simd          rc=0  time=0s
 mnist_batch_marginal         rc=0  time=1s
-mnist_deploy_cb              rc=0  time=1s
+mnist_deploy_cb              rc=0  time=2s
 mnist_swar_baseline          rc=0  time=0s
 mnist_rowmacc                rc=0  time=0s
-mnist_codecopy               rc=0  time=0s
-mnist_codecopy16             rc=0  time=0s
-mnist_loops                  rc=0  time=0s
-test_fullnet_500_acc         rc=0  time=1s
-fashion_onchain_acc          rc=0  time=1s
-seedchk_evm                  rc=0  time=1s
-test_security_opcodes        rc=0  time=0s
-test_security_matrix         rc=0  time=0s
-sec_oob                      rc=0  time=0s
-sec_xgather                  rc=0  time=0s
-sec_xgather2                 rc=0  time=0s
-sec_xtranspose_big           rc=0  time=0s
-sec_xmacc_n                  rc=0  time=0s
-sec_jumpdest                 rc=0  time=0s
-int8_accuracy.py             rc=0  time=1s
-int8_accuracy_fashion.py     rc=0  time=0s
-fashion_diag.py              rc=0  time=1s
-overflow_bound.py            rc=0  time=8s
-price_neutral.py             rc=0  time=0s
-atv_wallclock.txt            kept from an earlier run (RUN_TIMING not set)
-rowmacc_wallclock.txt        kept from an earlier run (RUN_TIMING not set)
-seed_sweep.txt               kept from an earlier run (RUN_SWEEPS not set)
-seed_sweep_fashion.txt       kept from an earlier run (RUN_SWEEPS not set)
-seed_sweep_fashion_cal.txt   kept from an earlier run (RUN_SWEEPS not set)
-fallback library:            build_noavx2/lib/libevmone.so (compiled with -O3 -fno-tree-vectorize -fno-tree-slp-vectorize: no -mavx2, no SIMDPP_ARCH_X86_AVX2)
-ymm (256-bit AVX) instructions:  fallback library 0, AVX2 library 2460 (objdump -d | grep -c ymm)
-atv_closed_form              rc=0  time=7s
-atv_cost_split               rc=0  time=21s
-atv_three_paths              rc=0  time=9s
-atv_price_sweep              rc=0  time=22s
-atv_int8                     rc=0  time=5s
-atv_solidity_scope           rc=0  time=0s
-mnist_sload                  rc=0  time=0s
-mnist_layers                 rc=0  time=1s
-mnist_e2e_cb                 rc=0  time=0s
-mnist_loader_loop            rc=0  time=0s
-mnist_unrolled_simd          rc=0  time=1s
-mnist_batch_marginal         rc=0  time=1s
-mnist_deploy_cb              rc=0  time=1s
-mnist_swar_baseline          rc=0  time=0s
-mnist_rowmacc                rc=0  time=1s
 mnist_codecopy               rc=0  time=0s
 mnist_codecopy16             rc=0  time=0s
 mnist_loops                  rc=0  time=0s
@@ -76,9 +35,23 @@ sec_xgather2                 rc=0  time=0s
 sec_xtranspose_big           rc=0  time=0s
 sec_xmacc_n                  rc=0  time=0s
 sec_jumpdest                 rc=0  time=0s
-fallback/atv_wallclock.txt   kept from an earlier run (RUN_TIMING not set)
-fallback/rowmacc_wallclock.txt kept from an earlier run (RUN_TIMING not set)
-fallback comparison:         29 identical, 0 different (see FALLBACK_COMPARISON.txt)
+int8_accuracy.py             rc=0  time=0s
+int8_accuracy_fashion.py     rc=0  time=1s
+fashion_diag.py              rc=0  time=0s
+overflow_bound.py            rc=0  time=8s
+bias_scale.py                rc=0  time=10s
+price_neutral.py             rc=0  time=0s
+atv_wallclock.txt            kept from an earlier run (RUN_TIMING not set)
+rowmacc_wallclock.txt        kept from an earlier run (RUN_TIMING not set)
+train_deep.py                rc=0  time=195s
+train_deep_fashion.py        rc=0  time=199s
+seedchk_write.py             rc=0  time=179s
+deep_reference.py            rc=0  time=181s
+regenerated weight files:   /out/data_regen/ (copy them into data/ and rerun the artifact)
+seed_sweep.txt               kept from an earlier run (RUN_SWEEPS not set)
+seed_sweep_fashion.txt       kept from an earlier run (RUN_SWEEPS not set)
+seed_sweep_fashion_cal.txt   kept from an earlier run (RUN_SWEEPS not set)
+FALLBACK_COMPARISON.txt      kept from an earlier run (RUN_FALLBACK not set)
 atv_cost_split_xmaccs26.txt  kept from an earlier run (RUN_PRICE not set)
 atv_cost_split_xmaccs84.txt  kept from an earlier run (RUN_PRICE not set)
 
@@ -93,6 +66,8 @@ d02acaaa8b844041ee39bcff755ebef7727e3c38eeaeb36590952f7ae661ba9f  atv_cost_split
 4a6469ee84a62bb8816f94978502f6dcb8b29216c3ec016105d296d70909df83  atv_solidity_scope.txt
 917d4134a517fe022dce92b74eadec32cf9ce8fb2f3ef43c5398e4a7c704ec61  atv_three_paths.txt
 3313584d23eaac311f3fb134fef6ac3e73cad894feb46f0f323ce684259106b6  atv_wallclock.txt
+6afb21b6b0e1e0a46a27b004cbbd9f71e5bd44070f864ecc9e38bda06837832c  bias_scale.txt
+1efed4c758128d5d77d07401f32bc70fb799bbee1b17a358004acf8e84a29503  deep_reference.txt
 6adfb0787da306e444c5ce1b5c71af53c99aee452b2f2f05793f66dc4e5dd337  fashion_diag.txt
 119e7fa87a193544c8c4229d6ab7eff84a65af6948d9035150bb25e9f6ce3f19  fashion_onchain_acc.txt
 bb1c0af0fc380d9f07f71e65573e17e1a280efaa1ef57334fc2a43576192bc44  int8_accuracy.txt
@@ -122,9 +97,12 @@ c4e47823ab3f1fa1025636e84974935eb38ea475d4cee45a480ddfff7719b671  seed_sweep.txt
 c96205b8f635c7628c0165eee8311a4aceab4c76880e71f8b481e990c277a793  seed_sweep_fashion.txt
 363c02d1ca09484c2d4d23891810e1d8f81f3fed5da6f60c83a1e41f893f80b2  seed_sweep_fashion_cal.txt
 ab3763f589c0b6a8f1545cca2b60c27cf44efe3b6805f0f0374e4f97e16ae150  seedchk_evm.txt
+c29cedd5a002c9c6722d4ce565cfb16556cb7be768a2214ba7ea4634d9fcd2a2  seedchk_write.txt
 9d17ae2c0f649e937383c192d294cf32eb53b98d59cdff7be7e87d7104ab7a56  test_fullnet_500_acc.txt
 fed3189126806d819b39c99d44ab7a0877b343e47cefb96fb70ee07cd193ae2d  test_security_matrix.txt
 48ee0f380c0f76986d02ccdd3a34ee2be20c67b37b289a94a8d2590e50df2203  test_security_opcodes.txt
+bd43e8aa81894dae1b8d5ad9bba362c14285ac2f13da7261149fb4913d96646b  train_deep.txt
+cdf0b4c743e124b6fa993d3f03d75c669c4b5413b995d99248a762c908d13612  train_deep_fashion.txt
 e74cd77f5c82de4e2a1b57be5a0ec2822ca5dfa8f76d8f3beaa535a4fc9baf80  fallback/atv_closed_form.txt
 5c3440686d94b06ec59302fecfe89ca838580112374a9eabcb7a3cfe29f3d0ba  fallback/atv_cost_split.txt
 1f504701aa5e31191454610009a826a104214f69b6f86e462051b44826243ecb  fallback/atv_int8.txt

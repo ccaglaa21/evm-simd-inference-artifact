@@ -11,6 +11,8 @@
 #                   about 2 minutes, machine dependent; with RUN_FALLBACK=1 both are also run on the fallback
 #                   build. Without RUN_TIMING=1 the timing files of an earlier run are kept, so a rerun of the
 #                   gas programs never changes the timing figures reported in the paper.
+#   RUN_TRAIN=1     train_deep.py, train_deep_fashion.py, seedchk_write.py, deep_reference.py: regenerate the canonical
+#                   weight files into /out/data_regen/ (about 10 minutes); needs the raw datasets mounted as below
 #   RUN_SWEEPS=1    seed_sweep.py, seed_sweep_fashion.py, seed_sweep_fashion_cal.py (about 50 minutes);
 #                   need the raw datasets mounted at /work/evmone/mnist_data and /work/evmone/fashion_data
 #   RUN_FALLBACK=1  builds a second libevmone WITHOUT AVX2 (-O3 -fno-tree-vectorize -fno-tree-slp-vectorize,
@@ -95,6 +97,7 @@ run_py int8_accuracy
 run_py int8_accuracy_fashion
 run_py fashion_diag
 run_py overflow_bound
+run_py bias_scale
 export OUT
 run_py price_neutral     # reads the two rowmacc_wallclock.txt files (kept or just produced)
 
@@ -105,6 +108,21 @@ if [ "${RUN_TIMING:-0}" = "1" ]; then
 else
   kept atv_wallclock.txt RUN_TIMING
   kept rowmacc_wallclock.txt RUN_TIMING
+fi
+
+if [ "${RUN_TRAIN:-0}" = "1" ]; then
+  echo "== regenerating the canonical weight files (need mnist_data/ and fashion_data/) =="
+  if [ -d mnist_data ] && [ -d fashion_data ]; then
+    mkdir -p "$OUT/data_regen"
+    for n in train_deep train_deep_fashion seedchk_write deep_reference; do run_py "$n"; done
+    cp deep_W1.txt deep_W2.txt deep_W3.txt deep_b1.txt deep_b2.txt deep_meta.txt deep_ref.txt \
+       fashion_W1.txt fashion_W2.txt fashion_W3.txt fashion_b1.txt fashion_b2.txt fashion_meta.txt fashion_batch.txt fashion_ref.txt \
+       seedchk_W1.txt seedchk_W2.txt seedchk_W3.txt seedchk_b1.txt seedchk_b2.txt seedchk_meta.txt seedchk_imgs.txt "$OUT/data_regen/" 2>/dev/null
+    echo "regenerated weight files:   $OUT/data_regen/ (copy them into data/ and rerun the artifact)" >> "$MAN"
+  else
+    echo "mnist_data/ or fashion_data/ not mounted; training skipped"
+    echo "training                     SKIPPED (raw data not mounted)" >> "$MAN"
+  fi
 fi
 
 if [ "${RUN_SWEEPS:-0}" = "1" ]; then
