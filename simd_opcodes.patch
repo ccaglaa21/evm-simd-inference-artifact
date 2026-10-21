@@ -645,3 +645,17 @@ index 07b26967..3c36e97c 100644
      ON_OPCODE_UNDEFINED(0xe6)                               \
      ON_OPCODE_UNDEFINED(0xe7)                               \
      ON_OPCODE_UNDEFINED(0xe8)                               \
+diff --git a/lib/evmone/baseline_analysis.cpp b/lib/evmone/baseline_analysis.cpp
+index 6083fcea..bee43c4e 100644
+--- a/lib/evmone/baseline_analysis.cpp
++++ b/lib/evmone/baseline_analysis.cpp
+@@ -27,6 +27,9 @@ void analyze_jumpdests(BitsetSpan map, bytes_view code) noexcept
+         const auto op = code[i];
+         if (static_cast<int8_t>(op) >= OP_PUSH1)  // If any PUSH opcode (see explanation above).
+             i += op - size_t{OP_PUSH1 - 1};       // Skip PUSH data.
++        else if (op == OP_XADD_IMM || op == OP_XMUL_IMM || op == OP_XSUB_IMM || op == OP_XGT_IMM ||
++                 op == OP_XRELU)
++            ++i;  // Skip the one-byte immediate of the SIMD instructions (never a jump destination).
+         else if (INTX_UNLIKELY(op == OP_JUMPDEST))
+             map.set(i);
+     }

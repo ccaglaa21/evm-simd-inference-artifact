@@ -1,13 +1,13 @@
 artifact run_all.sh
-date (UTC): 2026-10-21T07:39:23Z
+date (UTC): 2026-10-21T08:17:32Z
 evmone commit: 4938c0a379da908ff07658a4b970d15fd0a3abb5
 evmc commit:   496ce0f81058378b72d0b592d1c49b935bce3302
 compiler:      g++ (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0
 cpu:           11th Gen Intel(R) Core(TM) i5-1135G7 @ 2.40GHz
 avx2:          avx2
 
-atv_closed_form              rc=0  time=9s
-atv_cost_split               rc=0  time=22s
+atv_closed_form              rc=0  time=6s
+atv_cost_split               rc=0  time=20s
 atv_three_paths              rc=0  time=9s
 atv_price_sweep              rc=0  time=21s
 atv_int8                     rc=0  time=5s
@@ -17,13 +17,13 @@ mnist_layers                 rc=0  time=1s
 mnist_e2e_cb                 rc=0  time=0s
 mnist_loader_loop            rc=0  time=0s
 mnist_unrolled_simd          rc=0  time=0s
-mnist_batch_marginal         rc=0  time=2s
-mnist_deploy_cb              rc=0  time=1s
+mnist_batch_marginal         rc=0  time=1s
+mnist_deploy_cb              rc=0  time=2s
 mnist_swar_baseline          rc=0  time=0s
 mnist_rowmacc                rc=0  time=0s
 mnist_codecopy               rc=0  time=0s
 test_fullnet_500_acc         rc=0  time=1s
-fashion_onchain_acc          rc=0  time=1s
+fashion_onchain_acc          rc=0  time=0s
 seedchk_evm                  rc=0  time=0s
 test_security_opcodes        rc=0  time=0s
 test_security_matrix         rc=0  time=0s
@@ -32,9 +32,10 @@ sec_xgather                  rc=0  time=0s
 sec_xgather2                 rc=0  time=0s
 sec_xtranspose_big           rc=0  time=0s
 sec_xmacc_n                  rc=0  time=0s
+sec_jumpdest                 rc=0  time=0s
 int8_accuracy.py             rc=0  time=1s
 int8_accuracy_fashion.py     rc=0  time=0s
-fashion_diag.py              rc=0  time=1s
+fashion_diag.py              rc=0  time=0s
 overflow_bound.py            rc=0  time=8s
 atv_wallclock.txt            kept from an earlier run (RUN_TIMING not set)
 rowmacc_wallclock.txt        kept from an earlier run (RUN_TIMING not set)
@@ -44,24 +45,24 @@ seed_sweep_fashion_cal.txt   kept from an earlier run (RUN_SWEEPS not set)
 fallback library:            build_noavx2/lib/libevmone.so (compiled with -O3 -fno-tree-vectorize -fno-tree-slp-vectorize: no -mavx2, no SIMDPP_ARCH_X86_AVX2)
 ymm (256-bit AVX) instructions:  fallback library 0, AVX2 library 2413 (objdump -d | grep -c ymm)
 atv_closed_form              rc=0  time=7s
-atv_cost_split               rc=0  time=22s
+atv_cost_split               rc=0  time=20s
 atv_three_paths              rc=0  time=9s
-atv_price_sweep              rc=0  time=21s
+atv_price_sweep              rc=0  time=20s
 atv_int8                     rc=0  time=5s
 atv_solidity_scope           rc=0  time=0s
 mnist_sload                  rc=0  time=0s
 mnist_layers                 rc=0  time=1s
-mnist_e2e_cb                 rc=0  time=1s
+mnist_e2e_cb                 rc=0  time=0s
 mnist_loader_loop            rc=0  time=0s
-mnist_unrolled_simd          rc=0  time=0s
+mnist_unrolled_simd          rc=0  time=1s
 mnist_batch_marginal         rc=0  time=1s
-mnist_deploy_cb              rc=0  time=2s
+mnist_deploy_cb              rc=0  time=1s
 mnist_swar_baseline          rc=0  time=0s
-mnist_rowmacc                rc=0  time=0s
+mnist_rowmacc                rc=0  time=1s
 mnist_codecopy               rc=0  time=0s
 test_fullnet_500_acc         rc=0  time=1s
-fashion_onchain_acc          rc=0  time=1s
-seedchk_evm                  rc=0  time=0s
+fashion_onchain_acc          rc=0  time=0s
+seedchk_evm                  rc=0  time=1s
 test_security_opcodes        rc=0  time=0s
 test_security_matrix         rc=0  time=0s
 sec_oob                      rc=0  time=0s
@@ -69,14 +70,15 @@ sec_xgather                  rc=0  time=0s
 sec_xgather2                 rc=0  time=0s
 sec_xtranspose_big           rc=0  time=0s
 sec_xmacc_n                  rc=0  time=0s
+sec_jumpdest                 rc=0  time=0s
 fallback/atv_wallclock.txt   kept from an earlier run (RUN_TIMING not set)
 fallback/rowmacc_wallclock.txt kept from an earlier run (RUN_TIMING not set)
-fallback comparison:         26 identical, 0 different (see FALLBACK_COMPARISON.txt)
+fallback comparison:         27 identical, 0 different (see FALLBACK_COMPARISON.txt)
 atv_cost_split_xmaccs26.txt  kept from an earlier run (RUN_PRICE not set)
 atv_cost_split_xmaccs84.txt  kept from an earlier run (RUN_PRICE not set)
 
 sha256 of outputs:
-1875c58a831c87d7070dff6dbecb8445271ea3d86fb651a1b963234c72380a3c  FALLBACK_COMPARISON.txt
+f91b4b76ef22861a4966347f5beb54ce745283e808a10b977b962850c79d6e4f  FALLBACK_COMPARISON.txt
 e74cd77f5c82de4e2a1b57be5a0ec2822ca5dfa8f76d8f3beaa535a4fc9baf80  atv_closed_form.txt
 5c3440686d94b06ec59302fecfe89ca838580112374a9eabcb7a3cfe29f3d0ba  atv_cost_split.txt
 d02acaaa8b844041ee39bcff755ebef7727e3c38eeaeb36590952f7ae661ba9f  atv_cost_split_xmaccs26.txt
@@ -102,6 +104,7 @@ c7a3e800490e65ff0a904c4413438dd7d24212e5fcf8903f61498a386fa2ea83  mnist_rowmacc.
 cbfb7bee0f9118ce40a96a528ebae40a2b52c5524379ac5f28f27650babeaf73  mnist_unrolled_simd.txt
 96a017407b10e1508476e929294db965e6c155534f269e1dbc27f76bdbdf6661  overflow_bound.txt
 c9b3c9e4e7cbbf6c851767e6d0c4e2e634821613fb36d27d0f7cecd2965ffd02  rowmacc_wallclock.txt
+e4da80523465da3f7b41ecdfcb2679b3b25091b4cae83f38d73d27405d2f4d7a  sec_jumpdest.txt
 47e48f90cfee5d047cf9480cb8f1523eb4718068fe5982e615417220792bbc6f  sec_oob.txt
 556def5e4f3860758a37ea8aacb98d9f85288113501b08af31943dc798ba62a3  sec_xgather.txt
 e177de4efbd4da8f6565fd087ef6a419dfa347439e661a5f5766ee8840ccc6d9  sec_xgather2.txt
@@ -133,6 +136,7 @@ c7a3e800490e65ff0a904c4413438dd7d24212e5fcf8903f61498a386fa2ea83  fallback/mnist
 1a2abb8ea5740dac883c0a3c6b9c35b01ad8beb34e4b7b9a90436f93ef52892f  fallback/mnist_swar_baseline.txt
 cbfb7bee0f9118ce40a96a528ebae40a2b52c5524379ac5f28f27650babeaf73  fallback/mnist_unrolled_simd.txt
 92066c74567fd8bcae6c71d779197276ca6cf82bcb6040434cf9a4b270902782  fallback/rowmacc_wallclock.txt
+e4da80523465da3f7b41ecdfcb2679b3b25091b4cae83f38d73d27405d2f4d7a  fallback/sec_jumpdest.txt
 47e48f90cfee5d047cf9480cb8f1523eb4718068fe5982e615417220792bbc6f  fallback/sec_oob.txt
 556def5e4f3860758a37ea8aacb98d9f85288113501b08af31943dc798ba62a3  fallback/sec_xgather.txt
 e177de4efbd4da8f6565fd087ef6a419dfa347439e661a5f5766ee8840ccc6d9  fallback/sec_xgather2.txt
