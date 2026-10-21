@@ -1,0 +1,14 @@
+=== XMACC_N SECURITY TESTS ===
+running T1..T10
+[PASS] T1   n=0: status=0 output words=2 accumulator unchanged=yes MSIZE=6432 (expected 6432)
+[PASS] T2   n=2^31: status=3 (OUT_OF_GAS=3 expected)
+[PASS] T3   n=2^255: status=3 (OUT_OF_GAS=3 expected)
+[PASS] T4   n=1e8 with 1e8 gas: status=3 gas used=100000000 (OUT_OF_GAS=3 expected, no memory touched)
+[PASS] T5   off_w=2^64-8, n=4: status=3 (OUT_OF_GAS=3 expected)
+[PASS] T6   off_x=2^200, n=4: status=3 (OUT_OF_GAS=3 expected)
+[PASS] T7   n=2^30 (32 GiB) with 1e11 gas: status=3 (OUT_OF_GAS=3 expected from the memory charge)
+[PASS] T8   off_w == off_x, n=8: status=0 lanes == squares: yes
+[PASS] T9   40 groups: XMACC_N == 40 x XMACC: yes, == C++ reference (32-bit wrap): yes
+[PASS] T10  gas measured 2309, static count 2309 (11 gas x 40 groups included): equal
+
+--- SUMMARY --- 10/10 passed  *** ALL CHECKS PASSED ***
