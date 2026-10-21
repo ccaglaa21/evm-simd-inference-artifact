@@ -1,0 +1,26 @@
+Bytecode: inference contract 1188 B | 10 data contracts of at most 24576 bytes (224512 data bytes, 7016 words of 16 lanes) | XMACC_N16 priced at 22 gas per 16-element group
+
+[CHECK 1] 20 images, C++ == contract (code-as-storage, 16 lanes per word, XMACC_N16): 20/20 PASSED
+[CHECK 5] EIP-170 (<24,576): inference contract 1188 B, largest data contract 24576 B PASSED
+[N= 1] cold/warm = 368032/343032 | cold-warm 25000 (expected 10 x 2,500 = 25000) OK | MSIZE 227552 (expected 227552) OK | repeat identical
+[N= 2] cold/warm = 568751/543751 | cold-warm 25000 (expected 10 x 2,500 = 25000) OK | MSIZE 227584 (expected 227584) OK | repeat identical
+[N= 4] cold/warm = 970188/945188 | cold-warm 25000 (expected 10 x 2,500 = 25000) OK | MSIZE 227648 (expected 227648) OK | repeat identical
+[N= 8] cold/warm = 1773063/1748063 | cold-warm 25000 (expected 10 x 2,500 = 25000) OK | MSIZE 227776 (expected 227776) OK | repeat identical
+[N=16] cold/warm = 3378814/3353814 | cold-warm 25000 (expected 10 x 2,500 = 25000) OK | MSIZE 228032 (expected 228032) OK | repeat identical
+[CHECK 2] cold-warm == data contracts x 2,500 at every batch size: PASSED
+[CHECK 3] MSIZE == expected at every batch size: PASSED
+[CHECK 4] repeat runs identical: PASSED
+[CHECK 6] marginal per image (memory-stripped): 200688 200688 200688 200688 -> EXACTLY CONSTANT
+
+================ CODE-AS-STORAGE WEIGHTS, 16 LANES PER WORD (EXTCODECOPY loader, XMACC_N16) ================
+  single image, cold: total 368032 = weight read 47051 (10 cold account accesses x 2,600 + 7017 copied words x 3) + memory 120095 (MSIZE 227552) + the rest 200886
+  single image, warm: total 343032 (weight read 22051)
+  weight-read share of the cold total: 12.78%
+  anchors (mnist_codecopy, 8 lanes per word, XMACC_N): cold 715,664 | warm 668,164 | weight read 90,923 | memory 424,524 | marginal 199,911 | 19 data contracts
+  anchors (mnist_rowmacc, SLOAD weights): cold 32,185,375 | marginal 199,911
+  cold single-image ratios: 8-lane code-as-storage / 16-lane = 1.94x | SLOAD / 16-lane = 87.45x | marginal 8-lane / 16-lane = 1.00x
+  EIP-7825 cap 16777216: single image FITS in one transaction (2.2% of the cap) | batch of 16 cold 3378814 fits
+  marginal per image 200688 | code 1188 B | memory map compact (data at 1568..226080, scratch to 227520)
+  deployment (gas schedule, not measured): 10 data contracts, 224522 bytes x 200 + 10 x 32,000 = 45224400 | SLOAD layout of the same words: 7016 x 22,100 = 155053600
+
+*** ALL CHECKS PASSED -> numbers are valid ***

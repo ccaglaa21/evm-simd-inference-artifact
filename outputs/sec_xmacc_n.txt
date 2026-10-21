@@ -10,5 +10,7 @@ running T1..T10
 [PASS] T8   off_w == off_x, n=8: status=0 lanes == squares: yes
 [PASS] T9   40 groups: XMACC_N == 40 x XMACC: yes, == C++ reference (32-bit wrap): yes
 [PASS] T10  gas measured 2309, static count 2309 (11 gas x 40 groups included): equal
+[PASS] T11  XMACC_N16 n=2^31: status=3 (OUT_OF_GAS=3 expected)
+[PASS] T12  XMACC_N16 over 20 words == C++ reference (pairwise sums over all 16 lanes, 32-bit wrap): yes | gas 2297 == static 2297: yes
 
---- SUMMARY --- 10/10 passed  *** ALL CHECKS PASSED ***
+--- SUMMARY --- 12/12 passed  *** ALL CHECKS PASSED ***

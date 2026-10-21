@@ -8,6 +8,7 @@
 //           Kronecker substitution, correction once per neuron) -- the layer-1 scheme of Path S
 //   Path B  fixed-width XMACC: per group PUSH MLOAD PUSH MLOAD XMACC, then XSUM32
 //   Path N  row-level XMACC_N: one instruction per neuron, then XSUM32
+//   Path N16 row-level XMACC_N16 on 16-lane words (half the words, same price per element), then XSUM32
 // Method as in atv_wallclock: steady_clock around vm->execute only, adaptive inner repetition
 // (sample >= 10 ms), 7..31 samples, MEDIAN + min-max + CV%. The warm-up run checks the outputs of
 // all three programs against the C++ reference (bit-exact, 32-bit wrap) and records the gas.
@@ -52,8 +53,15 @@ int main() {
     std::vector<uint32_t> ref(NEU);
     for (int n = 0; n < NEU; ++n) { int64_t s = 0; for (int i = 0; i < I; ++i) s += (int64_t)W[(size_t)n * I + i] * X[i]; ref[n] = (uint32_t)s; }
     // calldata: [XB: 98 words, 16-bit lanes] [XS: 98 words, 32-bit lanes reversed] [WB: 128*98 words] [WS: 128*98 words]
-    const size_t XB = 0, XS = XB + (size_t)G * 32, WB = XS + (size_t)G * 32, WS = WB + (size_t)NEU * G * 32, CDS = WS + (size_t)NEU * G * 32;
+    const int G16 = I / 16;
+    const size_t XB = 0, XS = XB + (size_t)G * 32, WB = XS + (size_t)G * 32, WS = WB + (size_t)NEU * G * 32, X16 = WS + (size_t)NEU * G * 32, W16 = X16 + (size_t)G16 * 32, CDS = W16 + (size_t)NEU * G16 * 32;
     std::vector<uint8_t> cd(CDS, 0);
+    for (int g = 0; g < G16; ++g) {                                                   // 16-lane words for Path N16
+        uint8_t* x16 = &cd[X16 + (size_t)g * 32];
+        for (int j = 0; j < 16; ++j) { uint16_t u = (uint16_t)X[g * 16 + j]; x16[31 - 2 * j] = u & 0xFF; x16[30 - 2 * j] = (u >> 8) & 0xFF; }
+        for (int n = 0; n < NEU; ++n) { uint8_t* w16 = &cd[W16 + ((size_t)n * G16 + g) * 32];
+            for (int j = 0; j < 16; ++j) { uint16_t u = (uint16_t)W[(size_t)n * I + g * 16 + j]; w16[31 - 2 * j] = u & 0xFF; w16[30 - 2 * j] = (u >> 8) & 0xFF; } }
+    }
     for (int g = 0; g < G; ++g) {
         uint8_t* xb = &cd[XB + (size_t)g * 32]; uint8_t* xs = &cd[XS + (size_t)g * 32];
         for (int j = 0; j < 8; ++j) { uint16_t u = (uint16_t)X[g * 8 + j]; xb[31 - 2 * j] = u & 0xFF; xb[30 - 2 * j] = (u >> 8) & 0xFF;
@@ -74,6 +82,11 @@ int main() {
         for (int g = 0; g < G; ++g) { kB.PUSH(MX + (uint64_t)g * 32); kB.MLOAD(); kB.PUSH(MW + ((uint64_t)n * G + g) * 32); kB.MLOAD(); kB.b(0xCB); }
         kB.b(0xCD); kB.PUSH(MO + (uint64_t)n * 32); kB.MSTORE(); }
     tail(kB);
+    // Path N16: inputs at 0 (G16 words), weights at MW16, outputs at MO16 (its own, smaller memory map)
+    const uint64_t MW16 = (uint64_t)G16 * 32, MO16 = MW16 + (uint64_t)NEU * G16 * 32, MEND16 = MO16 + (uint64_t)NEU * 32;
+    Code kN16; copy(kN16, X16, MX, (uint64_t)G16 * 32); copy(kN16, W16, MW16, (uint64_t)NEU * G16 * 32);
+    for (int n = 0; n < NEU; ++n) { kN16.P1(0); kN16.PUSH(MX); kN16.PUSH(MW16 + (uint64_t)n * G16 * 32); kN16.PUSH(G16); kN16.b(0xE7); kN16.b(0xCD); kN16.PUSH(MO16 + (uint64_t)n * 32); kN16.MSTORE(); }
+    kN16.PUSH(MEND16); kN16.PUSH(0); kN16.b(0xF3);
     // Path N
     Code kN; copy(kN, XB, MX, (uint64_t)G * 32); copy(kN, WB, MW, (uint64_t)NEU * G * 32);
     for (int n = 0; n < NEU; ++n) { kN.P1(0); kN.PUSH(MX); kN.PUSH(MW + (uint64_t)n * G * 32); kN.PUSH(G); kN.b(0xE6); kN.b(0xCD); kN.PUSH(MO + (uint64_t)n * 32); kN.MSTORE(); }
@@ -95,19 +108,20 @@ int main() {
     kS.PUSH(MEND); kS.PUSH(0); kS.b(0xF3);
 #ifdef LOCAL_TEST
     { auto dump = [](const char* f, const std::vector<uint8_t>& v) { FILE* o = std::fopen(f, "wb"); std::fwrite(v.data(), 1, v.size(), o); std::fclose(o); };
-      dump("rw_S.bin", kS.c); dump("rw_B.bin", kB.c); dump("rw_N.bin", kN.c); dump("rw_cd.bin", cd);
-      FILE* o = std::fopen("rw_ref.txt", "w"); for (int n = 0; n < NEU; ++n) std::fprintf(o, "%u\n", ref[n]); std::fclose(o); std::printf("dumped\n"); return 0; }
+      dump("rw_S.bin", kS.c); dump("rw_B.bin", kB.c); dump("rw_N.bin", kN.c); dump("rw_N16.bin", kN16.c); dump("rw_cd.bin", cd);
+      FILE* o = std::fopen("rw_ref.txt", "w"); std::fprintf(o, "%llu %llu\n", (unsigned long long)MO, (unsigned long long)MO16); for (int n = 0; n < NEU; ++n) std::fprintf(o, "%u\n", ref[n]); std::fclose(o); std::printf("dumped\n"); return 0; }
 #endif
-    std::printf("Bytecode: S=%zu B=%zu N=%zu bytes | calldata %zu bytes | %d neurons x %d inputs = %d multiply-accumulates\n", kS.c.size(), kB.c.size(), kN.c.size(), CDS, NEU, I, NEU * I);
+    std::printf("Bytecode: S=%zu B=%zu N=%zu N16=%zu bytes | calldata %zu bytes | %d neurons x %d inputs = %d multiply-accumulates\n", kS.c.size(), kB.c.size(), kN.c.size(), kN16.c.size(), CDS, NEU, I, NEU * I);
 
     evmc_message msg{}; msg.kind = EVMC_CALL; msg.gas = GAS; msg.input_data = cd.data(); msg.input_size = cd.size();
     int fail = 0;
+    uint64_t MOcur = MO, MENDcur = MEND;   // output base of the program being run (N16 has its own map)
     auto runOnce = [&](const Code& k, bool check, int lanes /*1: XSUM32 word (uint32 at the low end), 0: S word*/, const char* name) -> long long {
         auto r = VM->execute(VM, nullptr, nullptr, EVMC_SHANGHAI, &msg, k.c.data(), k.c.size());
         long long g = GAS - r.gas_left;
         if (check) {
-            bool ok = r.status_code == EVMC_SUCCESS && r.output_data && r.output_size >= MEND;
-            if (ok) for (int n = 0; n < NEU && ok; ++n) { const uint8_t* w = r.output_data + MO + (size_t)n * 32;
+            bool ok = r.status_code == EVMC_SUCCESS && r.output_data && r.output_size >= MENDcur;
+            if (ok) for (int n = 0; n < NEU && ok; ++n) { const uint8_t* w = r.output_data + MOcur + (size_t)n * 32;
                 uint32_t got = 0; for (int i = 28; i < 32; ++i) got = (got << 8) | w[i];        // low 32 bits of the word
                 (void)lanes; if (got != ref[n]) ok = false; }
             std::printf("  [%s] bit-exact against the C++ reference (128 outputs, 32-bit wrap): %s | gas %lld\n", name, ok ? "PASSED" : "FAILED", g);
@@ -132,12 +146,13 @@ int main() {
         std::printf("  [%s] med=%.6f s  min=%.6f  max=%.6f  CV=%.1f%%  (samples=%zu, inner-reps=%lld)\n", name, med, S.front(), S.back(), 100.0 * sd / mu, S.size(), R);
         std::fflush(stdout);
     };
-    double tS, tB, tN;
+    double tS, tB, tN, tN16;
     timePath(kS, 0, "S", tS); timePath(kB, 1, "B", tB); timePath(kN, 1, "N", tN);
+    MOcur = MO16; MENDcur = MEND16; timePath(kN16, 1, "N16", tN16); MOcur = MO; MENDcur = MEND;
     std::printf("\n================ ROW-LEVEL INSTRUCTION, WALL-CLOCK (layer-1 shape, %d multiply-accumulates) ================\n", NEU * I);
-    std::printf("  median time per execution: S %.3f ms | B %.3f ms | N %.3f ms\n", tS * 1e3, tB * 1e3, tN * 1e3);
-    std::printf("  time ratios: S/N = %.2f | B/N = %.2f | S/B = %.2f\n", tS / tN, tB / tN, tS / tB);
-    std::printf("  nanoseconds per multiply-accumulate: S %.2f | B %.2f | N %.2f\n", tS * 1e9 / (NEU * I), tB * 1e9 / (NEU * I), tN * 1e9 / (NEU * I));
+    std::printf("  median time per execution: S %.3f ms | B %.3f ms | N %.3f ms | N16 %.3f ms\n", tS * 1e3, tB * 1e3, tN * 1e3, tN16 * 1e3);
+    std::printf("  time ratios: S/N = %.2f | B/N = %.2f | S/B = %.2f | S/N16 = %.2f | N/N16 = %.2f\n", tS / tN, tB / tN, tS / tB, tS / tN16, tN / tN16);
+    std::printf("  nanoseconds per multiply-accumulate: S %.2f | B %.2f | N %.2f | N16 %.2f\n", tS * 1e9 / (NEU * I), tB * 1e9 / (NEU * I), tN * 1e9 / (NEU * I), tN16 * 1e9 / (NEU * I));
     std::printf("%s\n", fail ? "*** A CHECK FAILED -> timing numbers are not valid ***" : "*** ALL CHECKS PASSED -> timing numbers are valid for this build ***");
 #ifndef LOCAL_TEST
     VM->destroy(VM); dlclose(h);

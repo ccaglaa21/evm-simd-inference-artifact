@@ -24,9 +24,10 @@ def parse(path):
     m = re.search(r"(\d+) neurons x (\d+) inputs", t)
     neu, inp = int(m.group(1)), int(m.group(2))
     d = {"neu": neu, "inp": inp}
-    for n in "SBN":
-        d[n + "gas"] = int(re.search(r"\[" + n + r"\] bit-exact.*?gas (\d+)", t).group(1))
-        d[n + "t"] = float(re.search(r"\[" + n + r"\] med=([\d.]+) s", t).group(1))
+    for n in ("S", "B", "N", "N16"):
+        m1 = re.search(r"\[" + n + r"\] bit-exact.*?gas (\d+)", t); m2 = re.search(r"\[" + n + r"\] med=([\d.]+) s", t)
+        if m1 and m2:
+            d[n + "gas"] = int(m1.group(1)); d[n + "t"] = float(m2.group(1))
     if "ALL CHECKS PASSED" not in t:
         print("checks of", path, "did not pass; no derivation"); sys.exit(1)
     return d
@@ -57,6 +58,13 @@ print(f"rowmacc_wallclock: {NEU} neurons x {I} inputs, {groups} groups of 8 (mul
 print(f"memory expansion gas {mem_BN} (S: {mem_S}), CALLDATACOPY copy cost {copy}")
 print(f"pure computation gas: S {compS} | B {compB} (XMACC {PRICE} x {groups} = {PRICE * groups}, other {otherB}) | N {compN} (XMACC_N {PRICE} x {groups} = {PRICE * groups}, other {otherN})")
 print(f"gas ratios of the pure computation at the provisional price {PRICE}: S/N {compS / compN:.2f} | S/B {compS / compB:.2f}")
+has16 = "N16gas" in a and "N16gas" in f
+if has16:
+    G16 = I // 16; groups16 = NEU * G16
+    MEND16 = G16 * 32 + NEU * G16 * 32 + NEU * 32
+    mem16 = memgas(MEND16); copy16 = (3 + 3 * G16) + (3 + 3 * NEU * G16)
+    compN16 = a["N16gas"] - mem16 - copy16; otherN16 = compN16 - 2 * PRICE * groups16
+    print(f"N16 (16 lanes per word, XMACC_N16 at {2 * PRICE} gas per 16-element group): gas {a['N16gas']}, memory {mem16}, copy {copy16}, pure computation {compN16} (XMACC_N16 {2 * PRICE} x {groups16} = {2 * PRICE * groups16}, other {otherN16}); S/N16 {compS / compN16:.2f}")
 print()
 for name, d in (("AVX2 build", a), ("scalar-fallback build", f)):
     rN = d["St"] / d["Nt"]
@@ -65,6 +73,9 @@ for name, d in (("AVX2 build", a), ("scalar-fallback build", f)):
     pB = (compS / rB - otherB) / groups
     print(f"{name}: median times S {d['St'] * 1e3:.3f} ms, B {d['Bt'] * 1e3:.3f} ms, N {d['Nt'] * 1e3:.3f} ms")
     print(f"  time ratio S/N = {rN:.2f} -> time-neutral price of XMACC_N = {pN:.2f} gas per group (provisional {PRICE})")
+    if has16:
+        r16 = d["St"] / d["N16t"]; p16 = (compS / r16 - otherN16) / groups16
+        print(f"  time ratio S/N16 = {r16:.2f} (N16 {d['N16t'] * 1e3:.3f} ms) -> time-neutral price of XMACC_N16 = {p16:.2f} gas per 16-element group (provisional {2 * PRICE})")
     if pB > 0:
         print(f"  time ratio S/B = {rB:.2f} -> time-neutral price of XMACC = {pB:.2f} gas per instruction (provisional {PRICE})")
     else:

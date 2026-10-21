@@ -13,6 +13,9 @@
 //   T9  cross-consistency -> XMACC_N over 40 groups of signed random data equals 40 XMACC steps
 //                            (same lane arithmetic, 32-bit wrap included)
 //   T10 gas accounting   -> gas of T9 equals the static count (11 per group plus the other opcodes)
+//   T11 XMACC_N16 n=2^31 -> clean OUT_OF_GAS (same guards as XMACC_N)
+//   T12 XMACC_N16 over 20 words equals the C++ reference (pairwise sums over the 16 lanes of a word, 32-bit wrap)
+//       and its gas equals the static count (22 per 16-element group)
 // A SUCCESS where OUT_OF_GAS is expected would mean a guard is missing. The program prints one line
 // per test and a summary; the output is deterministic and is compared between the two builds.
 #include <evmc/evmc.h>
@@ -71,7 +74,8 @@ int main() {
     const int W = 0, X = 32 * 64, OUT = 32 * 200;       // memory map: 64 weight words, 64 input words
     // common prelude: 64 groups of random signed lanes for W and X, accumulator lanes = 1..8
     int16_t wl[64][8], xl[64][8]; uint8_t ww[64][32], xw[64][32], accw[32];
-    for (int g = 0; g < 64; ++g) { for (int j = 0; j < 8; ++j) { wl[g][j] = rnd16(); xl[g][j] = rnd16(); } lanes16(ww[g], wl[g]); lanes16(xw[g], xl[g]); }
+    for (int g = 0; g < 64; ++g) { for (int j = 0; j < 8; ++j) { wl[g][j] = rnd16(); xl[g][j] = rnd16(); } lanes16(ww[g], wl[g]); lanes16(xw[g], xl[g]);
+        for (int b = 0; b < 16; ++b) { ww[g][b] = (uint8_t)rnd16(); xw[g][b] = (uint8_t)rnd16(); } }   // bytes 0..15 (lanes 8..15) are used by XMACC_N16 only
     std::memset(accw, 0, 32); for (int j = 0; j < 8; ++j) accw[31 - 4 * j] = (uint8_t)(j + 1);   // lane j = j + 1 (big-endian word bytes)
     auto prelude = [&](Code& k) { for (int g = 0; g < 64; ++g) { k.W32(ww[g]); k.PUSH(W + 32 * g); k.MSTORE(); k.W32(xw[g]); k.PUSH(X + 32 * g); k.MSTORE(); } };
     auto one = [&](uint64_t n, const uint8_t* n_word /*32 bytes or null*/, uint64_t offw, const uint8_t* offw_word, uint64_t offx, const uint8_t* offx_word) {
@@ -114,6 +118,18 @@ int main() {
       char d[160]; std::snprintf(d, sizeof d, "40 groups: XMACC_N == 40 x XMACC: %s, == C++ reference (32-bit wrap): %s", ok ? "yes" : "no", okref ? "yes" : "no"); report("T9", ok && okref, d);
       long long memw = (OUT + 64 + 31) / 32; long long memgas = 3 * memw + (memw * memw) / 512;
       long long pred = kn.sgas + memgas; char e[160]; std::snprintf(e, sizeof e, "gas measured %lld, static count %lld (11 gas x 40 groups included): %s", rn.gas, pred, rn.gas == pred ? "equal" : "DIFFERENT"); report("T10", rn.gas == pred, e); }
+    // T11, T12: the 16-lane variant XMACC_N16 (0xe7): guards and reference (pairwise sums, 22 gas per group)
+    { Code k; prelude(k); k.W32(accw); k.PUSH(X); k.PUSH(W); k.PUSH(0x80000000ULL); k.op(0xE7, 0); k.PUSH(OUT); k.MSTORE(); k.RET(OUT, 32);
+      Res r = run(k, GAS_BIG); char d[96]; std::snprintf(d, sizeof d, "XMACC_N16 n=2^31: status=%d (OUT_OF_GAS=3 expected)", (int)r.st); report("T11", r.st == EVMC_OUT_OF_GAS, d); }
+    { Code k; prelude(k); k.W32(accw); k.PUSH(X); k.PUSH(W); k.PUSH(20); k.op(0xE7, 22 * 20); k.PUSH(OUT); k.MSTORE(); k.RET(OUT, 32);
+      Res r = run(k, GAS_BIG); bool ok = r.st == EVMC_SUCCESS && r.out.size() == 32;
+      if (ok) for (int kk = 0; kk < 8; ++kk) { int32_t ref = kk + 1;
+          for (int g = 0; g < 20; ++g) { uint32_t sum = 0; for (int h = 0; h < 2; ++h) { int j = 2 * kk + h;
+              int16_t w = (int16_t)(ww[g][31 - 2 * j] | (ww[g][30 - 2 * j] << 8)); int16_t x = (int16_t)(xw[g][31 - 2 * j] | (xw[g][30 - 2 * j] << 8));
+              sum += (uint32_t)((int32_t)w * (int32_t)x); } ref = (int32_t)((uint32_t)ref + sum); }
+          if (lane32(r.out.data(), kk) != ref) ok = false; }
+      long long memw = (OUT + 32 + 31) / 32; long long pred = k.sgas + 3 * memw + (memw * memw) / 512;
+      char d[160]; std::snprintf(d, sizeof d, "XMACC_N16 over 20 words == C++ reference (pairwise sums over all 16 lanes, 32-bit wrap): %s | gas %lld == static %lld: %s", ok ? "yes" : "no", r.gas, pred, r.gas == pred ? "yes" : "no"); report("T12", ok && r.gas == pred, d); }
     std::printf("\n--- SUMMARY --- %d/%d passed%s\n", pass, total, pass == total ? "  *** ALL CHECKS PASSED ***" : "  *** INSPECT ***");
 #ifndef LOCAL_TEST
     VM->destroy(VM); dlclose(h);
