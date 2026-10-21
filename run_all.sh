@@ -24,6 +24,7 @@
 #                   atv_cost_split at each price (atv_cost_split_xmaccs26.txt, atv_cost_split_xmaccs84.txt);
 #                   about 2 x 2 minutes. Always the last stage, because it changes the gas table.
 #
+# price_neutral.py derives the time-neutral price of XMACC_N from rowmacc_wallclock.txt (AVX2 and fallback).
 # A stage that is not requested leaves the output files of an earlier run untouched and notes this in
 # MANIFEST.txt. The remaining training scripts (train_deep*.py, seedchk_write.py, deep_reference.py)
 # regenerate the canonical files already shipped in data/ and are not run here.
@@ -94,6 +95,8 @@ run_py int8_accuracy
 run_py int8_accuracy_fashion
 run_py fashion_diag
 run_py overflow_bound
+export OUT
+run_py price_neutral     # reads the two rowmacc_wallclock.txt files (kept or just produced)
 
 if [ "${RUN_TIMING:-0}" = "1" ]; then
   echo "== wall-clock: kernel (atv_wallclock) and row-level instruction (rowmacc_wallclock), machine dependent =="

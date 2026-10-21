@@ -22,7 +22,7 @@ Blockchain Smart Contracts* (Gebze Technical University, May 2026).
 | `numpy_simd.hpp` | `MatrixHeader` operations (copied into `lib/evmone/` before the patch is applied) |
 | `libsimdpp-2.1/` | header-only SIMD library, vendored from github.com/p12tic/libsimdpp @ `55860b50` (Boost Software License 1.0, see `THIRD_PARTY_LICENSES`) |
 | `experiments/` | 30 C++ measurement programs and the Solidity baseline contract (`ATVBaseline.sol`) |
-| `training/` | 11 Python scripts: training, quantization, seed sweeps, calibration experiment, int8 study, accumulator overflow bound |
+| `training/` | 12 Python scripts: training, quantization, seed sweeps, calibration experiment, int8 study, accumulator overflow bound, time-neutral price |
 | `data/` | canonical seed-42 weights and biases, 500-image batches, float reference predictions, seed-31337 spot-check weights |
 | `Dockerfile`, `run_selftest.sh` | isolated build of the patched interpreter and the closed-form self-test |
 | `run_all.sh` | compiles and runs every program and writes one output file per program |
@@ -59,7 +59,7 @@ mkdir -p outputs
 docker run --rm -m 6g -v "$PWD/outputs:/out" evmone-simd sh /work/evmone/run_all.sh
 ```
 
-This runs the 30 C++ programs and the 4 Python scripts that need only the
+This runs the 30 C++ programs and the 5 Python scripts that need only the
 shipped `data/` (about 4 minutes) and writes `outputs/<program>.txt` plus
 `outputs/MANIFEST.txt`. Four optional stages are enabled with environment
 variables:
@@ -124,6 +124,7 @@ identical to the AVX2 run. The fallback outputs are kept in
 | Row-level instruction (Path N, `XMACC_N`): unrolled single-image compute with one instruction per neuron, and the deployable looped contract with its marginal cost per image | `experiments/mnist_rowmacc.cpp` | `mnist_rowmacc.txt` |
 | Deployable contracts with a loop per neuron and an unrolled inner body, for the fixed-width path (B2) and the packed scalar baseline (S2): marginal cost per image against the per-group loops and the row-level contract | `experiments/mnist_loops.cpp` | `mnist_loops.txt` |
 | Weights as contract code (code-as-storage): the Path N contract with the 13,840 weight words stored in 19 data contracts and read with `EXTCODECOPY`, compact memory map; cold and warm cost, EIP-7825 cap check, deployment cost from the gas schedule | `experiments/mnist_codecopy.cpp` | `mnist_codecopy.txt` |
+| Time-neutral price of `XMACC_N` (and `XMACC`) from the row-level timing on both builds: the price at which the gas ratio of the pure computation equals the measured time ratio | `training/price_neutral.py` (reads `rowmacc_wallclock.txt` and `fallback/rowmacc_wallclock.txt`) | `price_neutral.txt` |
 | 32-bit accumulator analysis: worst-case bound per layer over the admissible input range and the largest value reached on the canonical images | `training/overflow_bound.py` | `overflow_bound.txt` |
 | Quantization loss over five seeds and 10,000 images; calibration experiment | `training/seed_sweep.py`, `training/seed_sweep_fashion.py`, `training/seed_sweep_fashion_cal.py` via `RUN_SWEEPS=1` | `seed_sweep.txt`, `seed_sweep_fashion.txt`, `seed_sweep_fashion_cal.txt` |
 | int8 accuracy study | `training/int8_accuracy.py`, `training/int8_accuracy_fashion.py` | `int8_accuracy.txt`, `int8_accuracy_fashion.txt` |
