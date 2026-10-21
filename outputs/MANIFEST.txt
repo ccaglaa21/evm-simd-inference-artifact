@@ -1,5 +1,5 @@
 artifact run_all.sh
-date (UTC): 2026-10-20T21:12:41Z
+date (UTC): 2026-10-21T07:39:23Z
 evmone commit: 4938c0a379da908ff07658a4b970d15fd0a3abb5
 evmc commit:   496ce0f81058378b72d0b592d1c49b935bce3302
 compiler:      g++ (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0
@@ -14,13 +14,14 @@ atv_int8                     rc=0  time=5s
 atv_solidity_scope           rc=0  time=0s
 mnist_sload                  rc=0  time=0s
 mnist_layers                 rc=0  time=1s
-mnist_e2e_cb                 rc=0  time=1s
-mnist_loader_loop            rc=0  time=1s
-mnist_unrolled_simd          rc=0  time=1s
-mnist_batch_marginal         rc=0  time=1s
+mnist_e2e_cb                 rc=0  time=0s
+mnist_loader_loop            rc=0  time=0s
+mnist_unrolled_simd          rc=0  time=0s
+mnist_batch_marginal         rc=0  time=2s
 mnist_deploy_cb              rc=0  time=1s
 mnist_swar_baseline          rc=0  time=0s
 mnist_rowmacc                rc=0  time=0s
+mnist_codecopy               rc=0  time=0s
 test_fullnet_500_acc         rc=0  time=1s
 fashion_onchain_acc          rc=0  time=1s
 seedchk_evm                  rc=0  time=0s
@@ -31,12 +32,12 @@ sec_xgather                  rc=0  time=0s
 sec_xgather2                 rc=0  time=0s
 sec_xtranspose_big           rc=0  time=0s
 sec_xmacc_n                  rc=0  time=0s
-rowmacc_wallclock            rc=0  time=1s
-int8_accuracy.py             rc=0  time=0s
-int8_accuracy_fashion.py     rc=0  time=1s
-fashion_diag.py              rc=0  time=0s
+int8_accuracy.py             rc=0  time=1s
+int8_accuracy_fashion.py     rc=0  time=0s
+fashion_diag.py              rc=0  time=1s
 overflow_bound.py            rc=0  time=8s
 atv_wallclock.txt            kept from an earlier run (RUN_TIMING not set)
+rowmacc_wallclock.txt        kept from an earlier run (RUN_TIMING not set)
 seed_sweep.txt               kept from an earlier run (RUN_SWEEPS not set)
 seed_sweep_fashion.txt       kept from an earlier run (RUN_SWEEPS not set)
 seed_sweep_fashion_cal.txt   kept from an earlier run (RUN_SWEEPS not set)
@@ -44,19 +45,20 @@ fallback library:            build_noavx2/lib/libevmone.so (compiled with -O3 -f
 ymm (256-bit AVX) instructions:  fallback library 0, AVX2 library 2413 (objdump -d | grep -c ymm)
 atv_closed_form              rc=0  time=7s
 atv_cost_split               rc=0  time=22s
-atv_three_paths              rc=0  time=10s
-atv_price_sweep              rc=0  time=25s
-atv_int8                     rc=0  time=6s
+atv_three_paths              rc=0  time=9s
+atv_price_sweep              rc=0  time=21s
+atv_int8                     rc=0  time=5s
 atv_solidity_scope           rc=0  time=0s
 mnist_sload                  rc=0  time=0s
 mnist_layers                 rc=0  time=1s
-mnist_e2e_cb                 rc=0  time=0s
+mnist_e2e_cb                 rc=0  time=1s
 mnist_loader_loop            rc=0  time=0s
-mnist_unrolled_simd          rc=0  time=1s
+mnist_unrolled_simd          rc=0  time=0s
 mnist_batch_marginal         rc=0  time=1s
 mnist_deploy_cb              rc=0  time=2s
 mnist_swar_baseline          rc=0  time=0s
 mnist_rowmacc                rc=0  time=0s
+mnist_codecopy               rc=0  time=0s
 test_fullnet_500_acc         rc=0  time=1s
 fashion_onchain_acc          rc=0  time=1s
 seedchk_evm                  rc=0  time=0s
@@ -65,16 +67,16 @@ test_security_matrix         rc=0  time=0s
 sec_oob                      rc=0  time=0s
 sec_xgather                  rc=0  time=0s
 sec_xgather2                 rc=0  time=0s
-sec_xtranspose_big           rc=0  time=1s
+sec_xtranspose_big           rc=0  time=0s
 sec_xmacc_n                  rc=0  time=0s
-atv_wallclock                rc=0  time=46s
-rowmacc_wallclock            rc=0  time=1s
-fallback comparison:         25 identical, 0 different (see FALLBACK_COMPARISON.txt)
+fallback/atv_wallclock.txt   kept from an earlier run (RUN_TIMING not set)
+fallback/rowmacc_wallclock.txt kept from an earlier run (RUN_TIMING not set)
+fallback comparison:         26 identical, 0 different (see FALLBACK_COMPARISON.txt)
 atv_cost_split_xmaccs26.txt  kept from an earlier run (RUN_PRICE not set)
 atv_cost_split_xmaccs84.txt  kept from an earlier run (RUN_PRICE not set)
 
 sha256 of outputs:
-d7d3e476fedfc4a7585b013d15a583b6750b541cd437228d54e58ecf8bc72da6  FALLBACK_COMPARISON.txt
+1875c58a831c87d7070dff6dbecb8445271ea3d86fb651a1b963234c72380a3c  FALLBACK_COMPARISON.txt
 e74cd77f5c82de4e2a1b57be5a0ec2822ca5dfa8f76d8f3beaa535a4fc9baf80  atv_closed_form.txt
 5c3440686d94b06ec59302fecfe89ca838580112374a9eabcb7a3cfe29f3d0ba  atv_cost_split.txt
 d02acaaa8b844041ee39bcff755ebef7727e3c38eeaeb36590952f7ae661ba9f  atv_cost_split_xmaccs26.txt
@@ -89,6 +91,7 @@ d02acaaa8b844041ee39bcff755ebef7727e3c38eeaeb36590952f7ae661ba9f  atv_cost_split
 bb1c0af0fc380d9f07f71e65573e17e1a280efaa1ef57334fc2a43576192bc44  int8_accuracy.txt
 2b0623113cd2b40a10761bf14ac172f9420c7dce08c9ab4e204def8054aa9f61  int8_accuracy_fashion.txt
 5b293774df18b802960b6fd21505aa0dbf58d5b42a546eb05ef39cfd946d53fe  mnist_batch_marginal.txt
+48a43067508ed48edd915bfaac90db98e3a0beb28646545dc3b8d25fe02f4e80  mnist_codecopy.txt
 2ed1aa26bc95c350327475c994d4dba96d5305e9d17e81e49abaf19b43d63205  mnist_deploy_cb.txt
 54bfe8f4d006ad677b09b9dd0c73bafd9b1f043f56ee577f7368668f0997f206  mnist_e2e_cb.txt
 bc2f6fb32ec6144f0c989fb42c9a5f1b5d68e5d440812f781d2d7baceb6469cb  mnist_layers.txt
@@ -120,6 +123,7 @@ e74cd77f5c82de4e2a1b57be5a0ec2822ca5dfa8f76d8f3beaa535a4fc9baf80  fallback/atv_c
 4e07b28135b9bf0d8defb370f26d32cd620373ce3eed3dccdc24655d87383e1c  fallback/atv_wallclock.txt
 119e7fa87a193544c8c4229d6ab7eff84a65af6948d9035150bb25e9f6ce3f19  fallback/fashion_onchain_acc.txt
 5b293774df18b802960b6fd21505aa0dbf58d5b42a546eb05ef39cfd946d53fe  fallback/mnist_batch_marginal.txt
+48a43067508ed48edd915bfaac90db98e3a0beb28646545dc3b8d25fe02f4e80  fallback/mnist_codecopy.txt
 2ed1aa26bc95c350327475c994d4dba96d5305e9d17e81e49abaf19b43d63205  fallback/mnist_deploy_cb.txt
 54bfe8f4d006ad677b09b9dd0c73bafd9b1f043f56ee577f7368668f0997f206  fallback/mnist_e2e_cb.txt
 bc2f6fb32ec6144f0c989fb42c9a5f1b5d68e5d440812f781d2d7baceb6469cb  fallback/mnist_layers.txt

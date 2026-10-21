@@ -1,0 +1,25 @@
+Bytecode: inference contract 1392 B | 19 data contracts of at most 24576 bytes (442880 data bytes, 13840 words) | XMACC_N priced at 11 gas per group
+
+[CHECK 1] 20 images, C++ == contract (code-as-storage, EXTCODECOPY loader): 20/20 PASSED
+[CHECK 5] EIP-170 (<24,576): inference contract 1392 B, largest data contract 24576 B PASSED
+[N= 1] cold/warm = 715664/668164 | cold-warm 47500 (expected 19 x 2,500 = 47500) OK | MSIZE 447840 (expected 447840) OK | repeat identical
+[N= 2] cold/warm = 915632/868132 | cold-warm 47500 (expected 19 x 2,500 = 47500) OK | MSIZE 447872 (expected 447872) OK | repeat identical
+[N= 4] cold/warm = 1315570/1268070 | cold-warm 47500 (expected 19 x 2,500 = 47500) OK | MSIZE 447936 (expected 447936) OK | repeat identical
+[N= 8] cold/warm = 2115444/2067944 | cold-warm 47500 (expected 19 x 2,500 = 47500) OK | MSIZE 448064 (expected 448064) OK | repeat identical
+[N=16] cold/warm = 3715194/3667694 | cold-warm 47500 (expected 19 x 2,500 = 47500) OK | MSIZE 448320 (expected 448320) OK | repeat identical
+[CHECK 2] cold-warm == data contracts x 2,500 at every batch size: PASSED
+[CHECK 3] MSIZE == expected at every batch size: PASSED
+[CHECK 4] repeat runs identical: PASSED
+[CHECK 6] marginal per image (memory-stripped): 199911 199911 199911 199911 -> EXACTLY CONSTANT | equals the Path N marginal of mnist_rowmacc (199,911): yes
+
+================ CODE-AS-STORAGE WEIGHTS (EXTCODECOPY loader, Path N body) ================
+  single image, cold: total 715664 = weight read 90923 (19 cold account accesses x 2,600 + 13841 copied words x 3) + memory 424524 (MSIZE 447840) + the rest 200217
+  single image, warm: total 668164 (weight read 43423)
+  weight-read share of the cold total: 12.70%
+  anchors (mnist_rowmacc, SLOAD weights, same body): cold 32,185,375 | warm 4,505,375 | SLOAD cold read 13,840 x 2,100 = 29,064,000 | marginal 199,911
+  cold single-image ratio, SLOAD / code-as-storage: 44.97x
+  EIP-7825 cap 16777216: single image FITS in one transaction (4.3% of the cap) | batch of 16 cold 3715194 fits
+  marginal per image 199911 | code 1392 B | memory map compact (data at 3136..446016, scratch to 447808)
+  deployment (gas schedule, not measured): 19 data contracts, 442899 bytes x 200 + 19 x 32,000 = 89187800 | SLOAD layout: 13840 x 22,100 = 305864000
+
+*** ALL CHECKS PASSED -> numbers are valid ***

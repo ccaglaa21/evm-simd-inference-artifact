@@ -7,18 +7,19 @@
 #   docker run --rm -m 6g -v "$PWD/outputs:/out" evmone-simd sh /work/evmone/run_all.sh
 #
 # Optional stages (environment variables, pass with -e NAME=1):
-#   RUN_TIMING=1    atv_wallclock: wall-clock time vs gas (about 1 minute; machine dependent)
-#   rowmacc_wallclock (row-level instruction timing, about 1 minute) always runs; its output is machine
-#                   dependent and is excluded from the fallback comparison
+#   RUN_TIMING=1    atv_wallclock (wall-clock time vs gas) and rowmacc_wallclock (row-level instruction timing),
+#                   about 2 minutes, machine dependent; with RUN_FALLBACK=1 both are also run on the fallback
+#                   build. Without RUN_TIMING=1 the timing files of an earlier run are kept, so a rerun of the
+#                   gas programs never changes the timing figures reported in the paper.
 #   RUN_SWEEPS=1    seed_sweep.py, seed_sweep_fashion.py, seed_sweep_fashion_cal.py (about 50 minutes);
 #                   need the raw datasets mounted at /work/evmone/mnist_data and /work/evmone/fashion_data
 #   RUN_FALLBACK=1  builds a second libevmone WITHOUT AVX2 (-O3 -fno-tree-vectorize -fno-tree-slp-vectorize,
 #                   no -mavx2 and no SIMDPP_ARCH_X86_AVX2, so every instruction runs its scalar fallback and the
 #                   compiler does not auto-vectorize it; the manifest records the count of ymm instructions in the
-#                   library, which must be 0), reruns the 25 gas programs against it into /out/fallback/ and
-#                   compares each output with the AVX2 run (FALLBACK_COMPARISON.txt); it also runs the two timing
-#                   programs against the fallback build (fallback/atv_wallclock.txt, fallback/rowmacc_wallclock.txt,
-#                   timing only, not compared); about 13 minutes (one more build of libevmone)
+#                   library, which must be 0), reruns the 26 gas programs against it into /out/fallback/ and
+#                   compares each output with the AVX2 run (FALLBACK_COMPARISON.txt); with RUN_TIMING=1 it also runs
+#                   the two timing programs against the fallback build (fallback/atv_wallclock.txt,
+#                   fallback/rowmacc_wallclock.txt, timing only, not compared); about 13 minutes (one more build)
 #   RUN_PRICE=1     rebuilds libevmone with the XMACC_S price set to 26 and then 84 and reruns
 #                   atv_cost_split at each price (atv_cost_split_xmaccs26.txt, atv_cost_split_xmaccs84.txt);
 #                   about 2 x 2 minutes. Always the last stage, because it changes the gas table.
@@ -44,7 +45,7 @@ MAN="$OUT/MANIFEST.txt"
 } >> "$MAN"
 
 KERNEL_PROGS="atv_closed_form atv_cost_split atv_three_paths atv_price_sweep atv_int8 atv_solidity_scope"
-MNIST_PROGS="mnist_sload mnist_layers mnist_e2e_cb mnist_loader_loop mnist_unrolled_simd mnist_batch_marginal mnist_deploy_cb mnist_swar_baseline mnist_rowmacc test_fullnet_500_acc fashion_onchain_acc seedchk_evm"
+MNIST_PROGS="mnist_sload mnist_layers mnist_e2e_cb mnist_loader_loop mnist_unrolled_simd mnist_batch_marginal mnist_deploy_cb mnist_swar_baseline mnist_rowmacc mnist_codecopy test_fullnet_500_acc fashion_onchain_acc seedchk_evm"
 SEC_PROGS="test_security_opcodes test_security_matrix sec_oob sec_xgather sec_xgather2 sec_xtranspose_big sec_xmacc_n"
 ALL_PROGS="$KERNEL_PROGS $MNIST_PROGS $SEC_PROGS"
 
@@ -88,8 +89,6 @@ echo "== MNIST / Fashion-MNIST programs =="
 for n in $MNIST_PROGS; do run_cpp "$n"; done
 echo "== security programs =="
 for n in $SEC_PROGS; do run_cpp "$n"; done
-echo "== row-level instruction wall-clock (timing only, machine dependent) =="
-run_cpp rowmacc_wallclock
 echo "== Python (canonical weight files only) =="
 run_py int8_accuracy
 run_py int8_accuracy_fashion
@@ -97,10 +96,12 @@ run_py fashion_diag
 run_py overflow_bound
 
 if [ "${RUN_TIMING:-0}" = "1" ]; then
-  echo "== wall-clock vs gas =="
+  echo "== wall-clock: kernel (atv_wallclock) and row-level instruction (rowmacc_wallclock), machine dependent =="
   run_cpp atv_wallclock
+  run_cpp rowmacc_wallclock
 else
   kept atv_wallclock.txt RUN_TIMING
+  kept rowmacc_wallclock.txt RUN_TIMING
 fi
 
 if [ "${RUN_SWEEPS:-0}" = "1" ]; then
@@ -132,9 +133,14 @@ if [ "${RUN_FALLBACK:-0}" = "1" ]; then
       YMM_F=$(objdump -d build_noavx2/lib/libevmone.so | grep -c ymm); YMM_A=$(objdump -d /tmp/libevmone_avx2.so | grep -c ymm)
       echo "ymm (256-bit AVX) instructions:  fallback library $YMM_F, AVX2 library $YMM_A (objdump -d | grep -c ymm)" >> "$MAN"
       for n in $ALL_PROGS; do run_cpp "$n" "$OUT/fallback"; done
-      echo "== wall-clock on the fallback build (timing only) =="
-      run_cpp atv_wallclock "$OUT/fallback"
-      run_cpp rowmacc_wallclock "$OUT/fallback"
+      if [ "${RUN_TIMING:-0}" = "1" ]; then
+        echo "== wall-clock on the fallback build (timing only) =="
+        run_cpp atv_wallclock "$OUT/fallback"
+        run_cpp rowmacc_wallclock "$OUT/fallback"
+      else
+        kept fallback/atv_wallclock.txt RUN_TIMING
+        kept fallback/rowmacc_wallclock.txt RUN_TIMING
+      fi
       cp /tmp/libevmone_avx2.so build/lib/libevmone.so
       {
         echo "Scalar-fallback run (build_noavx2: -O3 only, no AVX2) compared with the AVX2 run, file by file (cmp):"
