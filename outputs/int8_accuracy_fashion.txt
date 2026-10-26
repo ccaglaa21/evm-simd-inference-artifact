@@ -2,7 +2,7 @@ meta: S=4096 SHIFT1=6 SHIFT2=13 H1=128 H2=64
 max|W| per layer: 1808,2196,4003
 batch: tokens consumed=398002, in file=398002
 
-[CHECK] int16 accuracy = 441/500 = 88.2%  (must EQUAL the EVM Fashion: 434/500=86.8%)
+[CHECK] int16 accuracy = 441/500 = 88.2%  (must equal the EVM accuracy printed by fashion_onchain_acc)
 [CHECK] int16 == fashion_ref predictions: 486/500  (500 means the pipeline is EXACTLY right)
 
 === int8 RESULT (Fashion) ===

@@ -1,24 +1,24 @@
 === MNIST (deep_*): S=4096 SHIFT1=7 SHIFT2=13 layers 784->128->64->10, images=500 ===
-  shipped b2 range [-2060318, 9653712]; a1 W2q products reach the scale 255 S^2 / 2^SHIFT1, so the shipped bias is S = 4096 times too small
-  b2 as shipped (scale 255 S / 2^SHIFT1):
-    agreement with the float prediction 463/500, label accuracy 490/500
+  shipped b2 range [-2060318, 9653712]; a1 W2q products carry the scale 255 S^2 / 2^SHIFT1 = 33423360
+  b2 as shipped (consistent scale 255 S^2 / 2^SHIFT1):
+    agreement with the float prediction 500/500, label accuracy 490/500
     saturation: layer 1 63 of 64000 activations clipped at 32767, 27755 zero | layer 2 12 of 32000 clipped, 8642 zero | median |z2| 30902262, median |b2 term| 1483871
-  b2 x S (consistent scale 255 S^2 / 2^SHIFT1):
-    agreement with the float prediction 48/500, label accuracy 50/500
-    saturation: layer 1 63 of 64000 activations clipped at 32767, 27755 zero | layer 2 25491 of 32000 clipped, 5500 zero | median |z2| 6004669320, median |b2 term| 6077935616
+  b2 / S (earlier scale 255 S / 2^SHIFT1):
+    agreement with the float prediction 500/500, label accuracy 490/500
+    saturation: layer 1 63 of 64000 activations clipped at 32767, 27755 zero | layer 2 12 of 32000 clipped, 8916 zero | median |z2| 30164356, median |b2 term| 362
   b2 = 0:
-    agreement with the float prediction 463/500, label accuracy 490/500
+    agreement with the float prediction 500/500, label accuracy 490/500
     saturation: layer 1 63 of 64000 activations clipped at 32767, 27755 zero | layer 2 12 of 32000 clipped, 8916 zero | median |z2| 30163956, median |b2 term| 0
 
 === Fashion-MNIST (fashion_*): S=4096 SHIFT1=6 SHIFT2=13 layers 784->128->64->10, images=500 ===
-  shipped b2 range [-11384495, 19182980]; a1 W2q products reach the scale 255 S^2 / 2^SHIFT1, so the shipped bias is S = 4096 times too small
-  b2 as shipped (scale 255 S / 2^SHIFT1):
-    agreement with the float prediction 500/500, label accuracy 441/500
+  shipped b2 range [-11384495, 19182980]; a1 W2q products carry the scale 255 S^2 / 2^SHIFT1 = 66846720
+  b2 as shipped (consistent scale 255 S^2 / 2^SHIFT1):
+    agreement with the float prediction 486/500, label accuracy 441/500
     saturation: layer 1 1527 of 64000 activations clipped at 32767, 39875 zero | layer 2 158 of 32000 clipped, 14222 zero | median |z2| 43055361, median |b2 term| 6361396
-  b2 x S (consistent scale 255 S^2 / 2^SHIFT1):
-    agreement with the float prediction 47/500, label accuracy 47/500
-    saturation: layer 1 1527 of 64000 activations clipped at 32767, 39875 zero | layer 2 25000 of 32000 clipped, 6500 zero | median |z2| 26030243854, median |b2 term| 26056278016
+  b2 / S (earlier scale 255 S / 2^SHIFT1):
+    agreement with the float prediction 466/500, label accuracy 434/500
+    saturation: layer 1 1527 of 64000 activations clipped at 32767, 39875 zero | layer 2 127 of 32000 clipped, 15211 zero | median |z2| 43497978, median |b2 term| 1553
   b2 = 0:
-    agreement with the float prediction 480/500, label accuracy 434/500
+    agreement with the float prediction 466/500, label accuracy 434/500
     saturation: layer 1 1527 of 64000 activations clipped at 32767, 39875 zero | layer 2 127 of 32000 clipped, 15211 zero | median |z2| 43497139, median |b2 term| 0
 

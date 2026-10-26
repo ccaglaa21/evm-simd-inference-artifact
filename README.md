@@ -83,9 +83,13 @@ docker run --rm -m 6g -e RUN_PRICE=1 -e RUN_TIMING=1 -e RUN_FALLBACK=1 -e RUN_SW
 ```
 
 All gas values are deterministic: the `outputs/` shipped here were produced
-on an Intel i5-1135G7 (AVX2) inside a VirtualBox virtual machine and match
-the values measured on the original development host bit for bit. Only the
-wall-clock figures in `atv_wallclock.txt` and `rowmacc_wallclock.txt` depend on the machine.
+on an Intel i7-11800H (8 cores, AVX2, 15 GB) running Ubuntu 22.04.5 natively, and
+every gas, accuracy and security file is byte-identical to the run on an Intel
+i5-1135G7 inside a VirtualBox virtual machine and to the original development
+host. Only the wall-clock figures in `atv_wallclock.txt`, `rowmacc_wallclock.txt`
+and their `fallback/` copies depend on the machine, and `price_neutral.txt` is
+derived from them. The regenerated weight files of `data_regen/` were also
+byte-identical on both machines.
 
 The dual-path claim of the paper (the AVX2 path and the scalar fallback of
 every instruction give bit-identical results) is checked by the
@@ -128,6 +132,7 @@ identical to the AVX2 run. The fallback outputs are kept in
 | Weights as contract code (code-as-storage): the Path N contract with the 13,840 weight words stored in 19 data contracts and read with `EXTCODECOPY`, compact memory map; cold and warm cost, EIP-7825 cap check, deployment cost from the gas schedule | `experiments/mnist_codecopy.cpp` | `mnist_codecopy.txt` |
 | Time-neutral price of `XMACC_N`, `XMACC_N16` and `XMACC` from the row-level timing on both builds: the price at which the gas ratio of the pure computation equals the measured time ratio | `training/price_neutral.py` (reads `rowmacc_wallclock.txt` and `fallback/rowmacc_wallclock.txt`) | `price_neutral.txt` |
 | Scale check of the hidden-layer-2 bias and per-layer saturation counts on the canonical images | `training/bias_scale.py` | `bias_scale.txt` |
+| Figure 1, cold single-image cost of five contracts (drawn on the host from the output files, needs matplotlib: `python3 training/fig_cold_cost.py`) | `training/fig_cold_cost.py` | `fig_cold_cost.pdf` |
 | 32-bit accumulator analysis: worst-case bound per layer over the admissible input range and the largest value reached on the canonical images | `training/overflow_bound.py` | `overflow_bound.txt` |
 | Quantization loss over five seeds and 10,000 images; calibration experiment | `training/seed_sweep.py`, `training/seed_sweep_fashion.py`, `training/seed_sweep_fashion_cal.py` via `RUN_SWEEPS=1` | `seed_sweep.txt`, `seed_sweep_fashion.txt`, `seed_sweep_fashion_cal.txt` |
 | int8 accuracy study | `training/int8_accuracy.py`, `training/int8_accuracy_fashion.py` | `int8_accuracy.txt`, `int8_accuracy_fashion.txt` |

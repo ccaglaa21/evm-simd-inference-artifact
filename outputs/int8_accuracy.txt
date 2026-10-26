@@ -2,7 +2,7 @@ meta: S=4096 SHIFT1=7 SHIFT2=13 H1=128 H2=64
 W1(784, 128) W2(128, 64) W3(64, 10)  max|W| per layer: 1648,2660,4894
 mnist_batch: tokens consumed=398002, in file=796002 (should be equal/close)
 
-[CHECK] int16 accuracy = 490/500 = 98.0%  (must EQUAL the EVM: 490/500=98%)
+[CHECK] int16 accuracy = 490/500 = 98.0%  (must equal the EVM accuracy printed by test_fullnet_500_acc)
 [CHECK] int16 == deep_ref predictions: 500/500  (500 means the pipeline is EXACTLY right)
 
 === int8 RESULT ===

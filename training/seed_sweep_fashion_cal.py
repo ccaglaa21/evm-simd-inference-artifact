@@ -1,6 +1,6 @@
 # seed_sweep_fashion_cal.py — CALIBRATION EXPERIMENT: single-test-image
 # calibration (CANONICAL) vs training-set-100-image-max calibration (NEW).
-# Read-only. CHECK: the canonical method at seed 42 gives SHIFT 6/13 + 434/443/466 EXACTLY.
+# Read-only. CHECK: the canonical method at seed 42 reproduces the shipped fashion_* files exactly.
 # Question: does the Fashion loss range (0.05-2.41 points) narrow with the NEW method?
 import numpy as np, struct, time
 DATA='fashion_data'
@@ -19,6 +19,14 @@ def oh(y,k=10):
     o=np.zeros((len(y),k));o[np.arange(len(y)),y]=1;return o
 Ytr=oh(ytr)
 def relu(x):return np.maximum(0,x)
+
+def shipped_match(prefix, qp):
+    """True when the quantized parameters of this seed equal the shipped canonical files byte for byte."""
+    names=("W1","b1","W2","b2","W3")
+    for n,arr in zip(names,qp):
+        ref=np.array([int(x) for x in open(f"{prefix}_{n}.txt").read().split()],dtype=np.int64)
+        if ref.shape[0]!=arr.size or not np.array_equal(ref, np.asarray(arr,dtype=np.int64).reshape(-1)): return False
+    return True
 
 def train(seed):
     np.random.seed(seed)
@@ -83,8 +91,8 @@ for sd in seeds:
     rowsK.append((sd,shK[1],shK[2],fK)); rowsY.append((sd,shY[1],shY[2],fY))
     print(f"{sd:5d} | {shK[1]}/{shK[2]}  {kK:+.2f} | {shY[1]}/{shY[2]}  {kY:+.2f} | {fK[2]} -> {fY[2]}   ({time.time()-t0:.0f}s)", flush=True)
     if sd==42:
-        gate = shK==(4096,6,13) and fK[4]==434 and fK[3]==443 and fK[5]==466
-        print(f"  [CHECK seed42 CANONICAL] SHIFT 6/13 + 434/443/466: {'PASSED' if gate else 'MISMATCH — STOP, report'}", flush=True)
+        gate = shK==tuple(int(x) for x in open('fashion_meta.txt').read().split()[:3]) and shipped_match("fashion", qpK)
+        print(f"  [CHECK seed42 CANONICAL] S/SHIFT == fashion_meta and quantized parameters == shipped fashion_* files: {'PASSED' if gate else 'MISMATCH (report!)'}", flush=True)
 
 lossK=np.array([ (r[3][0]-r[3][1])/100.0 for r in rowsK])
 lossY=np.array([ (r[3][0]-r[3][1])/100.0 for r in rowsY])

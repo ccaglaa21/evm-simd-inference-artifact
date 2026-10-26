@@ -1,6 +1,6 @@
 # seed_sweep_fashion.py — SEED DIVERSITY (Fashion-MNIST), train_deep_fashion.py VERBATIM.
 # Read-only: fashion_*.txt is NOT WRITTEN. CHECK: seed 42 -> the fashion_meta SHIFTs
-# + canonical q500=434, f500=443, agree500=466 must be reproduced.
+# + the quantized parameters must equal the shipped fashion_* files.
 # NOTE: this is NOT an ON-CHAIN MEASUREMENT; it is the statistics of the quantization scheme. EVM equivalence
 # rests on the 100% execution fidelity; a separate EVM spot-check on another seed (seedchk_*) complements it.
 import numpy as np, struct, time
@@ -24,7 +24,15 @@ def relu(x):return np.maximum(0,x)
 
 with open('fashion_meta.txt') as f:
     mS,mS1,mS2,mH1,mH2=[int(x) for x in f.read().split()]
-print(f"fashion_meta reference: S={mS} SHIFT1={mS1} SHIFT2={mS2} (seed-42 check; canonical 434/443/466)")
+print(f"fashion_meta reference: S={mS} SHIFT1={mS1} SHIFT2={mS2} (seed-42 check against the shipped fashion_* files)")
+
+def shipped_match(prefix, qp):
+    """True when the quantized parameters of this seed equal the shipped canonical files byte for byte."""
+    names=("W1","b1","W2","b2","W3")
+    for n,arr in zip(names,qp):
+        ref=np.array([int(x) for x in open(f"{prefix}_{n}.txt").read().split()],dtype=np.int64)
+        if ref.shape[0]!=arr.size or not np.array_equal(ref, np.asarray(arr,dtype=np.int64).reshape(-1)): return False
+    return True
 
 def train_and_quant(seed):
     np.random.seed(seed)
@@ -88,9 +96,10 @@ for sd in seeds:
           f"10k: float {r['facc_10k']} q {r['qacc_10k']} agree {r['agree_10k']}", flush=True)
     if sd==42:
         g1 = (sh[0]==mS and sh[1]==mS1 and sh[2]==mS2)
-        g2 = (r['qacc_500']==434 and r['facc_500']==443 and r['agree_500']==466)
+        g2 = shipped_match("fashion", qp)
         print(f"  [CHECK seed42] S/SHIFT == fashion_meta: {'PASSED' if g1 else 'MISMATCH (report!)'} | "
-              f"canonical 434/443/466: {'PASSED' if g2 else 'MISMATCH (report!)'}", flush=True)
+              f"quantized parameters == shipped fashion_* files: {'PASSED' if g2 else 'MISMATCH (report!)'} | "
+              f"canonical 500 images: float {r['facc_500']} q {r['qacc_500']} agree {r['agree_500']}", flush=True)
 
 print("\n================ SEED SWEEP SUMMARY (Fashion-MNIST, 5 seeds) ================")
 print(" seed  | SH1/SH2 | f500 | q500 | agr500 | f10k  | q10k  | agr10k")

@@ -1,7 +1,7 @@
 # seed_sweep.py — SEED DIVERSITY (MNIST): the train_deep.py logic VERBATIM, parameterized by seed.
 # NO file is WRITTEN (deep_*.txt untouched). Report: SHIFTs per seed,
 # float/int16 accuracy (canonical 500 + full 10k), quantization agreement.
-# CHECK: seed 42 -> S/SHIFT1/SHIFT2 == deep_meta.txt AND 490/490/500 on the 500 expected
+# CHECK: seed 42 -> S/SHIFT1/SHIFT2 == deep_meta.txt AND the quantized parameters equal the shipped deep_* files
 # (if not reproduced it is reported explicitly; the results remain valid but flagged).
 # NOTE: qinfer is batch-vectorized, accumulation in int64 (the original int32 intermediates do not overflow,
 # int64 is mathematically identical). ReLU->shift->clip order verbatim (lines 74-77).
@@ -29,6 +29,14 @@ def relu(x): return np.maximum(0,x)
 with open('deep_meta.txt') as f:
     mS,mS1,mS2,mH1,mH2=[int(x) for x in f.read().split()]
 print(f"deep_meta reference: S={mS} SHIFT1={mS1} SHIFT2={mS2} (seed-42 check)")
+
+def shipped_match(prefix, qp):
+    """True when the quantized parameters of this seed equal the shipped canonical files byte for byte."""
+    names=("W1","b1","W2","b2","W3")
+    for n,arr in zip(names,qp):
+        ref=np.array([int(x) for x in open(f"{prefix}_{n}.txt").read().split()],dtype=np.int64)
+        if ref.shape[0]!=arr.size or not np.array_equal(ref, np.asarray(arr,dtype=np.int64).reshape(-1)): return False
+    return True
 
 def train_and_quant(seed):
     np.random.seed(seed)
@@ -101,9 +109,10 @@ for sd in seeds:
           f"10k: float {r['facc_10k']} q {r['qacc_10k']} agree {r['agree_10k']}", flush=True)
     if sd==42:
         gate = (sh[0]==mS and sh[1]==mS1 and sh[2]==mS2)
-        gate2 = (r['facc_500']==490 and r['qacc_500']==490 and r['agree_500']==500)
+        gate2 = shipped_match("deep", qp)
         print(f"  [CHECK seed42] S/SHIFT == deep_meta: {'PASSED' if gate else 'MISMATCH (report!)'} | "
-              f"canonical 490/490/500: {'PASSED' if gate2 else 'MISMATCH (report!)'}", flush=True)
+              f"quantized parameters == shipped deep_* files: {'PASSED' if gate2 else 'MISMATCH (report!)'} | "
+              f"canonical 500 images: float {r['facc_500']} q {r['qacc_500']} agree {r['agree_500']}", flush=True)
 
 print("\n================ SEED SWEEP SUMMARY (MNIST, 5 seeds) ================")
 print(" seed  | SH1/SH2 | f500  | q500  | agr500 | f10k  | q10k  | agr10k")

@@ -5,7 +5,7 @@
 //   7..31 samples (budget 90s/cell, min 3); MEDIAN + min-max + CV% are reported.
 // CHECKS: (1) bit-exact  (2) measured gas == atv_closed_form 2026-07-06 measurements (20 values, identical)
 //   (3) gas is identical across repeated runs.
-// NOTE: runs under VirtualBox; CV% is visible in the output, the paper notes the environment.
+// NOTE: wall-clock figures depend on the machine; CV% is visible in the output and the manifest records the CPU.
 #include <evmc/evmc.hpp>
 #include <evmc/mocked_host.hpp>
 #include <dlfcn.h>
@@ -144,7 +144,7 @@ int main(){
         timePath(kB,1,EXPB[ki],medB[ki],mnB[ki],mxB[ki],cvB[ki],GB[ki]);
     }
 
-    std::printf("\n================ WALL-CLOCK vs GAS (median; VirtualBox environment) ================\n");
+    std::printf("\n================ WALL-CLOCK vs GAS (median; machine dependent, see MANIFEST.txt) ================\n");
     std::printf("   K   |   tC (ms)   |   tB (ms)   | TIME C/B  |  GAS C/B  | MGas/s C | MGas/s B | CV_C%% | CV_B%% |   g*\n");
     std::printf("-------+-------------+-------------+-----------+-----------+----------+----------+-------+-------+------\n");
     for(int ki=0; ki<NK; ++ki){
