@@ -1,15 +1,15 @@
 Bytecode: S=140627 B=123516 N=2182 N16=2164 bytes | calldata 1011360 bytes | 128 neurons x 784 inputs = 100352 multiply-accumulates
   [S] bit-exact against the C++ reference (128 outputs, 32-bit wrap): PASSED | gas 656224
-  [S] med=0.000256 s  min=0.000248  max=0.000260  CV=1.3%  (samples=31, inner-reps=28)
+  [S] med=0.000253 s  min=0.000245  max=0.000262  CV=1.4%  (samples=31, inner-reps=28)
   [B] bit-exact against the C++ reference (128 outputs, 32-bit wrap): PASSED | gas 685199
-  [B] med=0.000142 s  min=0.000141  max=0.000145  CV=0.6%  (samples=31, inner-reps=69)
+  [B] med=0.000141 s  min=0.000140  max=0.000143  CV=0.4%  (samples=31, inner-reps=71)
   [N] bit-exact against the C++ reference (128 outputs, 32-bit wrap): PASSED | gas 535823
-  [N] med=0.000033 s  min=0.000032  max=0.000034  CV=1.1%  (samples=31, inner-reps=293)
+  [N] med=0.000033 s  min=0.000032  max=0.000034  CV=0.7%  (samples=31, inner-reps=296)
   [N16] bit-exact against the C++ reference (128 outputs, 32-bit wrap): PASSED | gas 260625
-  [N16] med=0.000018 s  min=0.000018  max=0.000018  CV=0.3%  (samples=31, inner-reps=558)
+  [N16] med=0.000018 s  min=0.000017  max=0.000018  CV=0.3%  (samples=31, inner-reps=565)
 
 ================ ROW-LEVEL INSTRUCTION, WALL-CLOCK (layer-1 shape, 100352 multiply-accumulates) ================
-  median time per execution: S 0.256 ms | B 0.142 ms | N 0.033 ms | N16 0.018 ms
-  time ratios: S/N = 7.89 | B/N = 4.37 | S/B = 1.80 | S/N16 = 14.41 | N/N16 = 1.83
-  nanoseconds per multiply-accumulate: S 2.56 | B 1.42 | N 0.32 | N16 0.18
+  median time per execution: S 0.253 ms | B 0.141 ms | N 0.033 ms | N16 0.018 ms
+  time ratios: S/N = 7.75 | B/N = 4.31 | S/B = 1.80 | S/N16 = 14.45 | N/N16 = 1.86
+  nanoseconds per multiply-accumulate: S 2.53 | B 1.40 | N 0.33 | N16 0.17
 *** ALL CHECKS PASSED -> timing numbers are valid for this build ***

@@ -4,14 +4,14 @@ pure computation gas: S 261428 | B 290456 (XMACC 11 x 12544 = 137984, other 1524
 gas ratios of the pure computation at the provisional price 11: S/N 1.85 | S/B 0.90
 N16 (16 lanes per word, XMACC_N16 at 22 gas per 16-element group): gas 260625, memory 100576, copy 18969, pure computation 141080 (XMACC_N16 22 x 6272 = 137984, other 3096); S/N16 1.85
 
-AVX2 build: median times S 0.257 ms, B 0.141 ms, N 0.033 ms
-  time ratio S/N = 7.79 -> time-neutral price of XMACC_N = 2.43 gas per group (provisional 11)
-  time ratio S/N16 = 14.28 (N16 0.018 ms) -> time-neutral price of XMACC_N16 = 2.43 gas per 16-element group (provisional 22)
-  time ratio S/B = 1.82 -> no non-negative time-neutral price of XMACC exists: the 12.15 gas of loads and pushes per group already exceed the time-neutral budget of 11.43 gas per group
-scalar-fallback build: median times S 0.271 ms, B 0.237 ms, N 0.084 ms
-  time ratio S/N = 3.23 -> time-neutral price of XMACC_N = 6.21 gas per group (provisional 11)
-  time ratio S/N16 = 3.76 (N16 0.072 ms) -> time-neutral price of XMACC_N16 = 10.58 gas per 16-element group (provisional 22)
-  time ratio S/B = 1.14 -> time-neutral price of XMACC = 6.07 gas per instruction (provisional 11)
+AVX2 build: median times S 0.253 ms, B 0.141 ms, N 0.033 ms
+  time ratio S/N = 7.67 -> time-neutral price of XMACC_N = 2.47 gas per group (provisional 11)
+  time ratio S/N16 = 14.06 (N16 0.018 ms) -> time-neutral price of XMACC_N16 = 2.47 gas per 16-element group (provisional 22)
+  time ratio S/B = 1.79 -> no non-negative time-neutral price of XMACC exists: the 12.15 gas of loads and pushes per group already exceed the time-neutral budget of 11.61 gas per group
+scalar-fallback build: median times S 0.281 ms, B 0.242 ms, N 0.083 ms
+  time ratio S/N = 3.39 -> time-neutral price of XMACC_N = 5.91 gas per group (provisional 11)
+  time ratio S/N16 = 3.85 (N16 0.073 ms) -> time-neutral price of XMACC_N16 = 10.33 gas per 16-element group (provisional 22)
+  time ratio S/B = 1.16 -> time-neutral price of XMACC = 5.79 gas per instruction (provisional 11)
 
 Reading: a time-neutral price below the provisional price means that the provisional price overcharges the instruction
 relative to its measured execution time, so the gas gains reported at the provisional price understate the time advantage.
