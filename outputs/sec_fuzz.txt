@@ -1,0 +1,9 @@
+=== RANDOMIZED DIFFERENTIAL TEST of the memory-addressed instructions (seed 0x5EED5EED5EED5EED) ===
+gas limit per trial 2000000; every trial compared with the reference model: status, gas used, memory size, memory content
+[XTRANSPOSE] 4000 trials: 3307 succeeded as predicted, 693 rejected (clean out-of-gas) as predicted, 0 mismatches PASSED
+[XBCAST    ] 4000 trials: 3317 succeeded as predicted, 683 rejected (clean out-of-gas) as predicted, 0 mismatches PASSED
+[XGATHER   ] 4000 trials: 677 succeeded as predicted, 3323 rejected (clean out-of-gas) as predicted, 0 mismatches PASSED
+[XMACC_S   ] 4000 trials: 671 succeeded as predicted, 3329 rejected (clean out-of-gas) as predicted, 0 mismatches PASSED
+[XMACC_N   ] 4000 trials: 2414 succeeded as predicted, 1586 rejected (clean out-of-gas) as predicted, 0 mismatches PASSED
+[XMACC_N16 ] 4000 trials: 2315 succeeded as predicted, 1685 rejected (clean out-of-gas) as predicted, 0 mismatches PASSED
+*** ALL CHECKS PASSED: 24000 random trials, every result equal to the reference model ***

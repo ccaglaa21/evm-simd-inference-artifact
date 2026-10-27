@@ -1,3 +1,4 @@
+dataset: MNIST (weights deep_*.txt, images mnist_batch.txt)
 Bytecode: inference contract 1188 B | 10 data contracts of at most 24576 bytes (224512 data bytes, 7016 words of 16 lanes) | XMACC_N16 priced at 22 gas per 16-element group
 
 [CHECK 1] 20 images, C++ == contract (code-as-storage, 16 lanes per word, XMACC_N16): 20/20 PASSED
@@ -16,8 +17,8 @@ Bytecode: inference contract 1188 B | 10 data contracts of at most 24576 bytes (
   single image, cold: total 368032 = weight read 47051 (10 cold account accesses x 2,600 + 7017 copied words x 3) + memory 120095 (MSIZE 227552) + the rest 200886
   single image, warm: total 343032 (weight read 22051)
   weight-read share of the cold total: 12.78%
-  anchors (mnist_codecopy, 8 lanes per word, XMACC_N): cold 715,664 | warm 668,164 | weight read 90,923 | memory 424,524 | marginal 199,911 | 19 data contracts
-  anchors (mnist_rowmacc, SLOAD weights): cold 32,185,375 | marginal 199,911
+  MNIST anchors (mnist_codecopy, 8 lanes per word, XMACC_N): cold 715,664 | warm 668,164 | weight read 90,923 | memory 424,524 | marginal 199,911 | 19 data contracts
+  MNIST anchors (mnist_rowmacc, SLOAD weights): cold 32,185,375 | marginal 199,911
   cold single-image ratios: 8-lane code-as-storage / 16-lane = 1.94x | SLOAD / 16-lane = 87.45x | marginal 8-lane / 16-lane = 1.00x
   EIP-7825 cap 16777216: single image FITS in one transaction (2.2% of the cap) | batch of 16 cold 3378814 fits
   marginal per image 200688 | code 1188 B | memory map compact (data at 1568..226080, scratch to 227520)

@@ -1,12 +1,12 @@
 === XGATHER SMALL-N OVERFLOW TEST (S4/S5) ===
 -- ref: normal header, idx=[0,2,100,6] (100 out of bounds -> must return 0) --
 [REF idx=100 normal(rows=1,cols=8)       ] status=0 gas=155  RES=[10,30,0,70]
-[S4a max_data_idx->8, idx=[0,2,4,6]      ] status=0 gas=155  RES=[10,30,50,70]
-[S4b max_data_idx->8, idx=[6,7,5,4]      ] status=0 gas=155  RES=[70,80,60,50]
-[S4c max_data_idx->4, idx=[5,6,7,3]      ] status=0 gas=155  RES=[0,0,0,40]
-[S5a total_indices->8, idx[0..7]         ] status=0 gas=155  RES=[10,20,30,40,50,60,70,80]
-[S5b total_indices->4, idx[0,2,4,6]      ] status=0 gas=155  RES=[10,30,50,70]
+[S4a max_data_idx->8, idx=[0,2,4,6]      ] status=3 gas=2000000  (OOG = caught by check_memory)
+[S4b max_data_idx->8, idx=[6,7,5,4]      ] status=3 gas=2000000  (OOG = caught by check_memory)
+[S4c max_data_idx->4, idx=[5,6,7,3]      ] status=3 gas=2000000  (OOG = caught by check_memory)
+[S5a total_indices->8, idx[0..7]         ] status=3 gas=2000000  (OOG = caught by check_memory)
+[S5b total_indices->4, idx[0,2,4,6]      ] status=3 gas=2000000  (OOG = caught by check_memory)
 
-NOTE: a SMALL-N wrap bypasses check_memory (requests a small area, no OOG) -> the body IS ENTERED.
-Expected SAFE: since the wrap shrinks the size, the index check becomes STRICTER and the loop SHORTER;
-out-of-bounds idx -> 0, no OOB read/write. If we see SUCCESS+garbage values or a segfault, there is a vulnerability.
+Expected: REF succeeds with RES=[10,30,0,70]; S4a-S5b stop with a clean out-of-gas (status=3), because a
+header that claims more than 2^64 elements is rejected by the 256-bit length check before the opcode body.
+[CHECK] 1 reference success + 5 wrapped headers rejected: PASSED
