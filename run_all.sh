@@ -18,7 +18,7 @@
 #   RUN_FALLBACK=1  builds a second libevmone WITHOUT AVX2 (-O3 -fno-tree-vectorize -fno-tree-slp-vectorize,
 #                   no -mavx2 and no SIMDPP_ARCH_X86_AVX2, so every instruction runs its scalar fallback and the
 #                   compiler does not auto-vectorize it; the manifest records the count of ymm instructions in the
-#                   library, which must be 0), reruns the 31 gas programs against it into /out/fallback/ and
+#                   library, which must be 0), reruns the 32 gas programs against it into /out/fallback/ and
 #                   compares each output with the AVX2 run (FALLBACK_COMPARISON.txt); with RUN_TIMING=1 it also runs
 #                   the two timing programs against the fallback build (fallback/atv_wallclock.txt,
 #                   fallback/rowmacc_wallclock.txt, timing only, not compared); about 13 minutes (one more build)
@@ -50,7 +50,7 @@ MAN="$OUT/MANIFEST.txt"
 
 KERNEL_PROGS="atv_closed_form atv_cost_split atv_three_paths atv_price_sweep atv_int8 atv_solidity_scope"
 MNIST_PROGS="mnist_sload mnist_layers mnist_e2e_cb mnist_loader_loop mnist_unrolled_simd mnist_batch_marginal mnist_deploy_cb mnist_swar_baseline mnist_rowmacc mnist_codecopy mnist_codecopy16 mnist_loops test_fullnet_500_acc fashion_onchain_acc seedchk_evm"
-SEC_PROGS="test_security_opcodes test_security_matrix sec_oob sec_xgather sec_xgather2 sec_xtranspose_big sec_xmacc_n sec_jumpdest sec_fuzz"
+SEC_PROGS="test_security_opcodes test_security_matrix sec_oob sec_xgather sec_xgather2 sec_xtranspose_big sec_xmacc_n sec_jumpdest sec_fuzz sec_fuzz_lanes"
 ALL_PROGS="$KERNEL_PROGS $MNIST_PROGS $SEC_PROGS"
 
 compile_cpp() {

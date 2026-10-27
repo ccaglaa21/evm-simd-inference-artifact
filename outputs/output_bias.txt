@@ -1,0 +1,16 @@
+=== MNIST (deep_*): S=4096 SHIFT1=7 SHIFT2=13 layers 784->128->64->10, images=500 ===
+  b3 range [-3420770, 4389548] at the scale 255 S^3 / 2^(SHIFT1+SHIFT2) = 16711680
+  b3 omitted (as the contracts compute):
+    agreement with the float prediction 500/500, label accuracy 490/500, largest |score| 593170222 (27.62% of 2^31-1)
+  b3 added at the consistent scale:
+    agreement with the float prediction 500/500, label accuracy 490/500, largest |score| 597096077 (27.80% of 2^31-1)
+  predictions changed by adding b3: 0 of 500
+
+=== Fashion-MNIST (fashion_*): S=4096 SHIFT1=6 SHIFT2=13 layers 784->128->64->10, images=500 ===
+  b3 range [-17966011, 16317204] at the scale 255 S^3 / 2^(SHIFT1+SHIFT2) = 33423360
+  b3 omitted (as the contracts compute):
+    agreement with the float prediction 486/500, label accuracy 441/500, largest |score| 768343797 (35.78% of 2^31-1)
+  b3 added at the consistent scale:
+    agreement with the float prediction 497/500, label accuracy 444/500, largest |score| 784661001 (36.54% of 2^31-1)
+  predictions changed by adding b3: 17 of 500
+

@@ -21,7 +21,7 @@ Blockchain Smart Contracts* (Gebze Technical University, May 2026).
 | `evmc_changes.patch` | one enum entry added to the EVMC header |
 | `numpy_simd.hpp` | `MatrixHeader` operations (copied into `lib/evmone/` before the patch is applied) |
 | `libsimdpp-2.1/` | header-only SIMD library, vendored from github.com/p12tic/libsimdpp @ `55860b50` (Boost Software License 1.0, see `THIRD_PARTY_LICENSES`) |
-| `experiments/` | 32 C++ measurement programs and the Solidity baseline contract (`ATVBaseline.sol`) |
+| `experiments/` | 33 C++ measurement programs and the Solidity baseline contract (`ATVBaseline.sol`) |
 | `training/` | 13 Python scripts: training, quantization, seed sweeps, calibration experiment, int8 study, accumulator overflow bound, time-neutral price |
 | `data/` | canonical seed-42 weights and biases, 500-image batches, float reference predictions, seed-31337 spot-check weights |
 | `Dockerfile`, `run_selftest.sh` | isolated build of the patched interpreter and the closed-form self-test |
@@ -59,7 +59,7 @@ mkdir -p outputs
 docker run --rm -m 6g -v "$PWD/outputs:/out" evmone-simd sh /work/evmone/run_all.sh
 ```
 
-This runs the 32 C++ programs (one of them twice, for the two datasets) and the 7 Python scripts that need only the
+This runs the 33 C++ programs (one of them twice, for the two datasets) and the 7 Python scripts that need only the
 shipped `data/` (about 4 minutes) and writes `outputs/<program>.txt` plus
 `outputs/MANIFEST.txt`. Four optional stages are enabled with environment
 variables:
@@ -68,7 +68,7 @@ variables:
 |---|---|---|---|
 | `-e RUN_PRICE=1` | rebuilds `libevmone` with the `XMACC_S` price set to 26 and then 84 and reruns `atv_cost_split` at each price (`atv_cost_split_xmaccs26.txt`, `atv_cost_split_xmaccs84.txt`) | nothing | about 2 x 2 min |
 | `-e RUN_TIMING=1` | `atv_wallclock` (wall-clock time vs gas, time-neutral price `g*`) and `rowmacc_wallclock` (row-level instruction timing); without it the timing files of an earlier run are kept, so a rerun of the gas programs never changes the reported timing figures | nothing | about 2 min (adaptive sampling) |
-| `-e RUN_FALLBACK=1` | builds a second `libevmone` without AVX2 and without auto-vectorization (`-O3 -fno-tree-vectorize -fno-tree-slp-vectorize`, directory `build_noavx2`), reruns the 31 gas programs against it into `outputs/fallback/` and compares every file with the AVX2 run (`FALLBACK_COMPARISON.txt`); with `RUN_TIMING=1` also runs `atv_wallclock` and `rowmacc_wallclock` on the fallback build (`fallback/atv_wallclock.txt`, `fallback/rowmacc_wallclock.txt`, timing only) | nothing | about 13 min |
+| `-e RUN_FALLBACK=1` | builds a second `libevmone` without AVX2 and without auto-vectorization (`-O3 -fno-tree-vectorize -fno-tree-slp-vectorize`, directory `build_noavx2`), reruns the 32 gas programs against it into `outputs/fallback/` and compares every file with the AVX2 run (`FALLBACK_COMPARISON.txt`); with `RUN_TIMING=1` also runs `atv_wallclock` and `rowmacc_wallclock` on the fallback build (`fallback/atv_wallclock.txt`, `fallback/rowmacc_wallclock.txt`, timing only) | nothing | about 13 min |
 | `-e RUN_TRAIN=1` | `train_deep.py`, `train_deep_fashion.py`, `seedchk_write.py`, `deep_reference.py`: regenerate the canonical weight files into `outputs/data_regen/` (copy them into `data/` to use them) | the raw MNIST and Fashion-MNIST IDX files mounted as for `RUN_SWEEPS` | about 10 min |
 | `-e RUN_SWEEPS=1` | `seed_sweep.py`, `seed_sweep_fashion.py`, `seed_sweep_fashion_cal.py` (five seeds each) | the raw MNIST and Fashion-MNIST IDX files mounted at `/work/evmone/mnist_data` and `/work/evmone/fashion_data` | about 50 min |
 
@@ -93,7 +93,7 @@ byte-identical on both machines.
 
 The dual-path claim of the paper (the AVX2 path and the scalar fallback of
 every instruction give bit-identical results) is checked by the
-`RUN_FALLBACK=1` stage: the same 31 programs, including the 500 + 500 + 100
+`RUN_FALLBACK=1` stage: the same 32 programs, including the 500 + 500 + 100
 image tests, are rerun against the interpreter built without AVX2, and
 `outputs/FALLBACK_COMPARISON.txt` lists, file by file, whether the output is
 identical to the AVX2 run. The fallback outputs are kept in
@@ -122,7 +122,7 @@ identical to the AVX2 run. The fallback outputs are kept in
 | MNIST fidelity and accuracy (500/500, 490/500) | `experiments/test_fullnet_500_acc.cpp` | `test_fullnet_500_acc.txt` |
 | Fashion-MNIST fidelity, quantization match and accuracy (500/500, 466/500, 434/500, 443/500) | `experiments/fashion_onchain_acc.cpp` | `fashion_onchain_acc.txt` |
 | Seed-31337 spot check (100/100) | `experiments/seedchk_evm.cpp` (weights from `training/seedchk_write.py`) | `seedchk_evm.txt` |
-| Dual-path determinism: the AVX2 build and the scalar-fallback build give bit-identical outputs (500 + 500 + 100 images and every gas value) | the 31 gas programs rerun against `build_noavx2/lib/libevmone.so` via `RUN_FALLBACK=1` | `fallback/*.txt`, `FALLBACK_COMPARISON.txt` |
+| Dual-path determinism: the AVX2 build and the scalar-fallback build give bit-identical outputs (500 + 500 + 100 images and every gas value) | the 32 gas programs rerun against `build_noavx2/lib/libevmone.so` via `RUN_FALLBACK=1` | `fallback/*.txt`, `FALLBACK_COMPARISON.txt` |
 | Wall-clock time of the scalar-fallback build (AVX2 versus scalar execution time of the same bytecode) | `experiments/atv_wallclock.cpp` on `build_noavx2` via `RUN_FALLBACK=1` | `fallback/atv_wallclock.txt` |
 | Wall-clock time of the row-level instructions: Paths S, B, N and N16 on a layer-1-shaped kernel (128 x 784), AVX2 build and fallback build | `experiments/rowmacc_wallclock.cpp` via `RUN_TIMING=1` (and `RUN_FALLBACK=1`) | `rowmacc_wallclock.txt`, `fallback/rowmacc_wallclock.txt` |
 | Packed-multiplication scalar baseline (Path S): pure computational cost of the unrolled network with standard instructions only, compared with Paths B and C | `experiments/mnist_swar_baseline.cpp` | `mnist_swar_baseline.txt` |
@@ -140,6 +140,7 @@ identical to the AVX2 run. The fallback outputs are kept in
 | int8 accuracy study | `training/int8_accuracy.py`, `training/int8_accuracy_fashion.py` | `int8_accuracy.txt`, `int8_accuracy_fashion.txt` |
 | Memory-safety suite | `experiments/sec_oob.cpp`, `sec_xgather.cpp`, `sec_xgather2.cpp`, `sec_xtranspose_big.cpp`, `sec_xmacc_n.cpp`, `test_security_opcodes.cpp`, `test_security_matrix.cpp` | `sec_*.txt`, `test_security_*.txt` |
 | Randomized differential test of the memory-addressed instructions: 6 x 4,000 trials with edge-case and random operands and header fields, each compared with a reference model of the specification (status, gas, memory size, memory content); run on both builds | `experiments/sec_fuzz.cpp` | `sec_fuzz.txt`, `fallback/sec_fuzz.txt` |
+| Randomized differential test of the eight stack-only lane instructions (`XADD_IMM`, `XSUB_IMM`, `XMUL_IMM`, `XGT_IMM`, `XRELU`, `XSUM32`, `XPACK`, `XMACC`): 8 x 4,000 trials with random words and every immediate byte, each compared with a reference model of the lane semantics (status, gas, result word); run on both builds | `experiments/sec_fuzz_lanes.cpp` | `sec_fuzz_lanes.txt`, `fallback/sec_fuzz_lanes.txt` |
 | JUMPDEST analysis: the one-byte immediates of `XADD_IMM`, `XMUL_IMM`, `XSUB_IMM`, `XGT_IMM` and `XRELU` are skipped by the jump-destination analysis (an immediate 0x5b is not a jump target) | `experiments/sec_jumpdest.cpp` | `sec_jumpdest.txt` |
 | Canonical weights in `data/` | `training/train_deep.py`, `training/train_deep_fashion.py`, `training/deep_reference.py` (need the raw datasets) | `data/` |
 
@@ -200,6 +201,15 @@ header with `memmove`. `sec_xgather2.cpp` was updated: its wrapped headers are
 now rejected instead of entering the opcode body. With these changes all
 24,000 trials match the reference model on both builds, and every gas figure of
 the paper is unchanged.
+
+`sec_fuzz_lanes.cpp` covers the remaining eight instructions. On the previous
+patch it found that `XRELU` with an immediate shift of 32 or more gave different
+results on the two builds: the vector path cleared the lanes, the scalar path
+shifted by the immediate modulo 32, because a shift of a 32-bit value by 32 or
+more is undefined in C++. The shipped patch clamps the immediate to 31, which
+clears every lane for 32 and more on both builds (the lanes are non-negative
+after the ReLU), and all 32,000 trials match on both builds. The contracts of
+the paper use shifts between 6 and 14, so no reported figure changed.
 
 ## License
 

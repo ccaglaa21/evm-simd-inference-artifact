@@ -189,7 +189,7 @@ index 6083fcea..bee43c4e 100644
              map.set(i);
      }
 diff --git a/lib/evmone/instructions.hpp b/lib/evmone/instructions.hpp
-index 0d8ee917..4641ee02 100644
+index 0d8ee917..def6c770 100644
 --- a/lib/evmone/instructions.hpp
 +++ b/lib/evmone/instructions.hpp
 @@ -7,6 +7,10 @@
@@ -203,7 +203,7 @@ index 0d8ee917..4641ee02 100644
  #include <evmone_precompiles/keccak.hpp>
  
  namespace evmone
-@@ -148,6 +152,342 @@ namespace instr::core
+@@ -148,6 +152,346 @@ namespace instr::core
  /// Moreover, these implementations _do not_ inform about new stack height
  /// after execution. The adjustment must be performed by the caller.
  inline void noop(StackTop /*stack*/) noexcept {}
@@ -502,7 +502,11 @@ index 0d8ee917..4641ee02 100644
 +    static inline code_iterator xrelu_imm(StackTop stack, ExecutionState& state, code_iterator pos) noexcept
 +    {
 +        (void)state;
-+      const uint8_t shift = pos[1];
++      // The immediate shift is clamped to 31: a shift of 32 or more clears every lane (the lanes are
++        // non-negative after the ReLU), and the clamp makes the vector path and the scalar path agree
++        // for every immediate value (a 32-bit shift by 32 or more is undefined in C++, and the two
++        // backends would otherwise differ).
++        const uint8_t shift = pos[1] > 31 ? 31 : pos[1];
 +        auto& v = stack[0];
 +        auto x = simdpp::load_u<simdpp::int32<8>>(reinterpret_cast<const uint8_t*>(&v));
 +        auto zero = simdpp::make_int<simdpp::int32<8>>(0);
