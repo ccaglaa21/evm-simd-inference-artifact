@@ -103,7 +103,7 @@ namespace evmone::numpy {
         MatrixHeader hData, hInd;
         std::memcpy(&hData, ptr_Data, sizeof(MatrixHeader));
         std::memcpy(&hInd, ptr_Indices, sizeof(MatrixHeader));
-        std::memcpy(ptr_Res, &hInd, sizeof(MatrixHeader)); // The result has the size of the index list
+        std::memmove(ptr_Res, &hInd, sizeof(MatrixHeader)); // The result has the size of the index list (memmove: the result region may overlap the operands)
 
         uint16_t* dData = reinterpret_cast<uint16_t*>(ptr_Data + sizeof(MatrixHeader));
         uint16_t* dInd = reinterpret_cast<uint16_t*>(ptr_Indices + sizeof(MatrixHeader));

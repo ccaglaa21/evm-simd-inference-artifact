@@ -80,6 +80,9 @@ np.savetxt('fashion_W2.txt',W2q.flatten(),fmt='%d')
 np.savetxt('fashion_W3.txt',W3q.flatten(),fmt='%d')
 np.savetxt('fashion_b1.txt',b1i,fmt='%d')
 np.savetxt('fashion_b2.txt',b2i,fmt='%d')
+# output-layer bias at the scale of a2*W3q, 255*S^3/2^(SHIFT1+SHIFT2); not used by the contracts, written for output_bias.py
+b3i=np.round(b3*(255*S*S*S/(2**(SHIFT1+SHIFT2)))).astype(np.int64)
+np.savetxt('fashion_b3.txt',b3i,fmt='%d')
 with open('fashion_meta.txt','w') as f: f.write(f"{S} {SHIFT1} {SHIFT2} {H1} {H2}\n")
 # batch (images) + ref (float prediction), 500 images
 N=500
@@ -98,4 +101,4 @@ with open('fashion_ref.txt','w') as f:
         img=Xte_raw[n].astype(np.float64)/255.0
         z1=img@W1+b1;a1=relu(z1);z2=a1@W2+b2;a2=relu(z2);z3=a2@W3+b3
         f.write(f"{int(yte[n])} {int(np.argmax(z3))}\n")
-print("Files written: fashion_W1/W2/W3, fashion_b1/b2, fashion_meta, fashion_batch, fashion_ref")
+print("Files written: fashion_W1/W2/W3, fashion_b1/b2/b3, fashion_meta, fashion_batch, fashion_ref")

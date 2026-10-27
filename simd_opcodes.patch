@@ -1,5 +1,5 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index b2bbb20f..c6399fbb 100644
+index b2bbb20f..04a35942 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
 @@ -21,11 +21,17 @@ include(CableToolchains)
@@ -100,14 +100,8 @@ index b2bbb20f..c6399fbb 100644
 +    target_compile_features(runner PRIVATE cxx_std_20)
 +    target_include_directories(runner PRIVATE /usr/local/include/libsimdpp-2.1)
 +endif()
-diff --git a/evmc b/evmc
---- a/evmc
-+++ b/evmc
-@@ -1 +1 @@
--Subproject commit 496ce0f81058378b72d0b592d1c49b935bce3302
-+Subproject commit 496ce0f81058378b72d0b592d1c49b935bce3302-dirty
 diff --git a/lib/evmone/CMakeLists.txt b/lib/evmone/CMakeLists.txt
-index f667a7b4..77d44343 100644
+index f667a7b4..ed67967d 100644
 --- a/lib/evmone/CMakeLists.txt
 +++ b/lib/evmone/CMakeLists.txt
 @@ -4,6 +4,9 @@
@@ -160,7 +154,7 @@ index f667a7b4..77d44343 100644
  endif()
  
 diff --git a/lib/evmone/advanced_instructions.cpp b/lib/evmone/advanced_instructions.cpp
-index 5aa9cfa1..c64b0ce2 100644
+index 5aa9cfa1..2a6bb248 100644
 --- a/lib/evmone/advanced_instructions.cpp
 +++ b/lib/evmone/advanced_instructions.cpp
 @@ -297,6 +297,16 @@ EVMC_EXPORT const OpTable& get_op_table(evmc_revision rev) noexcept
@@ -180,8 +174,22 @@ index 5aa9cfa1..c64b0ce2 100644
              }
          }
          return tables;
+diff --git a/lib/evmone/baseline_analysis.cpp b/lib/evmone/baseline_analysis.cpp
+index 6083fcea..bee43c4e 100644
+--- a/lib/evmone/baseline_analysis.cpp
++++ b/lib/evmone/baseline_analysis.cpp
+@@ -27,6 +27,9 @@ void analyze_jumpdests(BitsetSpan map, bytes_view code) noexcept
+         const auto op = code[i];
+         if (static_cast<int8_t>(op) >= OP_PUSH1)  // If any PUSH opcode (see explanation above).
+             i += op - size_t{OP_PUSH1 - 1};       // Skip PUSH data.
++        else if (op == OP_XADD_IMM || op == OP_XMUL_IMM || op == OP_XSUB_IMM || op == OP_XGT_IMM ||
++                 op == OP_XRELU)
++            ++i;  // Skip the one-byte immediate of the SIMD instructions (never a jump destination).
+         else if (INTX_UNLIKELY(op == OP_JUMPDEST))
+             map.set(i);
+     }
 diff --git a/lib/evmone/instructions.hpp b/lib/evmone/instructions.hpp
-index 0d8ee917..2bd84427 100644
+index 0d8ee917..4641ee02 100644
 --- a/lib/evmone/instructions.hpp
 +++ b/lib/evmone/instructions.hpp
 @@ -7,6 +7,10 @@
@@ -195,7 +203,7 @@ index 0d8ee917..2bd84427 100644
  #include <evmone_precompiles/keccak.hpp>
  
  namespace evmone
-@@ -148,6 +152,329 @@ namespace instr::core
+@@ -148,6 +152,342 @@ namespace instr::core
  /// Moreover, these implementations _do not_ inform about new stack height
  /// after execution. The adjustment must be performed by the caller.
  inline void noop(StackTop /*stack*/) noexcept {}
@@ -226,19 +234,26 @@ index 0d8ee917..2bd84427 100644
 +        if (!check_memory(gas_left, state.memory, off_data, 32)) return {EVMC_OUT_OF_GAS, gas_left};
 +        if (!check_memory(gas_left, state.memory, off_ind, 32)) return {EVMC_OUT_OF_GAS, gas_left};
 +        // Read the index count (rows*cols) from the index header, reserve enough space for Res.
++        // The products and byte sizes are formed in 256-bit arithmetic: a 64-bit product of two header
++        // fields can wrap (rows = 2^32, cols = 2^31 gives 2^63, and 2^63 * 2 wraps to 0), which would pass
++        // a 64-bit size check and let op_xgather read or write outside the memory. The 256-bit size
++        // overload of check_memory rejects any size above 2^32-1, so after these checks the products fit
++        // in size_t without wrap and op_xgather uses the same values.
 +        {
 +            uint64_t ir, ic;
 +            std::memcpy(&ir, &state.memory[static_cast<size_t>(off_ind)], 8);
 +            std::memcpy(&ic, &state.memory[static_cast<size_t>(off_ind)] + 8, 8);
-+            uint64_t n_idx = ir * ic;
++            const uint256 n_idx = uint256(ir) * uint256(ic);
 +            // For Data: header + (data size). Read from the Data header.
 +            uint64_t dr, dc;
 +            std::memcpy(&dr, &state.memory[static_cast<size_t>(off_data)], 8);
 +            std::memcpy(&dc, &state.memory[static_cast<size_t>(off_data)] + 8, 8);
-+            uint64_t n_data = dr * dc;
-+            if (!check_memory(gas_left, state.memory, off_data, 32 + n_data * 2)) return {EVMC_OUT_OF_GAS, gas_left};
-+            if (!check_memory(gas_left, state.memory, off_ind, 32 + n_idx * 2)) return {EVMC_OUT_OF_GAS, gas_left};
-+            if (!check_memory(gas_left, state.memory, off_res, 32 + n_idx * 2)) return {EVMC_OUT_OF_GAS, gas_left};
++            const uint256 n_data = uint256(dr) * uint256(dc);
++            const uint256 need_data = uint256(32) + n_data * uint256(2);
++            const uint256 need_idx = uint256(32) + n_idx * uint256(2);
++            if (!check_memory(gas_left, state.memory, off_data, need_data)) return {EVMC_OUT_OF_GAS, gas_left};
++            if (!check_memory(gas_left, state.memory, off_ind, need_idx)) return {EVMC_OUT_OF_GAS, gas_left};
++            if (!check_memory(gas_left, state.memory, off_res, need_idx)) return {EVMC_OUT_OF_GAS, gas_left};
 +        }
 +        uint8_t* pData = &state.memory[static_cast<size_t>(off_data)];
 +        uint8_t* pInd = &state.memory[static_cast<size_t>(off_ind)];
@@ -462,16 +477,22 @@ index 0d8ee917..2bd84427 100644
 +#else
 +        // --- SCALAR FALLBACK: when AVX2 is unavailable (ARM, older x86). BIT-EXACT identical to the AVX2 path. ---
 +        // Determinism: the wrap behaviour must be identical to mullo_epi32 / add_epi32.
++        // All eight matrix, input and accumulator lanes are read before the first write, as the AVX2
++        // path does, so that an accumulator region overlapping the operands gives the same result.
 +        const int16_t* pInp16 = reinterpret_cast<const int16_t*>(pInp);
 +        int32_t* pAcc32 = reinterpret_cast<int32_t*>(pAcc);
++        int32_t mat_v[8], inp_v[8], acc_v[8];
 +        for (int j = 0; j < 8; ++j) {
 +            const int32_t element_idx = base_idx + j * sc;                 // idx[j]
-+            const int32_t mat_v = static_cast<int32_t>(data[element_idx]); // int16->int32 sign-extend
-+            const int32_t inp_v = static_cast<int32_t>(pInp16[j]);         // int16->int32 sign-extend
++            mat_v[j] = static_cast<int32_t>(data[element_idx]);            // int16->int32 sign-extend
++            inp_v[j] = static_cast<int32_t>(pInp16[j]);                    // int16->int32 sign-extend
++            acc_v[j] = pAcc32[j];
++        }
++        for (int j = 0; j < 8; ++j) {
 +            const int32_t prod  = static_cast<int32_t>(                    // mullo_epi32: low 32-bit wrap
-+                static_cast<uint32_t>(mat_v) * static_cast<uint32_t>(inp_v));
++                static_cast<uint32_t>(mat_v[j]) * static_cast<uint32_t>(inp_v[j]));
 +            pAcc32[j] = static_cast<int32_t>(                              // add_epi32: 32-bit wrap
-+                static_cast<uint32_t>(pAcc32[j]) + static_cast<uint32_t>(prod));
++                static_cast<uint32_t>(acc_v[j]) + static_cast<uint32_t>(prod));
 +        }
 +#endif
 +        return {EVMC_SUCCESS, gas_left};
@@ -526,7 +547,7 @@ index 0d8ee917..2bd84427 100644
  inline constexpr auto jumpdest = noop;
  
 diff --git a/lib/evmone/instructions_opcodes.hpp b/lib/evmone/instructions_opcodes.hpp
-index f4ae262d..003669d2 100644
+index f4ae262d..968aec6a 100644
 --- a/lib/evmone/instructions_opcodes.hpp
 +++ b/lib/evmone/instructions_opcodes.hpp
 @@ -171,6 +171,20 @@ enum Opcode : uint8_t  // NOLINT(*-use-enum-class)
@@ -552,7 +573,7 @@ index f4ae262d..003669d2 100644
  };
  }  // namespace evmone
 diff --git a/lib/evmone/instructions_traits.hpp b/lib/evmone/instructions_traits.hpp
-index a75a9614..8bfe9b07 100644
+index a75a9614..8ca727b3 100644
 --- a/lib/evmone/instructions_traits.hpp
 +++ b/lib/evmone/instructions_traits.hpp
 @@ -39,6 +39,20 @@ constexpr inline GasCostTable gas_costs = []() noexcept {
@@ -645,17 +666,3 @@ index 07b26967..3c36e97c 100644
      ON_OPCODE_UNDEFINED(0xe6)                               \
      ON_OPCODE_UNDEFINED(0xe7)                               \
      ON_OPCODE_UNDEFINED(0xe8)                               \
-diff --git a/lib/evmone/baseline_analysis.cpp b/lib/evmone/baseline_analysis.cpp
-index 6083fcea..bee43c4e 100644
---- a/lib/evmone/baseline_analysis.cpp
-+++ b/lib/evmone/baseline_analysis.cpp
-@@ -27,6 +27,9 @@ void analyze_jumpdests(BitsetSpan map, bytes_view code) noexcept
-         const auto op = code[i];
-         if (static_cast<int8_t>(op) >= OP_PUSH1)  // If any PUSH opcode (see explanation above).
-             i += op - size_t{OP_PUSH1 - 1};       // Skip PUSH data.
-+        else if (op == OP_XADD_IMM || op == OP_XMUL_IMM || op == OP_XSUB_IMM || op == OP_XGT_IMM ||
-+                 op == OP_XRELU)
-+            ++i;  // Skip the one-byte immediate of the SIMD instructions (never a jump destination).
-         else if (INTX_UNLIKELY(op == OP_JUMPDEST))
-             map.set(i);
-     }

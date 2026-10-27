@@ -62,18 +62,24 @@ struct Code {
 };
 static long long memgas(long long bytes) { long long a = (bytes + 31) / 32; return 3 * a + (a * a) / 512; }
 
-int main() {
+int main(int argc, char** argv) {
+    // optional argument "fashion": the same contract generator on the Fashion-MNIST weight files (fashion_*.txt,
+    // fashion_batch.txt); without it the MNIST files (deep_*.txt, mnist_batch.txt) are used
+    const bool fashion = (argc > 1 && std::string(argv[1]) == "fashion");
+    const std::string pfx = fashion ? "fashion_" : "deep_";
+    const std::string batchFile = fashion ? "fashion_batch.txt" : "mnist_batch.txt";
+    printf("dataset: %s (weights %s*.txt, images %s)\n", fashion ? "Fashion-MNIST" : "MNIST", pfx.c_str(), batchFile.c_str());
     int S, SHIFT1, SHIFT2, H1, H2;
-    { std::ifstream f("deep_meta.txt"); f >> S >> SHIFT1 >> SHIFT2 >> H1 >> H2; }
+    { std::ifstream f(pfx + "meta.txt"); f >> S >> SHIFT1 >> SHIFT2 >> H1 >> H2; }
     const int I = 784, L = 16, CDIMG = I / L * 32;
     std::vector<int> W1(H1 * I), W2(H2 * H1), W3(H2 * 10);
-    { std::ifstream f("deep_W1.txt"); for (auto& x : W1) f >> x; }
-    { std::ifstream f("deep_W2.txt"); for (auto& x : W2) f >> x; }
-    { std::ifstream f("deep_W3.txt"); for (auto& x : W3) f >> x; }
+    { std::ifstream f(pfx + "W1.txt"); for (auto& x : W1) f >> x; }
+    { std::ifstream f(pfx + "W2.txt"); for (auto& x : W2) f >> x; }
+    { std::ifstream f(pfx + "W3.txt"); for (auto& x : W3) f >> x; }
     std::vector<long long> b1(H1), b2(H2);
-    { std::ifstream f("deep_b1.txt"); for (auto& x : b1) f >> x; }
-    { std::ifstream f("deep_b2.txt"); for (auto& x : b2) f >> x; }
-    std::ifstream bf("mnist_batch.txt"); int Nb, wsc; bf >> Nb >> wsc;
+    { std::ifstream f(pfx + "b1.txt"); for (auto& x : b1) f >> x; }
+    { std::ifstream f(pfx + "b2.txt"); for (auto& x : b2) f >> x; }
+    std::ifstream bf(batchFile); int Nb, wsc; bf >> Nb >> wsc;
     const int N_RUN = std::min(Nb, 500);
     std::vector<std::vector<int>> imgs(N_RUN, std::vector<int>(I));
     for (int im = 0; im < N_RUN; ++im) { int tlb, pfo; bf >> tlb >> pfo; double tmp; for (int i = 0; i < 10; ++i) bf >> tmp; for (int i = 0; i < I; ++i) bf >> imgs[im][i]; }
@@ -298,8 +304,8 @@ int main() {
     printf("  single image, cold: total %lld = weight read %lld (%d cold account accesses x 2,600 + %lld copied words x 3) + memory %lld (MSIZE %lld) + the rest %lld\n", GD_c[0], readCold, NDATA, copyWords, mem1, MSD[0], rest);
     printf("  single image, warm: total %lld (weight read %lld)\n", GD_w[0], readWarm);
     printf("  weight-read share of the cold total: %.2f%%\n", 100.0 * readCold / GD_c[0]);
-    printf("  anchors (mnist_codecopy, 8 lanes per word, XMACC_N): cold 715,664 | warm 668,164 | weight read 90,923 | memory 424,524 | marginal 199,911 | 19 data contracts\n");
-    printf("  anchors (mnist_rowmacc, SLOAD weights): cold 32,185,375 | marginal 199,911\n");
+    printf("  MNIST anchors (mnist_codecopy, 8 lanes per word, XMACC_N): cold 715,664 | warm 668,164 | weight read 90,923 | memory 424,524 | marginal 199,911 | 19 data contracts\n");
+    printf("  MNIST anchors (mnist_rowmacc, SLOAD weights): cold 32,185,375 | marginal 199,911\n");
     printf("  cold single-image ratios: 8-lane code-as-storage / 16-lane = %.2fx | SLOAD / 16-lane = %.2fx | marginal 8-lane / 16-lane = %.2fx\n", 715664.0 / GD_c[0], 32185375.0 / GD_c[0], 199911.0 / m01);
     printf("  EIP-7825 cap %lld: single image %s (%.1f%% of the cap) | batch of 16 cold %lld %s\n", CAP, GD_c[0] < CAP ? "FITS in one transaction" : "does NOT fit", 100.0 * GD_c[0] / CAP, GD_c[4], GD_c[4] < CAP ? "fits" : "does not fit");
     printf("  marginal per image %lld | code %zu B | memory map compact (data at %d..%d, scratch to %d)\n", m01, codeD.size(), W1M, DATA_END, PREDS);

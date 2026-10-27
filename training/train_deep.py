@@ -93,6 +93,9 @@ np.savetxt('deep_W2.txt',W2q.flatten(),fmt='%d')
 np.savetxt('deep_W3.txt',W3q.flatten(),fmt='%d')
 np.savetxt('deep_b1.txt',b1i,fmt='%d')
 np.savetxt('deep_b2.txt',b2i,fmt='%d')
+# output-layer bias at the scale of a2*W3q, 255*S^3/2^(SHIFT1+SHIFT2); not used by the contracts, written for output_bias.py
+b3i=np.round(b3*(255*S*S*S/(2**(SHIFT1+SHIFT2)))).astype(np.int64)
+np.savetxt('deep_b3.txt',b3i,fmt='%d')
 with open('deep_meta.txt','w') as f:
     f.write(f"{S} {SHIFT1} {SHIFT2} {H1} {H2}\n")
-print("Files written: deep_W1/W2/W3, deep_b1/b2, deep_meta")
+print("Files written: deep_W1/W2/W3, deep_b1/b2/b3, deep_meta")
