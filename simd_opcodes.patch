@@ -203,7 +203,7 @@ index 0d8ee917..def6c770 100644
  #include <evmone_precompiles/keccak.hpp>
  
  namespace evmone
-@@ -148,6 +152,346 @@ namespace instr::core
+@@ -148,6 +152,361 @@ namespace instr::core
  /// Moreover, these implementations _do not_ inform about new stack height
  /// after execution. The adjustment must be performed by the caller.
  inline void noop(StackTop /*stack*/) noexcept {}
@@ -309,23 +309,33 @@ index 0d8ee917..def6c770 100644
 +        const bool fixed_point = (pos[1] >> 2) & 0x01;
 +        const uint8_t frac_sel = (pos[1] >> 3) & 0x03;
 +        const unsigned frac_bits = (frac_sel == 0) ? 4u : (frac_sel == 1) ? 8u : (frac_sel == 2) ? 12u : 4u;
-+        auto& v1 = stack[0];
-+        auto& v2 = stack[1];
++        // The lane products are formed in plain unsigned integer code on both builds (the low half of the
++        // product, then the optional fixed-point shift). A 16-bit lane product through the scalar backend
++        // of the vector library would be a signed int multiplication that can overflow, which is undefined
++        // in C++, so the lanes are computed here directly; the results are identical on every build.
++        uint8_t a[32], b[32];
++        std::memcpy(a, &stack[0], 32);
++        std::memcpy(b, &stack[1], 32);
 +        if (lane_width == 2 || lane_width == 3) {
-+            using T = simdpp::uint32<8>;
-+            auto a = simdpp::load_u<T>(reinterpret_cast<const uint8_t*>(&v1));
-+            auto b = simdpp::load_u<T>(reinterpret_cast<const uint8_t*>(&v2));
-+            auto prod = simdpp::mul_lo(a, b);
-+            if (fixed_point) prod = simdpp::shift_r(prod, frac_bits);
-+            simdpp::store_u(reinterpret_cast<uint8_t*>(&v2), prod);
++            for (int j = 0; j < 8; ++j) {
++                uint32_t x, y;
++                std::memcpy(&x, a + 4 * j, 4);
++                std::memcpy(&y, b + 4 * j, 4);
++                uint32_t p = x * y;                                   // low 32 bits of the product
++                if (fixed_point) p >>= frac_bits;
++                std::memcpy(b + 4 * j, &p, 4);
++            }
 +        } else {
-+            using T = simdpp::uint16<16>;
-+            auto a = simdpp::load_u<T>(reinterpret_cast<const uint8_t*>(&v1));
-+            auto b = simdpp::load_u<T>(reinterpret_cast<const uint8_t*>(&v2));
-+            auto prod = simdpp::mul_lo(a, b);
-+            if (fixed_point) prod = simdpp::shift_r(prod, frac_bits);
-+            simdpp::store_u(reinterpret_cast<uint8_t*>(&v2), prod);
++            for (int j = 0; j < 16; ++j) {
++                uint16_t x, y;
++                std::memcpy(&x, a + 2 * j, 2);
++                std::memcpy(&y, b + 2 * j, 2);
++                uint16_t p = static_cast<uint16_t>(static_cast<uint32_t>(x) * static_cast<uint32_t>(y));   // low 16 bits
++                if (fixed_point) p = static_cast<uint16_t>(p >> frac_bits);
++                std::memcpy(b + 2 * j, &p, 2);
++            }
 +        }
++        std::memcpy(&stack[1], b, 32);
 +        static_cast<void>(stack.pop());
 +        return pos + 2;
 +    }
@@ -479,20 +489,25 @@ index 0d8ee917..def6c770 100644
 +        // Determinism: the wrap behaviour must be identical to mullo_epi32 / add_epi32.
 +        // All eight matrix, input and accumulator lanes are read before the first write, as the AVX2
 +        // path does, so that an accumulator region overlapping the operands gives the same result.
-+        const int16_t* pInp16 = reinterpret_cast<const int16_t*>(pInp);
-+        int32_t* pAcc32 = reinterpret_cast<int32_t*>(pAcc);
++        // EVM memory offsets carry no alignment, so every lane is read and written with memcpy
++        // (a typed pointer into the memory would be a misaligned access, undefined in C++).
++        const uint8_t* pData8 = reinterpret_cast<const uint8_t*>(data);
 +        int32_t mat_v[8], inp_v[8], acc_v[8];
 +        for (int j = 0; j < 8; ++j) {
 +            const int32_t element_idx = base_idx + j * sc;                 // idx[j]
-+            mat_v[j] = static_cast<int32_t>(data[element_idx]);            // int16->int32 sign-extend
-+            inp_v[j] = static_cast<int32_t>(pInp16[j]);                    // int16->int32 sign-extend
-+            acc_v[j] = pAcc32[j];
++            int16_t m16, i16;
++            std::memcpy(&m16, pData8 + 2 * static_cast<size_t>(element_idx), 2);
++            std::memcpy(&i16, pInp + 2 * j, 2);
++            mat_v[j] = static_cast<int32_t>(m16);                          // int16->int32 sign-extend
++            inp_v[j] = static_cast<int32_t>(i16);                          // int16->int32 sign-extend
++            std::memcpy(&acc_v[j], pAcc + 4 * j, 4);
 +        }
 +        for (int j = 0; j < 8; ++j) {
 +            const int32_t prod  = static_cast<int32_t>(                    // mullo_epi32: low 32-bit wrap
 +                static_cast<uint32_t>(mat_v[j]) * static_cast<uint32_t>(inp_v[j]));
-+            pAcc32[j] = static_cast<int32_t>(                              // add_epi32: 32-bit wrap
++            const int32_t res = static_cast<int32_t>(                      // add_epi32: 32-bit wrap
 +                static_cast<uint32_t>(acc_v[j]) + static_cast<uint32_t>(prod));
++            std::memcpy(pAcc + 4 * j, &res, 4);
 +        }
 +#endif
 +        return {EVMC_SUCCESS, gas_left};

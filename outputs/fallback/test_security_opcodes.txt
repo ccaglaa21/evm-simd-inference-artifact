@@ -1,11 +1,11 @@
 === SIMD OPCODE SECURITY TESTS ===
 
-1. XMACC empty stack (underflow): status=7 gas=1000000 [STACK_UNDERFLOW]
-2. XMACC insufficient operands (1/3): status=7 gas=1000000 [STACK_UNDERFLOW]
-3. XRELU shift=255 (extreme shift): status=0 gas=24 [ran]
-4. XGT config=0xFF (invalid): status=0 gas=27 [ran]
-5. 10000 XMACC (DoS attempt, low gas): status=3 gas=100000 [OUT_OF_GAS]
-6. XPACK normal (reference): status=0 gas=24 [ran]
+1. XMACC empty stack (underflow): status=stack underflow gas=1000000 [STACK_UNDERFLOW]
+2. XMACC insufficient operands (1/3): status=stack underflow gas=1000000 [STACK_UNDERFLOW]
+3. XRELU shift=255 (extreme shift): status=success gas=24 [ran]
+4. XGT config=0xFF (invalid): status=success gas=27 [ran]
+5. 10000 XMACC (DoS attempt, low gas): status=out of gas gas=100000 [OUT_OF_GAS]
+6. XPACK normal (reference): status=success gas=24 [ran]
 
 === ASSESSMENT ===
 - Stack underflow: the EVM catches it automatically (status!=0), stops before reaching the opcode

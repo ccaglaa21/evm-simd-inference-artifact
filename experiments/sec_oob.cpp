@@ -2,11 +2,13 @@
 // it must NOT READ/WRITE host memory and must return a clean EVMC_OUT_OF_GAS (status=3).
 // Setup identical to atv_k8_v2.cpp; the difference: we write a bad stride into the MatrixHeader.
 #include <evmc/evmc.h>
+#include <evmc/mocked_host.hpp>   // a valid (empty) host interface; no host call is made by this program
 #include <dlfcn.h>
 #include <iostream>
 #include <cstdio>
 #include <vector>
 #include <cstdint>
+static evmc::MockedHost g_host;
 static evmc_vm* VM;
 static const int64_t GAS=5000000000LL;
 static void u64le(std::vector<uint8_t>& b, uint64_t v){ for(int i=0;i<8;++i) b.push_back((v>>(8*i))&0xFF); }
@@ -40,7 +42,7 @@ static evmc_status_code run_one(uint64_t hRows,uint64_t hCols,uint64_t hSr,uint6
     k.ML(ACC); k.PUSH(OUTV); k.b(0x52);
     k.PUSH(32); k.PUSH(OUTV); k.b(0xF3);
     evmc_message msg{}; msg.kind=EVMC_CALL; msg.gas=GAS;
-    auto res=VM->execute(VM,nullptr,nullptr,EVMC_SHANGHAI,&msg,k.c.data(),k.c.size());
+    auto res=VM->execute(VM, &g_host.get_interface(), g_host.to_context(),EVMC_SHANGHAI,&msg,k.c.data(),k.c.size());
     auto st=res.status_code;
     printf("[%s] status=%d %s\n", label, (int)st,
         st==EVMC_OUT_OF_GAS ? "(EVMC_OUT_OF_GAS = guard triggered, clean stop)" :

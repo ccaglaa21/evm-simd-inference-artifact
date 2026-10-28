@@ -1,8 +1,10 @@
 #include <evmc/evmc.h>
+#include <evmc/mocked_host.hpp>   // a valid (empty) host interface; no host call is made by this program
 #include <dlfcn.h>
 #include <iostream>
 #include <vector>
 #include <cstdint>
+static evmc::MockedHost g_host;
 
 int main(){
     void* h=dlopen("build/lib/libevmone.so",RTLD_NOW);
@@ -11,7 +13,7 @@ int main(){
 
     auto run=[&](const std::string& ad, std::vector<uint8_t> code)->void{
         evmc_message msg{}; msg.kind=EVMC_CALL; msg.gas=1000000;
-        auto res=vm->execute(vm,nullptr,nullptr,EVMC_SHANGHAI,&msg,code.data(),code.size());
+        auto res=vm->execute(vm, &g_host.get_interface(), g_host.to_context(),EVMC_SHANGHAI,&msg,code.data(),code.size());
         std::cout<<ad<<": status="<<res.status_code<<" gas="<<(1000000-res.gas_left)<<"\n";
         if(res.release)res.release(&res);
     };

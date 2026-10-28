@@ -19,11 +19,13 @@
 // A SUCCESS where OUT_OF_GAS is expected would mean a guard is missing. The program prints one line
 // per test and a summary; the output is deterministic and is compared between the two builds.
 #include <evmc/evmc.h>
+#include <evmc/mocked_host.hpp>   // a valid (empty) host interface; no host call is made by this program
 #include <dlfcn.h>
 #include <cstdio>
 #include <cstdint>
 #include <cstring>
 #include <vector>
+static evmc::MockedHost g_host;
 
 static evmc_vm* VM;
 static const int64_t GAS_BIG = 5000000000LL;
@@ -49,7 +51,7 @@ static Res run(const Code& k, int64_t gas) {   // dump mode: write the bytecode,
 #else
 static Res run(const Code& k, int64_t gas) {
     evmc_message msg{}; msg.kind = EVMC_CALL; msg.gas = gas;
-    auto r = VM->execute(VM, nullptr, nullptr, EVMC_SHANGHAI, &msg, k.c.data(), k.c.size());
+    auto r = VM->execute(VM, &g_host.get_interface(), g_host.to_context(), EVMC_SHANGHAI, &msg, k.c.data(), k.c.size());
     Res o; o.st = r.status_code; o.gas = gas - r.gas_left;
     if (r.output_data) o.out.assign(r.output_data, r.output_data + r.output_size);
     if (r.release) r.release(&r);

@@ -16,6 +16,7 @@
 // compared by eye (timing is excluded from the automatic comparison), the result lines of the
 // bit-exact checks and the gas values must be identical.
 #include <evmc/evmc.h>
+#include <evmc/mocked_host.hpp>   // a valid (empty) host interface; no host call is made by this program
 #include <dlfcn.h>
 #include <cstdio>
 #include <cstdint>
@@ -24,6 +25,7 @@
 #include <cmath>
 #include <algorithm>
 #include <vector>
+static evmc::MockedHost g_host;
 
 static evmc_vm* VM;
 static const int64_t GAS = 200000000000LL;
@@ -117,7 +119,7 @@ int main() {
     int fail = 0;
     uint64_t MOcur = MO, MENDcur = MEND;   // output base of the program being run (N16 has its own map)
     auto runOnce = [&](const Code& k, bool check, int lanes /*1: XSUM32 word (uint32 at the low end), 0: S word*/, const char* name) -> long long {
-        auto r = VM->execute(VM, nullptr, nullptr, EVMC_SHANGHAI, &msg, k.c.data(), k.c.size());
+        auto r = VM->execute(VM, &g_host.get_interface(), g_host.to_context(), EVMC_SHANGHAI, &msg, k.c.data(), k.c.size());
         long long g = GAS - r.gas_left;
         if (check) {
             bool ok = r.status_code == EVMC_SUCCESS && r.output_data && r.output_size >= MENDcur;

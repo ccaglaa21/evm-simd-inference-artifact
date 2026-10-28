@@ -16,7 +16,7 @@ Blockchain Smart Contracts* (Gebze Technical University, May 2026).
 | Path | What it is |
 |---|---|
 | `EVMONE_COMMIT.txt`, `EVMC_COMMIT.txt` | pinned upstream commits: evmone `4938c0a3`, EVMC `496ce0f` |
-| `simd_opcodes.patch` | the extension (647 lines): instruction bodies, gas table, traits, build glue |
+| `simd_opcodes.patch` | the extension (687 lines): instruction bodies, gas table, traits, build glue |
 | `xmacc_n.patch` | the row-level instructions `XMACC_N` (0xe6, element-count operand, 8 lanes per word) and `XMACC_N16` (0xe7, 16 lanes per word, pairwise sums), applied after `simd_opcodes.patch` |
 | `evmc_changes.patch` | one enum entry added to the EVMC header |
 | `numpy_simd.hpp` | `MatrixHeader` operations (copied into `lib/evmone/` before the patch is applied) |
@@ -69,13 +69,14 @@ variables:
 | `-e RUN_PRICE=1` | rebuilds `libevmone` with the `XMACC_S` price set to 26 and then 84 and reruns `atv_cost_split` at each price (`atv_cost_split_xmaccs26.txt`, `atv_cost_split_xmaccs84.txt`) | nothing | about 2 x 2 min |
 | `-e RUN_TIMING=1` | `atv_wallclock` (wall-clock time vs gas, time-neutral price `g*`) and `rowmacc_wallclock` (row-level instruction timing); without it the timing files of an earlier run are kept, so a rerun of the gas programs never changes the reported timing figures | nothing | about 2 min (adaptive sampling) |
 | `-e RUN_FALLBACK=1` | builds a second `libevmone` without AVX2 and without auto-vectorization (`-O3 -fno-tree-vectorize -fno-tree-slp-vectorize`, directory `build_noavx2`), reruns the 32 gas programs against it into `outputs/fallback/` and compares every file with the AVX2 run (`FALLBACK_COMPARISON.txt`); with `RUN_TIMING=1` also runs `atv_wallclock` and `rowmacc_wallclock` on the fallback build (`fallback/atv_wallclock.txt`, `fallback/rowmacc_wallclock.txt`, timing only) | nothing | about 13 min |
+| `-e RUN_SANITIZE=1` | builds `libevmone` twice more with AddressSanitizer and UndefinedBehaviorSanitizer (`-O1 -g -fsanitize=address,undefined -fno-sanitize-recover=undefined`, directory `build_san`), once with AVX2 and once scalar, and runs the ten security programs and eight deterministic experiment programs against each with the sanitizer runtimes preloaded (`outputs/sanitize_avx2/`, `outputs/sanitize_scalar/`); any report ends the program with a non-zero code; `SANITIZE_SUMMARY.txt` counts the reports and compares every output with the uninstrumented run; the program list can be changed with `-e SANITIZE_PROGS="..."` | nothing | about 15 min |
 | `-e RUN_TRAIN=1` | `train_deep.py`, `train_deep_fashion.py`, `seedchk_write.py`, `deep_reference.py`: regenerate the canonical weight files into `outputs/data_regen/` (copy them into `data/` to use them) | the raw MNIST and Fashion-MNIST IDX files mounted as for `RUN_SWEEPS` | about 10 min |
 | `-e RUN_SWEEPS=1` | `seed_sweep.py`, `seed_sweep_fashion.py`, `seed_sweep_fashion_cal.py` (five seeds each) | the raw MNIST and Fashion-MNIST IDX files mounted at `/work/evmone/mnist_data` and `/work/evmone/fashion_data` | about 50 min |
 
 Example with everything enabled:
 
 ```
-docker run --rm -m 6g -e RUN_PRICE=1 -e RUN_TIMING=1 -e RUN_FALLBACK=1 -e RUN_SWEEPS=1 \
+docker run --rm -m 6g -e RUN_PRICE=1 -e RUN_TIMING=1 -e RUN_FALLBACK=1 -e RUN_SANITIZE=1 -e RUN_SWEEPS=1 \
   -v "$PWD/outputs:/out" \
   -v "$HOME/mnist_data:/work/evmone/mnist_data:ro" \
   -v "$HOME/fashion_data:/work/evmone/fashion_data:ro" \
@@ -124,6 +125,8 @@ identical to the AVX2 run. The fallback outputs are kept in
 | Seed-31337 spot check (100/100) | `experiments/seedchk_evm.cpp` (weights from `training/seedchk_write.py`) | `seedchk_evm.txt` |
 | Dual-path determinism: the AVX2 build and the scalar-fallback build give bit-identical outputs (500 + 500 + 100 images and every gas value) | the 32 gas programs rerun against `build_noavx2/lib/libevmone.so` via `RUN_FALLBACK=1` | `fallback/*.txt`, `FALLBACK_COMPARISON.txt` |
 | Wall-clock time of the scalar-fallback build (AVX2 versus scalar execution time of the same bytecode) | `experiments/atv_wallclock.cpp` on `build_noavx2` via `RUN_FALLBACK=1` | `fallback/atv_wallclock.txt` |
+| Analytic bound of a dot-product precompile (one CALL per neuron, identity-style word price, unknown per-element price) against the XMACC_N part of Path N, from the gas schedule, with the break-even per-element price | `training/precompile_bound.py` (reads `mnist_rowmacc.txt` and `deep_meta.txt`) | `precompile_bound.txt` |
+| Sanitizer check: no AddressSanitizer or UndefinedBehaviorSanitizer report in the security programs and in eight experiment programs on either build, outputs identical to the uninstrumented run | the programs listed in `SANITIZE_PROGS` against `build_san/lib/libevmone.so` via `RUN_SANITIZE=1` | `sanitize_avx2/*.txt`, `sanitize_scalar/*.txt`, `SANITIZE_SUMMARY.txt` |
 | Wall-clock time of the row-level instructions: Paths S, B, N and N16 on a layer-1-shaped kernel (128 x 784), AVX2 build and fallback build | `experiments/rowmacc_wallclock.cpp` via `RUN_TIMING=1` (and `RUN_FALLBACK=1`) | `rowmacc_wallclock.txt`, `fallback/rowmacc_wallclock.txt` |
 | Packed-multiplication scalar baseline (Path S): pure computational cost of the unrolled network with standard instructions only, compared with Paths B and C | `experiments/mnist_swar_baseline.cpp` | `mnist_swar_baseline.txt` |
 | Row-level instruction (Path N, `XMACC_N`): unrolled single-image compute with one instruction per neuron, and the deployable looped contract with its marginal cost per image | `experiments/mnist_rowmacc.cpp` | `mnist_rowmacc.txt` |
@@ -132,6 +135,7 @@ identical to the AVX2 run. The fallback outputs are kept in
 | Deployable contracts with a loop per neuron and an unrolled inner body, for the fixed-width path (B2) and the packed scalar baseline (S2): marginal cost per image against the per-group loops and the row-level contract | `experiments/mnist_loops.cpp` | `mnist_loops.txt` |
 | Weights as contract code (code-as-storage): the Path N contract with the 13,840 weight words stored in 19 data contracts and read with `EXTCODECOPY`, compact memory map; cold and warm cost, EIP-7825 cap check, deployment cost from the gas schedule | `experiments/mnist_codecopy.cpp` | `mnist_codecopy.txt` |
 | Time-neutral price of `XMACC_N`, `XMACC_N16` and `XMACC` from the row-level timing on both builds: the price at which the gas ratio of the pure computation equals the measured time ratio | `training/price_neutral.py` (reads `rowmacc_wallclock.txt` and `fallback/rowmacc_wallclock.txt`) | `price_neutral.txt` |
+| Break-even price of `XMACC_N` and `XMACC_N16`: the price per group at which the row-level path costs the same gas as the packed scalar baseline, for the 128 x 784 kernel, the full network with unrolled code and the deployable looped contracts | `training/break_even_price.py` (reads `rowmacc_wallclock.txt`, `mnist_rowmacc.txt`, `mnist_loops.txt`, `mnist_codecopy16.txt`, `mnist_swar_baseline.txt`, `price_neutral.txt` and `deep_meta.txt`) | `break_even_price.txt` |
 | Scale check of the hidden-layer-2 bias and per-layer saturation counts on the canonical images | `training/bias_scale.py` | `bias_scale.txt` |
 | Effect of the omitted output-layer bias: predictions with and without `b3` on the 500 canonical images, agreement with the float model and label accuracy | `training/output_bias.py` (reads `deep_b3.txt`, `fashion_b3.txt`, written by the training scripts at the scale 255 S^3 / 2^(SHIFT1+SHIFT2)) | `output_bias.txt` |
 | Figure 1, cold single-image cost of five contracts (drawn on the host from the output files, needs matplotlib: `python3 training/fig_cold_cost.py`) | `training/fig_cold_cost.py` | `fig_cold_cost.pdf` |
@@ -210,6 +214,32 @@ more is undefined in C++. The shipped patch clamps the immediate to 31, which
 clears every lane for 32 and more on both builds (the lanes are non-negative
 after the ReLU), and all 32,000 trials match on both builds. The contracts of
 the paper use shifts between 6 and 14, so no reported figure changed.
+
+## Findings of the sanitizer builds
+
+The `RUN_SANITIZE=1` stage was added after the randomized tests. Compiled with
+UndefinedBehaviorSanitizer, the previous patch produced three reports, none of
+which changed a result on x86 but each of which is undefined behavior in C++
+and could differ on another compiler or architecture:
+
+1. `op_xgather` read and wrote the 16-bit elements through `uint16_t*`
+   pointers into the EVM memory, which has no alignment; the shipped
+   `numpy_simd.hpp` reads and writes them with `memcpy`.
+2. The scalar path of `XMACC_S` read the matrix, input and accumulator lanes
+   through `int16_t*` and `int32_t*` pointers into the EVM memory; the shipped
+   patch reads and writes them with `memcpy`.
+3. The 16-bit lane multiplication of `XMUL_IMM` went through the scalar backend
+   of the vector library, where two `uint16_t` values are promoted to `int`
+   before the multiplication and the product can overflow `int` (65535 x 62404
+   in trial 2 of the lane test); the shipped patch forms the lane products of
+   `XMUL_IMM` in plain unsigned arithmetic on both builds.
+
+A fourth report came from the test programs, not from the patch: eleven
+programs that make no host call passed a null host interface to `execute`,
+which `evmone` binds to a reference; they now pass an empty `evmc::MockedHost`.
+With these changes the stage reports nothing on either build, every output is
+identical to the uninstrumented run, and every gas figure of the paper is
+unchanged.
 
 ## License
 

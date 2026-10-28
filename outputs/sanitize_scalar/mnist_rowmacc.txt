@@ -1,0 +1,28 @@
+Bytecode: N-UNROLLED=544854 B | N-DEPLOYABLE=1122 B | matWords=13840 | XMACC_N priced at 11 gas per group
+[NOTE] Static prediction of the N-unrolled warm run: 3300460 gas (loader 1508866, expected MSIZE 900640)
+
+[CHECK 1] 20 images, C++ == N-unrolled == N-deployable: 20/20 PASSED
+[CHECK 2] N-unrolled warm pred==meas: 3300460/3300460 diff=0 PASSED | MSIZE pred/meas: 900640/900640 OK
+[CHECK 3] cold-warm==27680000 (N-unrolled): 27680000 OK
+[CHECK 4] compute_cold==compute_warm (N-unrolled): 284875/284875 PASSED
+[CHECK 5] EIP-170 (<24,576): N-deployable 1122 B PASSED
+[CHECK 6] repeat run identical (N-unrolled cold): PASSED
+[N= 1] N-deployable cold/warm = 32185375/4505375 | MSIZE 901344 (expected 901344) | cold-warm OK | MSIZE OK
+[N= 2] N-deployable cold/warm = 32385399/4705399 | MSIZE 901376 (expected 901376) | cold-warm OK | MSIZE OK
+[N= 4] N-deployable cold/warm = 32785447/5105447 | MSIZE 901440 (expected 901440) | cold-warm OK | MSIZE OK
+[N= 8] N-deployable cold/warm = 33585543/5905543 | MSIZE 901568 (expected 901568) | cold-warm OK | MSIZE OK
+[N=16] N-deployable cold/warm = 35185735/7505735 | MSIZE 901824 (expected 901824) | cold-warm OK | MSIZE OK
+[CHECK 7] N-deployable marginal per image (memory-stripped): 199911 199911 199911 199911 -> EXACTLY CONSTANT
+
+================ ROW-LEVEL INSTRUCTION (Path N) ================
+  N-unrolled pure compute (single image): 284875  (loader 124866, layer-1 share ~268352)
+  per multiply-accumulate (109184 MACs): 2.61 gas including the loader | 1.47 gas without the loader
+  anchors (unrolled, single image): Path C 10,408,685 | Path B 446,833 | Path S 438,926
+  RATIOS (unrolled): C/N = 36.54x | B/N = 1.57x | S/N = 1.54x
+  N-deployable: code 1122 B | single image cold 32185375, warm 4505375 (looped loader; compute 1487304)
+  N-deployable marginal per image (memory-stripped): 199911
+  anchors (deployable, marginal): Path B looped 1,992,849 | scalar looped 20,038,957
+  RATIOS (deployable, marginal): B/N = 9.97x | scalar/N = 100.24x
+  loop overhead of the deployable variant: marginal 199911 / unrolled per-image compute 160009 = 1.25x
+
+*** ALL CHECKS PASSED -> numbers are valid ***

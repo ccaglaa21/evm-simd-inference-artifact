@@ -1,0 +1,15 @@
+network 784->128->64->10: 13648 groups of 8 elements (XMACC_N), 6824 groups of 16 elements (XMACC_N16)
+
+break-even price p* = (gas of the scalar side - gas of the row-level side outside XMACC_N) / groups
+comparison                                                                  scalar  other_N  groups      p* prov. p*/prov.
+kernel 128 x 784, unrolled, pure computation                                261428     3096   12544   20.59    11     1.87   gas per 8-element group
+kernel 128 x 784, unrolled, pure computation, 16 lanes                      261428     3096    6272   41.19    22     1.87   gas per 16-element group
+full network, unrolled, single-image pure computation (Table 7 row e)       438926   134747   13648   22.29    11     2.03   gas per 8-element group
+deployable, loop per neuron, marginal cost per image (Table 7 row f)        427553    49783   13648   27.68    11     2.52   gas per 8-element group
+deployable, 16 lanes, code-as-storage, marginal cost per image              427553    50560    6824   55.25    22     2.51   gas per 16-element group
+
+Reading: the row-level path stays cheaper than the packed scalar baseline up to p* gas per group. The provisional
+price could be raised by the factor in the last column before the two paths cost the same gas.
+The time-neutral prices of XMACC_N in price_neutral.txt, 2.46 and 6.14 gas per group on the two builds, lie below
+the provisional price, so the admissible interval for a price that neither undercharges the instruction in time
+nor removes its gas advantage runs from 6.14 (slowest build) to 20.59 gas per group (smallest p* of the 8-lane comparisons).

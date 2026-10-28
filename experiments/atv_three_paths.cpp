@@ -1,10 +1,12 @@
 // FULL A^T v COMPARISON: K=8..128. Real, complete, no shortcuts.
 #include <evmc/evmc.h>
+#include <evmc/mocked_host.hpp>   // a valid (empty) host interface; no host call is made by this program
 #include <dlfcn.h>
 #include <iostream>
 #include <cstdio>
 #include <vector>
 #include <cstdint>
+static evmc::MockedHost g_host;
 
 static evmc_vm* VM;
 static const int64_t GAS=20000000000LL;
@@ -81,7 +83,7 @@ int main(){
             }
             k.PUSH(K*32); k.PUSH(OUTV); k.b(0xF3);
             evmc_message msg{}; msg.kind=EVMC_CALL; msg.gas=GAS;
-            auto res=VM->execute(VM,nullptr,nullptr,EVMC_SHANGHAI,&msg,k.c.data(),k.c.size());
+            auto res=VM->execute(VM, &g_host.get_interface(), g_host.to_context(),EVMC_SHANGHAI,&msg,k.c.data(),k.c.size());
             gA=GAS-res.gas_left; stA=res.status_code;
             if(res.status_code==0&&res.output_data&&(int)res.output_size>=K*32)
                 for(int r=0;r<K;++r){ long long x=0; for(int j=28;j<32;++j) x=(x<<8)|res.output_data[r*32+j]; resA[r]=x; }
@@ -119,7 +121,7 @@ int main(){
             }
             k.PUSH(K*32); k.PUSH(OUTV); k.b(0xF3);
             evmc_message msg{}; msg.kind=EVMC_CALL; msg.gas=GAS;
-            auto res=VM->execute(VM,nullptr,nullptr,EVMC_SHANGHAI,&msg,k.c.data(),k.c.size());
+            auto res=VM->execute(VM, &g_host.get_interface(), g_host.to_context(),EVMC_SHANGHAI,&msg,k.c.data(),k.c.size());
             gC=GAS-res.gas_left; stC=res.status_code;
             if(res.status_code==0&&res.output_data&&(int)res.output_size>=K*32)
                 for(int r=0;r<K;++r){ long long x=0; for(int j=28;j<32;++j) x=(x<<8)|res.output_data[r*32+j]; resC[r]=x; }
@@ -153,7 +155,7 @@ int main(){
             }
             k.PUSH(K*32); k.PUSH(OUTV); k.b(0xF3);
             evmc_message msg{}; msg.kind=EVMC_CALL; msg.gas=GAS;
-            auto res=VM->execute(VM,nullptr,nullptr,EVMC_SHANGHAI,&msg,k.c.data(),k.c.size());
+            auto res=VM->execute(VM, &g_host.get_interface(), g_host.to_context(),EVMC_SHANGHAI,&msg,k.c.data(),k.c.size());
             gB=GAS-res.gas_left; stB=res.status_code;
             if(res.status_code==0&&res.output_data&&(int)res.output_size>=K*32)
                 for(int r=0;r<K;++r){ long long s=0; for(int i=0;i<8;++i){ uint32_t x=0; for(int kk=0;kk<4;++kk) x|=((uint32_t)res.output_data[r*32+i*4+kk])<<(8*kk); s+=(int32_t)x; } resB[r]=(long long)(uint32_t)s; }

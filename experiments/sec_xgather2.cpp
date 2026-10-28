@@ -4,10 +4,12 @@
 // body is entered; the reference case (a normal header with one out-of-range index) must succeed and
 // return 0 for that index. An earlier version of the check used 64-bit products and entered the body.
 #include <evmc/evmc.h>
+#include <evmc/mocked_host.hpp>   // a valid (empty) host interface; no host call is made by this program
 #include <dlfcn.h>
 #include <iostream>
 #include <vector>
 #include <cstdint>
+static evmc::MockedHost g_host;
 static evmc_vm* VM;
 static const int64_t GAS=2000000;
 struct Builder {
@@ -37,7 +39,7 @@ static evmc_status_code run(const char* name,
     k.P2(RES+32); k.code.push_back(0x51); k.P1(0); k.code.push_back(0x52);
     k.P1((uint8_t)retLen); k.P1(0); k.code.push_back(0xF3);
     evmc_message msg{}; msg.kind=EVMC_CALL; msg.gas=GAS;
-    auto res=VM->execute(VM,nullptr,nullptr,EVMC_SHANGHAI,&msg,k.code.data(),k.code.size());
+    auto res=VM->execute(VM, &g_host.get_interface(), g_host.to_context(),EVMC_SHANGHAI,&msg,k.code.data(),k.code.size());
     auto st=res.status_code;
     printf("[%-40s] status=%d gas=%lld", name, (int)st, (long long)(GAS-res.gas_left));
     if(st==EVMC_SUCCESS && res.output_data && (int)res.output_size>=retLen){

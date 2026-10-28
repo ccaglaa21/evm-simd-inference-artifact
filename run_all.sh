@@ -22,12 +22,17 @@
 #                   compares each output with the AVX2 run (FALLBACK_COMPARISON.txt); with RUN_TIMING=1 it also runs
 #                   the two timing programs against the fallback build (fallback/atv_wallclock.txt,
 #                   fallback/rowmacc_wallclock.txt, timing only, not compared); about 13 minutes (one more build)
+#   RUN_SANITIZE=1  builds libevmone twice more with AddressSanitizer and UndefinedBehaviorSanitizer (AVX2 and
+#                   scalar, -O1) and runs the security programs and a set of deterministic experiment programs
+#                   against each; any report is fatal and counted in SANITIZE_SUMMARY.txt; about 2 x 10 minutes.
 #   RUN_PRICE=1     rebuilds libevmone with the XMACC_S price set to 26 and then 84 and reruns
 #                   atv_cost_split at each price (atv_cost_split_xmaccs26.txt, atv_cost_split_xmaccs84.txt);
 #                   about 2 x 2 minutes. Always the last stage, because it changes the gas table.
 #
 # price_neutral.py derives the time-neutral price of XMACC_N from rowmacc_wallclock.txt (AVX2 and fallback);
-# it runs after every other stage so that it reads the timing files of this run.
+# it runs after every other stage so that it reads the timing files of this run. break_even_price.py then
+# derives, from the same outputs, the price of XMACC_N at which the row-level path would cost the same gas
+# as the packed scalar baseline (kernel, full network, deployable contracts).
 # A stage that is not requested leaves the output files of an earlier run untouched and notes this in
 # MANIFEST.txt. The remaining training scripts (train_deep*.py, seedchk_write.py, deep_reference.py)
 # regenerate the canonical files already shipped in data/ and are not run here.
@@ -207,6 +212,60 @@ else
   kept FALLBACK_COMPARISON.txt RUN_FALLBACK
 fi
 
+if [ "${RUN_SANITIZE:-0}" = "1" ]; then
+  # Two more builds of libevmone, instrumented with AddressSanitizer and UndefinedBehaviorSanitizer
+  # (-fsanitize=address,undefined, -O1, every report fatal), one with AVX2 and one scalar. The deterministic
+  # programs listed in SANITIZE_PROGS run against each, with the sanitizer runtimes preloaded into the test
+  # programs (the library is loaded with dlopen). Any report ends the program with a non-zero code and is
+  # counted in SANITIZE_SUMMARY.txt; the outputs are also compared with the uninstrumented run of this script.
+  AVX2_FLAGS="-march=native -mavx2 -mfma -O3 -DSIMDPP_ARCH_X86_AVX2"
+  SAN_COMMON="-O1 -g -fsanitize=address,undefined -fno-sanitize-recover=undefined -fno-omit-frame-pointer"
+  SAN_AVX2="-march=native -mavx2 -mfma -DSIMDPP_ARCH_X86_AVX2 $SAN_COMMON"
+  SAN_SCALAR="-fno-tree-vectorize -fno-tree-slp-vectorize $SAN_COMMON"
+  SANITIZE_PROGS="${SANITIZE_PROGS:-$SEC_PROGS atv_three_paths atv_closed_form mnist_unrolled_simd mnist_swar_baseline mnist_rowmacc mnist_codecopy16 mnist_loops test_fullnet_500_acc}"
+  ASAN_RT=$(gcc -print-file-name=libasan.so); UBSAN_RT=$(gcc -print-file-name=libubsan.so)
+  : > "$OUT/SANITIZE_SUMMARY.txt"
+  for variant in avx2 scalar; do
+    if [ "$variant" = "avx2" ]; then F="$SAN_AVX2"; else F="$SAN_SCALAR"; fi
+    echo "== sanitizers ($variant): building libevmone with $F =="
+    sed -i "s/add_compile_options($AVX2_FLAGS)/add_compile_options($F)/" CMakeLists.txt
+    if grep -q "add_compile_options($F)" CMakeLists.txt; then
+      if cmake -S . -B build_san -DCMAKE_BUILD_TYPE=Release -DCMAKE_SHARED_LINKER_FLAGS="-fsanitize=address,undefined" > "$OUT/rebuild_san_$variant.log" 2>&1 && \
+         cmake --build build_san --target evmone -j2 >> "$OUT/rebuild_san_$variant.log" 2>&1; then
+        mkdir -p "$OUT/sanitize_$variant"
+        cp build/lib/libevmone.so /tmp/libevmone_plain.so
+        cp build_san/lib/libevmone.so build/lib/libevmone.so
+        echo "sanitized library ($variant): compiled with $F; ymm instructions $(objdump -d build_san/lib/libevmone.so | grep -c ymm)" >> "$MAN"
+        rm -rf build_san
+        for n in $SANITIZE_PROGS; do
+          ASAN_OPTIONS=detect_leaks=0 UBSAN_OPTIONS=print_stacktrace=1:halt_on_error=1 LD_PRELOAD="$ASAN_RT:$UBSAN_RT" run_cpp "$n" "$OUT/sanitize_$variant"
+        done
+        cp /tmp/libevmone_plain.so build/lib/libevmone.so
+        {
+          echo "Sanitized $variant build ($F): programs, sanitizer reports, and comparison with the uninstrumented outputs of this run"
+          for n in $SANITIZE_PROGS; do
+            f="$OUT/sanitize_$variant/$n.txt"
+            r=$(grep -c 'runtime error\|ERROR: AddressSanitizer' "$f")
+            if cmp -s "$f" "$OUT/$n.txt"; then c="identical to the plain run"; else c="DIFFERENT from the plain run"; fi
+            printf '  %-26s sanitizer reports %s, %s\n' "$n" "$r" "$c"
+          done
+        } >> "$OUT/SANITIZE_SUMMARY.txt"
+      else
+        echo "BUILD FAIL (see rebuild_san_$variant.log)"
+        echo "sanitized build ($variant)      BUILD FAIL (see rebuild_san_$variant.log)" >> "$MAN"
+      fi
+      sed -i "s/add_compile_options($F)/add_compile_options($AVX2_FLAGS)/" CMakeLists.txt
+    else
+      echo "compile-option line not found; sanitizer stage skipped"
+      echo "sanitized build ($variant)      SKIPPED (compile-option line not found)" >> "$MAN"
+    fi
+  done
+  echo "sanitizer summary:           $(grep -c 'reports 0, identical' "$OUT/SANITIZE_SUMMARY.txt") clean and identical, $(grep -c 'reports [1-9]\|DIFFERENT' "$OUT/SANITIZE_SUMMARY.txt") with reports or differences (see SANITIZE_SUMMARY.txt)" >> "$MAN"
+  cat "$OUT/SANITIZE_SUMMARY.txt"
+else
+  kept SANITIZE_SUMMARY.txt RUN_SANITIZE
+fi
+
 if [ "${RUN_PRICE:-0}" = "1" ]; then
   for g in 26 84; do
     echo "== price sensitivity: rebuilding libevmone with XMACC_S gas = $g =="
@@ -234,6 +293,10 @@ fi
 
 echo "== time-neutral price (price_neutral.py reads rowmacc_wallclock.txt of the AVX2 and the fallback build, just produced or kept) =="
 run_py price_neutral
+echo "== break-even price (break_even_price.py reads rowmacc_wallclock, mnist_rowmacc, mnist_loops, mnist_codecopy16, price_neutral) =="
+run_py break_even_price
+echo "== analytic precompile bound (precompile_bound.py reads mnist_rowmacc.txt and deep_meta.txt) =="
+run_py precompile_bound
 
 echo >> "$MAN"
 echo "sha256 of outputs:" >> "$MAN"

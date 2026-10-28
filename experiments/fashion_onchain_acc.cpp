@@ -1,10 +1,12 @@
 #include <evmc/evmc.h>
+#include <evmc/mocked_host.hpp>   // a valid (empty) host interface; no host call is made by this program
 #include <dlfcn.h>
 #include <iostream>
 #include <fstream>
 #include <vector>
 #include <cstdint>
 #include <algorithm>
+static evmc::MockedHost g_host;
 
 static void put16(std::vector<uint8_t>& w,int lane,int val){
     uint16_t u=(uint16_t)(int16_t)val; w[lane*2]=u&0xFF; w[lane*2+1]=(u>>8)&0xFF;
@@ -217,7 +219,7 @@ int main(){
 
         evmc_message msg{}; msg.kind=EVMC_CALL; msg.gas=5000000000LL;
         msg.input_data=calldata.data(); msg.input_size=calldata.size();
-        auto res=vm->execute(vm,nullptr,nullptr,EVMC_SHANGHAI,&msg,code.data(),code.size());
+        auto res=vm->execute(vm, &g_host.get_interface(), g_host.to_context(),EVMC_SHANGHAI,&msg,code.data(),code.size());
         total_gas += (5000000000LL - res.gas_left);
 
         int evm_pred=-1;

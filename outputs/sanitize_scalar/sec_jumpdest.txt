@@ -1,0 +1,9 @@
+=== JUMPDEST ANALYSIS TEST (immediate bytes are not jump destinations) ===
+[PASS] XADD_IMM  immediate 0x5b: jump into the immediate -> status 8 (expected 8 BAD_JUMP_DESTINATION) | jump to a real JUMPDEST after it -> status 0 (expected 0)
+[PASS] XMUL_IMM  immediate 0x5b: jump into the immediate -> status 8 (expected 8 BAD_JUMP_DESTINATION) | jump to a real JUMPDEST after it -> status 0 (expected 0)
+[PASS] XSUB_IMM  immediate 0x5b: jump into the immediate -> status 8 (expected 8 BAD_JUMP_DESTINATION) | jump to a real JUMPDEST after it -> status 0 (expected 0)
+[PASS] XGT_IMM   immediate 0x5b: jump into the immediate -> status 8 (expected 8 BAD_JUMP_DESTINATION) | jump to a real JUMPDEST after it -> status 0 (expected 0)
+[PASS] XRELU     immediate 0x5b: jump into the immediate -> status 8 (expected 8 BAD_JUMP_DESTINATION) | jump to a real JUMPDEST after it -> status 0 (expected 0)
+[PASS] control: jump into the data byte of PUSH1 0x5b -> status 8 (expected 8)
+
+--- SUMMARY --- 6/6 passed  *** ALL CHECKS PASSED ***

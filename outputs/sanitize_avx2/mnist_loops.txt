@@ -1,0 +1,25 @@
+Bytecode: B2 (XMACC, loop per neuron) 2440 B | S2 (packed scalar, loop per neuron) 3940 B | slots B 13840, S 14052
+
+[CHECK 1] 20 images, C++ == B2 == S2: 20/20 PASSED
+[CHECK 5] EIP-170 (<24,576): B2 2440 B, S2 3940 B PASSED
+[B2 N= 1] cold/warm = 32429711/4749711 | cold-warm OK | MSIZE 901344 (expected 901344) OK | repeat identical
+[B2 N= 2] cold/warm = 32874071/5194071 | cold-warm OK | MSIZE 901376 (expected 901376) OK | repeat identical
+[B2 N= 4] cold/warm = 33762791/6082791 | cold-warm OK | MSIZE 901440 (expected 901440) OK | repeat identical
+[B2 N= 8] cold/warm = 35540231/7860231 | cold-warm OK | MSIZE 901568 (expected 901568) OK | repeat identical
+[B2 N=16] cold/warm = 39095111/11415111 | cold-warm OK | MSIZE 901824 (expected 901824) OK | repeat identical
+[CHECK 6] B2 marginal per image (memory-stripped): 444247 444247 444247 444247 -> EXACTLY CONSTANT
+[S2 N= 1] cold/warm = 31680134/3576134 | cold-warm OK | MSIZE 454400 (expected 454400) OK | repeat identical
+[S2 N= 2] cold/warm = 32107745/4003745 | cold-warm OK | MSIZE 454432 (expected 454432) OK | repeat identical
+[S2 N= 4] cold/warm = 32962968/4858968 | cold-warm OK | MSIZE 454496 (expected 454496) OK | repeat identical
+[S2 N= 8] cold/warm = 34673414/6569414 | cold-warm OK | MSIZE 454624 (expected 454624) OK | repeat identical
+[S2 N=16] cold/warm = 38094306/9990306 | cold-warm OK | MSIZE 454880 (expected 454880) OK | repeat identical
+[CHECK 6] S2 marginal per image (memory-stripped): 427553 427553 427553 427553 -> EXACTLY CONSTANT
+
+================ LOOP PER NEURON, UNROLLED INNER BODY ================
+  marginal cost per image: B2 (fixed-width XMACC) 444247 | S2 (packed scalar) 427553
+  anchors (marginal, per-group loops): Path B 1,992,849 | byte-extraction scalar 20,038,957 | row-level Path N 199,911
+  anchors (unrolled, single image, incl. loader): Path B 446,833 | Path S 438,926 | Path N 284,875
+  RATIOS: S2/B2 = 0.96x | B2/N = 2.22x | S2/N = 2.14x | per-group B / B2 = 4.49x | byte-extraction scalar / S2 = 46.87x
+  single image: B2 cold 32429711, warm 4749711 | S2 cold 31680134, warm 3576134 | code B2 2440 B, S2 3940 B
+
+*** ALL CHECKS PASSED -> numbers are valid ***

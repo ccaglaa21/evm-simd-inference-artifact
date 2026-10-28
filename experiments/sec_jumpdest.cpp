@@ -13,15 +13,17 @@
 // A control program jumps into the data byte of a PUSH1 0x5b and must fail in the same way.
 // The output is deterministic and is compared between the two builds.
 #include <evmc/evmc.h>
+#include <evmc/mocked_host.hpp>   // a valid (empty) host interface; no host call is made by this program
 #include <dlfcn.h>
 #include <cstdio>
 #include <cstdint>
 #include <vector>
+static evmc::MockedHost g_host;
 
 static evmc_vm* VM;
 static evmc_status_code run(const std::vector<uint8_t>& code) {
     evmc_message msg{}; msg.kind = EVMC_CALL; msg.gas = 1000000;
-    auto r = VM->execute(VM, nullptr, nullptr, EVMC_SHANGHAI, &msg, code.data(), code.size());
+    auto r = VM->execute(VM, &g_host.get_interface(), g_host.to_context(), EVMC_SHANGHAI, &msg, code.data(), code.size());
     auto st = r.status_code; if (r.release) r.release(&r); return st;
 }
 int main() {

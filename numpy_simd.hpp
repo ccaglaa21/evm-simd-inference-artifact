@@ -105,21 +105,24 @@ namespace evmone::numpy {
         std::memcpy(&hInd, ptr_Indices, sizeof(MatrixHeader));
         std::memmove(ptr_Res, &hInd, sizeof(MatrixHeader)); // The result has the size of the index list (memmove: the result region may overlap the operands)
 
-        uint16_t* dData = reinterpret_cast<uint16_t*>(ptr_Data + sizeof(MatrixHeader));
-        uint16_t* dInd = reinterpret_cast<uint16_t*>(ptr_Indices + sizeof(MatrixHeader));
-        uint16_t* dRes = reinterpret_cast<uint16_t*>(ptr_Res + sizeof(MatrixHeader));
+        // EVM memory offsets carry no alignment, so the 16-bit elements are read and written with memcpy
+        // (a uint16_t* into the memory would be a misaligned access, undefined in C++).
+        uint8_t* dData = ptr_Data + sizeof(MatrixHeader);
+        uint8_t* dInd = ptr_Indices + sizeof(MatrixHeader);
+        uint8_t* dRes = ptr_Res + sizeof(MatrixHeader);
 
         size_t total_indices = hInd.rows * hInd.cols;
         size_t max_data_idx = hData.rows * hData.cols;
 
         for(size_t i = 0; i < total_indices; ++i) {
-            uint16_t target_idx = dInd[i];
+            uint16_t target_idx;
+            std::memcpy(&target_idx, dInd + 2 * i, 2);
+            uint16_t value = 0;
             // Bounds check (to avoid a segfault)
             if (target_idx < max_data_idx) {
-                dRes[i] = dData[target_idx];
-            } else {
-                dRes[i] = 0; 
+                std::memcpy(&value, dData + 2 * static_cast<size_t>(target_idx), 2);
             }
+            std::memcpy(dRes + 2 * i, &value, 2);
         }
     }
 // --- 5. BROADCAST (virtual replication) ---
