@@ -80,9 +80,9 @@ static void reference(Instr ins, uint8_t imm, const Word w1, const Word w2, cons
             for (int j = 0; j < 8; ++j) { int32_t x = (int32_t)get_lane(w1, 4, j); if (x < 0) x = 0; x >>= sh; if (x > 32767) x = 32767; set_lane(out, 4, j, (uint32_t)x); }
             break;
         }
-        case T_XSUM32: { uint32_t s = 0; for (int j = 0; j < 8; ++j) s += (uint32_t)get_lane(w1, 4, j); set_lane(out, 4, 0, s); break; }   // zero-extended to 256 bits
+        case T_XSUM32: { int64_t s = 0; for (int j = 0; j < 8; ++j) s += (int32_t)get_lane(w1, 4, j); if (s > INT32_MAX) s = INT32_MAX; if (s < INT32_MIN) s = INT32_MIN; set_lane(out, 4, 0, (uint32_t)(int32_t)s); break; }   // exact sum clamped to int32, zero-extended to 256 bits
         case T_XPACK: for (int j = 0; j < 8; ++j) { int32_t x = (int32_t)get_lane(w1, 4, j); if (x > 32767) x = 32767; if (x < -32768) x = -32768; set_lane(out, 2, j, (uint16_t)(int16_t)x); } break;
-        case T_XMACC: for (int j = 0; j < 8; ++j) { int32_t a = (int16_t)get_lane(w1, 2, j), b = (int16_t)get_lane(w2, 2, j); uint32_t acc = (uint32_t)get_lane(w3, 4, j); set_lane(out, 4, j, acc + (uint32_t)(a * b)); } break;
+        case T_XMACC: for (int j = 0; j < 8; ++j) { int32_t a = (int16_t)get_lane(w1, 2, j), b = (int16_t)get_lane(w2, 2, j); int64_t s = (int64_t)(int32_t)get_lane(w3, 4, j) + a * b; if (s > INT32_MAX) s = INT32_MAX; if (s < INT32_MIN) s = INT32_MIN; set_lane(out, 4, j, (uint32_t)(int32_t)s); } break;   // saturating lane addition
         default: break;
     }
 }

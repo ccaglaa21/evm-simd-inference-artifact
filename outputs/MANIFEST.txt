@@ -1,5 +1,5 @@
 artifact run_all.sh
-date (UTC): 2026-10-28T11:58:44Z
+date (UTC): 2026-10-30T17:34:49Z
 evmone commit: 4938c0a379da908ff07658a4b970d15fd0a3abb5
 evmc commit:   496ce0f81058378b72d0b592d1c49b935bce3302
 compiler:      g++ (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0
@@ -7,17 +7,63 @@ cpu:           11th Gen Intel(R) Core(TM) i7-11800H @ 2.30GHz
 avx2:          avx2
 
 atv_closed_form              rc=0  time=6s
-atv_cost_split               rc=0  time=18s
+atv_cost_split               rc=0  time=19s
+atv_three_paths              rc=0  time=8s
+atv_price_sweep              rc=0  time=19s
+atv_int8                     rc=0  time=5s
+atv_solidity_scope           rc=0  time=0s
+mnist_sload                  rc=0  time=0s
+mnist_layers                 rc=0  time=0s
+mnist_e2e_cb                 rc=0  time=1s
+mnist_loader_loop            rc=0  time=0s
+mnist_unrolled_simd          rc=0  time=0s
+mnist_batch_marginal         rc=0  time=1s
+mnist_deploy_cb              rc=0  time=2s
+mnist_swar_baseline          rc=0  time=0s
+mnist_rowmacc                rc=0  time=0s
+mnist_codecopy               rc=0  time=0s
+mnist_codecopy16             rc=0  time=0s
+mnist_loops                  rc=0  time=1s
+test_fullnet_500_acc         rc=0  time=1s
+fashion_onchain_acc          rc=0  time=1s
+seedchk_evm                  rc=0  time=1s
+fashion_codecopy16           rc=0  time=0s  (mnist_codecopy16 fashion)
+test_security_opcodes        rc=0  time=0s
+test_security_matrix         rc=0  time=0s
+sec_oob                      rc=0  time=0s
+sec_xgather                  rc=0  time=0s
+sec_xgather2                 rc=0  time=0s
+sec_xtranspose_big           rc=0  time=0s
+sec_xmacc_n                  rc=0  time=0s
+sec_jumpdest                 rc=0  time=0s
+sec_fuzz                     rc=0  time=0s
+sec_fuzz_lanes               rc=0  time=0s
+sec_saturate                 rc=0  time=0s
+int8_accuracy.py             rc=0  time=1s
+int8_accuracy_fashion.py     rc=0  time=0s
+fashion_diag.py              rc=0  time=0s
+overflow_bound.py            rc=0  time=24s
+bias_scale.py                rc=0  time=10s
+output_bias.py               rc=0  time=6s
+atv_wallclock                rc=0  time=38s
+rowmacc_wallclock            rc=0  time=1s
+seed_sweep.py                rc=0  time=857s
+seed_sweep_fashion.py        rc=0  time=868s
+seed_sweep_fashion_cal.py    rc=0  time=877s
+fallback library:            build_noavx2/lib/libevmone.so (compiled with -O3 -fno-tree-vectorize -fno-tree-slp-vectorize: no -mavx2, no SIMDPP_ARCH_X86_AVX2)
+ymm (256-bit AVX) instructions:  fallback library 0, AVX2 library 2468 (objdump -d | grep -c ymm)
+atv_closed_form              rc=0  time=6s
+atv_cost_split               rc=0  time=19s
 atv_three_paths              rc=0  time=8s
 atv_price_sweep              rc=0  time=19s
 atv_int8                     rc=0  time=4s
 atv_solidity_scope           rc=0  time=0s
 mnist_sload                  rc=0  time=0s
-mnist_layers                 rc=0  time=0s
+mnist_layers                 rc=0  time=1s
 mnist_e2e_cb                 rc=0  time=0s
 mnist_loader_loop            rc=0  time=0s
-mnist_unrolled_simd          rc=0  time=1s
-mnist_batch_marginal         rc=0  time=1s
+mnist_unrolled_simd          rc=0  time=0s
+mnist_batch_marginal         rc=0  time=2s
 mnist_deploy_cb              rc=0  time=1s
 mnist_swar_baseline          rc=0  time=0s
 mnist_rowmacc                rc=0  time=0s
@@ -27,7 +73,6 @@ mnist_loops                  rc=0  time=0s
 test_fullnet_500_acc         rc=0  time=1s
 fashion_onchain_acc          rc=0  time=1s
 seedchk_evm                  rc=0  time=0s
-fashion_codecopy16           rc=0  time=0s  (mnist_codecopy16 fashion)
 test_security_opcodes        rc=0  time=0s
 test_security_matrix         rc=0  time=0s
 sec_oob                      rc=0  time=0s
@@ -38,55 +83,12 @@ sec_xmacc_n                  rc=0  time=0s
 sec_jumpdest                 rc=0  time=0s
 sec_fuzz                     rc=0  time=0s
 sec_fuzz_lanes               rc=0  time=0s
-int8_accuracy.py             rc=0  time=1s
-int8_accuracy_fashion.py     rc=0  time=0s
-fashion_diag.py              rc=0  time=0s
-overflow_bound.py            rc=0  time=8s
-bias_scale.py                rc=0  time=9s
-output_bias.py               rc=0  time=6s
-atv_wallclock                rc=0  time=35s
-rowmacc_wallclock            rc=0  time=1s
-seed_sweep.txt               kept from an earlier run (RUN_SWEEPS not set)
-seed_sweep_fashion.txt       kept from an earlier run (RUN_SWEEPS not set)
-seed_sweep_fashion_cal.txt   kept from an earlier run (RUN_SWEEPS not set)
-fallback library:            build_noavx2/lib/libevmone.so (compiled with -O3 -fno-tree-vectorize -fno-tree-slp-vectorize: no -mavx2, no SIMDPP_ARCH_X86_AVX2)
-ymm (256-bit AVX) instructions:  fallback library 0, AVX2 library 2437 (objdump -d | grep -c ymm)
-atv_closed_form              rc=0  time=5s
-atv_cost_split               rc=0  time=19s
-atv_three_paths              rc=0  time=7s
-atv_price_sweep              rc=0  time=18s
-atv_int8                     rc=0  time=4s
-atv_solidity_scope           rc=0  time=0s
-mnist_sload                  rc=0  time=0s
-mnist_layers                 rc=0  time=1s
-mnist_e2e_cb                 rc=0  time=0s
-mnist_loader_loop            rc=0  time=1s
-mnist_unrolled_simd          rc=0  time=0s
-mnist_batch_marginal         rc=0  time=1s
-mnist_deploy_cb              rc=0  time=1s
-mnist_swar_baseline          rc=0  time=0s
-mnist_rowmacc                rc=0  time=0s
-mnist_codecopy               rc=0  time=0s
-mnist_codecopy16             rc=0  time=0s
-mnist_loops                  rc=0  time=1s
-test_fullnet_500_acc         rc=0  time=1s
-fashion_onchain_acc          rc=0  time=0s
-seedchk_evm                  rc=0  time=1s
-test_security_opcodes        rc=0  time=0s
-test_security_matrix         rc=0  time=0s
-sec_oob                      rc=0  time=0s
-sec_xgather                  rc=0  time=0s
-sec_xgather2                 rc=0  time=0s
-sec_xtranspose_big           rc=0  time=0s
-sec_xmacc_n                  rc=0  time=0s
-sec_jumpdest                 rc=0  time=0s
-sec_fuzz                     rc=0  time=0s
-sec_fuzz_lanes               rc=0  time=0s
-fashion_codecopy16           rc=0  time=0s  (mnist_codecopy16 fashion)
-atv_wallclock                rc=0  time=35s
+sec_saturate                 rc=0  time=0s
+fashion_codecopy16           rc=0  time=1s  (mnist_codecopy16 fashion)
+atv_wallclock                rc=0  time=37s
 rowmacc_wallclock            rc=0  time=2s
-fallback comparison:         32 identical, 0 different (see FALLBACK_COMPARISON.txt)
-sanitized library (avx2): compiled with -march=native -mavx2 -mfma -DSIMDPP_ARCH_X86_AVX2 -O1 -g -fsanitize=address,undefined -fno-sanitize-recover=undefined -fno-omit-frame-pointer; ymm instructions 3599
+fallback comparison:         33 identical, 0 different (see FALLBACK_COMPARISON.txt)
+sanitized library (avx2): compiled with -march=native -mavx2 -mfma -DSIMDPP_ARCH_X86_AVX2 -O1 -g -fsanitize=address,undefined -fno-sanitize-recover=undefined -fno-omit-frame-pointer; ymm instructions 3537
 test_security_opcodes        rc=0  time=0s
 test_security_matrix         rc=0  time=0s
 sec_oob                      rc=0  time=0s
@@ -97,14 +99,15 @@ sec_xmacc_n                  rc=0  time=0s
 sec_jumpdest                 rc=0  time=0s
 sec_fuzz                     rc=0  time=0s
 sec_fuzz_lanes               rc=0  time=0s
-atv_three_paths              rc=0  time=66s
+sec_saturate                 rc=0  time=0s
+atv_three_paths              rc=0  time=69s
 atv_closed_form              rc=0  time=46s
 mnist_unrolled_simd          rc=0  time=1s
-mnist_swar_baseline          rc=0  time=1s
+mnist_swar_baseline          rc=0  time=0s
 mnist_rowmacc                rc=0  time=1s
 mnist_codecopy16             rc=0  time=0s
-mnist_loops                  rc=0  time=4s
-test_fullnet_500_acc         rc=0  time=17s
+mnist_loops                  rc=0  time=3s
+test_fullnet_500_acc         rc=0  time=14s
 sanitized library (scalar): compiled with -fno-tree-vectorize -fno-tree-slp-vectorize -O1 -g -fsanitize=address,undefined -fno-sanitize-recover=undefined -fno-omit-frame-pointer; ymm instructions 0
 test_security_opcodes        rc=0  time=0s
 test_security_matrix         rc=0  time=0s
@@ -116,24 +119,25 @@ sec_xmacc_n                  rc=0  time=0s
 sec_jumpdest                 rc=0  time=0s
 sec_fuzz                     rc=0  time=1s
 sec_fuzz_lanes               rc=0  time=0s
-atv_three_paths              rc=0  time=64s
-atv_closed_form              rc=0  time=45s
+sec_saturate                 rc=0  time=0s
+atv_three_paths              rc=0  time=68s
+atv_closed_form              rc=0  time=46s
 mnist_unrolled_simd          rc=0  time=1s
-mnist_swar_baseline          rc=0  time=1s
-mnist_rowmacc                rc=0  time=1s
+mnist_swar_baseline          rc=0  time=0s
+mnist_rowmacc                rc=0  time=2s
 mnist_codecopy16             rc=0  time=0s
-mnist_loops                  rc=0  time=5s
-test_fullnet_500_acc         rc=0  time=19s
-sanitizer summary:           36 clean and identical, 0 with reports or differences (see SANITIZE_SUMMARY.txt)
-atv_cost_split_xmaccs26      rc=0  time=19s  (libevmone rebuilt with XMACC_S=26)
+mnist_loops                  rc=0  time=3s
+test_fullnet_500_acc         rc=0  time=16s
+sanitizer summary:           38 clean and identical, 0 with reports or differences (see SANITIZE_SUMMARY.txt)
+atv_cost_split_xmaccs26      rc=0  time=18s  (libevmone rebuilt with XMACC_S=26)
 atv_cost_split_xmaccs84      rc=0  time=19s  (libevmone rebuilt with XMACC_S=84)
 price_neutral.py             rc=0  time=0s
 break_even_price.py          rc=0  time=0s
 precompile_bound.py          rc=0  time=0s
 
 sha256 of outputs:
-50e03495d19f6f0adf63e010c08c012740f62a7ffa3fc48cb408227d2c6485b0  FALLBACK_COMPARISON.txt
-267dd02e07de79063bda60d8ffe597dc41c6feb3e85a967934bcf7a2e7a126f9  SANITIZE_SUMMARY.txt
+4a2f0a23f53c13b36c08527ed107885a73fbca3f6b8d7035c40e237401a78a9a  FALLBACK_COMPARISON.txt
+ad871711df752cca34af7709e65b15a3f7bfe96d120aecdede299f63eafb0311  SANITIZE_SUMMARY.txt
 e74cd77f5c82de4e2a1b57be5a0ec2822ca5dfa8f76d8f3beaa535a4fc9baf80  atv_closed_form.txt
 5c3440686d94b06ec59302fecfe89ca838580112374a9eabcb7a3cfe29f3d0ba  atv_cost_split.txt
 d02acaaa8b844041ee39bcff755ebef7727e3c38eeaeb36590952f7ae661ba9f  atv_cost_split_xmaccs26.txt
@@ -142,9 +146,9 @@ d02acaaa8b844041ee39bcff755ebef7727e3c38eeaeb36590952f7ae661ba9f  atv_cost_split
 727e07dc5bcda40bc124e499b1650d13c2b43afb2212c53a868f595e1e4dd10d  atv_price_sweep.txt
 4a6469ee84a62bb8816f94978502f6dcb8b29216c3ec016105d296d70909df83  atv_solidity_scope.txt
 917d4134a517fe022dce92b74eadec32cf9ce8fb2f3ef43c5398e4a7c704ec61  atv_three_paths.txt
-476c54aa28a90f155a02905b846a24d3734da7680d5b0d73efb3189ef5af8da3  atv_wallclock.txt
+0b9903211619aa7d69ea4d8b51f92bce8af2a860f6b43dee9e957ef91f243011  atv_wallclock.txt
 f6806b3006af1ffd1499e5b699a529936e156363a8cff1731bc08ebe6062858f  bias_scale.txt
-edf501ea5aff630a704a2cc3ca0e9e59cedd3693331b8659fd8024c1c66a8867  break_even_price.txt
+373bfc39f92528f8aaed82678b0d38d8df022a32070eab9f097e4009195696f2  break_even_price.txt
 1efed4c758128d5d77d07401f32bc70fb799bbee1b17a358004acf8e84a29503  deep_reference.txt
 a5bea0431fce654fae567651a3e5ac6e9ec044dbc858e839a6a7af8bd19a587c  fashion_codecopy16.txt
 8d91c0dff209ee7aea8995228690f29bf200f95e58ebe2ff5595210191857239  fashion_diag.txt
@@ -164,21 +168,22 @@ c7a3e800490e65ff0a904c4413438dd7d24212e5fcf8903f61498a386fa2ea83  mnist_rowmacc.
 1a2abb8ea5740dac883c0a3c6b9c35b01ad8beb34e4b7b9a90436f93ef52892f  mnist_swar_baseline.txt
 cbfb7bee0f9118ce40a96a528ebae40a2b52c5524379ac5f28f27650babeaf73  mnist_unrolled_simd.txt
 390f820f568f99553f6de3d4bdb483489efa1d87dcd1f65b19d1028ee6217124  output_bias.txt
-cb68cf0e78cf73903564bb2b14cff7d8fccacf98651acece6b1a143914935e93  overflow_bound.txt
+28e8abb03efe6c9f5df7a8f9c95c8e164f17af6db88fd43845ddcc47107b3527  overflow_bound.txt
 e0f628d14555b4de6022ce90d3ac0338ba007dd6a7cdcba49c923ee8b060c514  precompile_bound.txt
-9efa5010961d854260411de13fbb10d3dee60f7fccd12fbeccc3e42d7069b16c  price_neutral.txt
-920797abf655be7f470c60261e2042e1ca5df436386fbf14a30bd5bfd7dc8fe2  rowmacc_wallclock.txt
+e734c551803e1fac6fca03ac8d6da87014ada406dbcf9724593d300c1035b877  price_neutral.txt
+738f11a7d8703e9158cef7c199495efe88bb454b2aa9f156104a87ab3d0191f1  rowmacc_wallclock.txt
 f1ce599f6e3300e280bbf63760e3dbcf1eb59ab113a3bc9ed120e3746142fdb6  sec_fuzz.txt
 bdd85484da72e339ebd0e0210b528b98e2bd0f73b4895afbe90cef40ec7f97bc  sec_fuzz_lanes.txt
 e4da80523465da3f7b41ecdfcb2679b3b25091b4cae83f38d73d27405d2f4d7a  sec_jumpdest.txt
 47e48f90cfee5d047cf9480cb8f1523eb4718068fe5982e615417220792bbc6f  sec_oob.txt
+896268959860c403c4cd852ae9f91095fe642a73091c0f279b86bd267e797ba2  sec_saturate.txt
 556def5e4f3860758a37ea8aacb98d9f85288113501b08af31943dc798ba62a3  sec_xgather.txt
 abc7dfef96e73187bfef84aa20de03b477e009b5ce8ad6b685f0fb6043fb695e  sec_xgather2.txt
-f2be1e265a00e7baf00f913c253cce04a0f0f1edcdaf08223787cd5b9b6ff864  sec_xmacc_n.txt
+834f03c5d9cc8ba6a2ac8f4d0e9032929e403f6a88e8a2548042e9b796c6ae5e  sec_xmacc_n.txt
 6055c6ac18e265c970c2c57d1727f1a80b519d6c3c9d16061339a8c85c63d4c9  sec_xtranspose_big.txt
-5f67575efd74ef1d7fe1ade5757a0904adf3c13846aaad88524b792abc60ee2e  seed_sweep.txt
-c3f54857bbe80c2592fa34c07b0e520634872a806907d5dc6037bbd5ebaae58c  seed_sweep_fashion.txt
-f709305fab367548bcf264993a3ae5a254ac09f79dfd613b516630a18211c6a5  seed_sweep_fashion_cal.txt
+6418a34732fd0d520b59d6f8c45f3cb806ed193b42b52599e8a4000bdb8d3303  seed_sweep.txt
+3cd615a27d6590f2002f2533b7985d7fe5e06ceeec830b4562a32d93a63f03fe  seed_sweep_fashion.txt
+27c621176632f5fd3d2b59346d012a02a344a81e4c971b08bd2a40c242627563  seed_sweep_fashion_cal.txt
 70c11fb613ff8b8488c7544dfe498a891057a75ac448ff1808ced1c88ce70176  seedchk_evm.txt
 c29cedd5a002c9c6722d4ce565cfb16556cb7be768a2214ba7ea4634d9fcd2a2  seedchk_write.txt
 9d17ae2c0f649e937383c192d294cf32eb53b98d59cdff7be7e87d7104ab7a56  test_fullnet_500_acc.txt
@@ -192,7 +197,7 @@ e74cd77f5c82de4e2a1b57be5a0ec2822ca5dfa8f76d8f3beaa535a4fc9baf80  fallback/atv_c
 727e07dc5bcda40bc124e499b1650d13c2b43afb2212c53a868f595e1e4dd10d  fallback/atv_price_sweep.txt
 4a6469ee84a62bb8816f94978502f6dcb8b29216c3ec016105d296d70909df83  fallback/atv_solidity_scope.txt
 917d4134a517fe022dce92b74eadec32cf9ce8fb2f3ef43c5398e4a7c704ec61  fallback/atv_three_paths.txt
-23b7da14fa03faa1a0595f00bef198d044b5be27ad97c440abca6b0929767efc  fallback/atv_wallclock.txt
+aefa4515a79a1d1928f0bed3f9f7cccac97176a1d7092b2c5d981d7ed04cba54  fallback/atv_wallclock.txt
 a5bea0431fce654fae567651a3e5ac6e9ec044dbc858e839a6a7af8bd19a587c  fallback/fashion_codecopy16.txt
 b47a542e70a92997a8a6a9e7dbef8cc5a730ed7e1926759b56b796e5752646cb  fallback/fashion_onchain_acc.txt
 5b293774df18b802960b6fd21505aa0dbf58d5b42a546eb05ef39cfd946d53fe  fallback/mnist_batch_marginal.txt
@@ -207,14 +212,15 @@ c7a3e800490e65ff0a904c4413438dd7d24212e5fcf8903f61498a386fa2ea83  fallback/mnist
 1e97ac96311b24b2d37bd8cb15c52af5ac86fa645f5a7d624d90229d983efed3  fallback/mnist_sload.txt
 1a2abb8ea5740dac883c0a3c6b9c35b01ad8beb34e4b7b9a90436f93ef52892f  fallback/mnist_swar_baseline.txt
 cbfb7bee0f9118ce40a96a528ebae40a2b52c5524379ac5f28f27650babeaf73  fallback/mnist_unrolled_simd.txt
-d141f3b3d8b9278df60e62b93829ca6ec7a0b6d4fbdc08bbd020fba6a7b0673e  fallback/rowmacc_wallclock.txt
+f4835b3b54d10acc6d87efa85f50eb63a37f34e06a005785ab93454df8d9a930  fallback/rowmacc_wallclock.txt
 f1ce599f6e3300e280bbf63760e3dbcf1eb59ab113a3bc9ed120e3746142fdb6  fallback/sec_fuzz.txt
 bdd85484da72e339ebd0e0210b528b98e2bd0f73b4895afbe90cef40ec7f97bc  fallback/sec_fuzz_lanes.txt
 e4da80523465da3f7b41ecdfcb2679b3b25091b4cae83f38d73d27405d2f4d7a  fallback/sec_jumpdest.txt
 47e48f90cfee5d047cf9480cb8f1523eb4718068fe5982e615417220792bbc6f  fallback/sec_oob.txt
+896268959860c403c4cd852ae9f91095fe642a73091c0f279b86bd267e797ba2  fallback/sec_saturate.txt
 556def5e4f3860758a37ea8aacb98d9f85288113501b08af31943dc798ba62a3  fallback/sec_xgather.txt
 abc7dfef96e73187bfef84aa20de03b477e009b5ce8ad6b685f0fb6043fb695e  fallback/sec_xgather2.txt
-f2be1e265a00e7baf00f913c253cce04a0f0f1edcdaf08223787cd5b9b6ff864  fallback/sec_xmacc_n.txt
+834f03c5d9cc8ba6a2ac8f4d0e9032929e403f6a88e8a2548042e9b796c6ae5e  fallback/sec_xmacc_n.txt
 6055c6ac18e265c970c2c57d1727f1a80b519d6c3c9d16061339a8c85c63d4c9  fallback/sec_xtranspose_big.txt
 70c11fb613ff8b8488c7544dfe498a891057a75ac448ff1808ced1c88ce70176  fallback/seedchk_evm.txt
 9d17ae2c0f649e937383c192d294cf32eb53b98d59cdff7be7e87d7104ab7a56  fallback/test_fullnet_500_acc.txt

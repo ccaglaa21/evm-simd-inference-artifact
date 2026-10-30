@@ -12,10 +12,10 @@ index 2a6bb248..e9b516b9 100644
                      t.fn = op_undefined;
                      t.gas_cost = 0;
 diff --git a/lib/evmone/instructions.hpp b/lib/evmone/instructions.hpp
-index 1c594be4..77c365bf 100644
+index c93f8a29..b2deccc4 100644
 --- a/lib/evmone/instructions.hpp
 +++ b/lib/evmone/instructions.hpp
-@@ -343,6 +343,181 @@ inline void noop(StackTop /*stack*/) noexcept {}
+@@ -406,6 +406,183 @@ inline void noop(StackTop /*stack*/) noexcept {}
          return pos + 1;
      }
  
@@ -23,8 +23,8 @@ index 1c594be4..77c365bf 100644
 +    // Stack (pop order): n (number of 8-lane groups), off_w (first weight word), off_x (first input
 +    // word). The accumulator (8 x int32 lanes) stays on the stack and is updated in place.
 +    // For every group g the eight int16 lanes of the memory words at off_w+32g and off_x+32g are
-+    // multiplied and accumulated with the same lane arithmetic as XMACC (16->32 widening, 32-bit
-+    // wrap). The words are read exactly as MLOAD reads them, so the lane layout is that of XMACC.
++    // multiplied and accumulated with the same lane arithmetic as XMACC (16->32 widening, saturating
++    // 32-bit addition). The words are read exactly as MLOAD reads them, so the lane layout is that of XMACC.
 +    // Gas: XMACC_N_GROUP_GAS per group (the price of one XMACC), charged before any memory access;
 +    // memory expansion is charged by check_memory as for every memory instruction.
 +    // SECURITY: n must fit in 31 bits; both regions are bounds-checked before any read.
@@ -58,8 +58,8 @@ index 1c594be4..77c365bf 100644
 +        // Vector path: the sixteen lane bytes of a word (bytes 16..31) are loaded with one 128-bit
 +        // load and reversed with one byte shuffle, which yields the eight int16 lanes in lane order
 +        // (lane j = bytes 31-2j, 30-2j). The lanes are sign-extended to 32 bits, multiplied exactly
-+        // (every product of two int16 values fits in 32 bits) and accumulated with wrapping 32-bit
-+        // addition. This is the same arithmetic as the scalar path below.
++        // (every product of two int16 values fits in 32 bits) and accumulated with the saturating
++        // 32-bit addition sat_add32_v. This is the same arithmetic as the scalar path below.
 +        const __m128i rev = _mm_set_epi8(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15);
 +        __m256i acc = _mm256_loadu_si256(reinterpret_cast<const __m256i*>(ab));
 +        for (uint64_t g = 0; g < n; ++g)
@@ -70,7 +70,7 @@ index 1c594be4..77c365bf 100644
 +            x16 = _mm_shuffle_epi8(x16, rev);
 +            const __m256i w32 = _mm256_cvtepi16_epi32(w16);
 +            const __m256i x32 = _mm256_cvtepi16_epi32(x16);
-+            acc = _mm256_add_epi32(acc, _mm256_mullo_epi32(w32, x32));
++            acc = sat_add32_v(acc, _mm256_mullo_epi32(w32, x32));
 +        }
 +        _mm256_storeu_si256(reinterpret_cast<__m256i*>(ab), acc);
 +#else
@@ -93,8 +93,7 @@ index 1c594be4..77c365bf 100644
 +                const int16_t x = static_cast<int16_t>(
 +                    static_cast<uint16_t>(px[g * 32 + 31 - 2 * j]) |
 +                    (static_cast<uint16_t>(px[g * 32 + 30 - 2 * j]) << 8));
-+                acc[j] = static_cast<int32_t>(static_cast<uint32_t>(acc[j]) +
-+                                              static_cast<uint32_t>(static_cast<int32_t>(w) * static_cast<int32_t>(x)));
++                acc[j] = sat_add32(acc[j], static_cast<int32_t>(w) * static_cast<int32_t>(x));
 +            }
 +        }
 +        for (int j = 0; j < 8; ++j)
@@ -111,10 +110,11 @@ index 1c594be4..77c365bf 100644
 +    // --- XMACC_N16: row-level multiply-accumulate over 16-lane words (element-count operand) ---
 +    // Same stack interface as XMACC_N (pops n, off_w, off_x; the accumulator word stays on the stack),
 +    // but every memory word holds SIXTEEN int16 lanes (lane j at bytes 31-2j, 30-2j, j = 0..15, the
-+    // whole word) and the eight int32 accumulator lanes receive PAIRWISE sums:
-+    //     acc[k] += w[2k] * x[2k] + w[2k+1] * x[2k+1]      (k = 0..7, 32-bit wrap)
-+    // which is the pmaddwd form of the multiply-accumulate. The lane sum of the accumulator (XSUM32)
-+    // is therefore the dot product of all 16 n elements, as for XMACC_N over 2 n groups of eight.
++    // whole word) and the eight int32 accumulator lanes receive the two products of a pair in turn:
++    //     acc[k] = sat(sat(acc[k] + w[2k] * x[2k]) + w[2k+1] * x[2k+1])      (k = 0..7)
++    // with the saturating 32-bit addition of the other accumulation instructions. Without saturation
++    // the lane sum of the accumulator (XSUM32) is the dot product of all 16 n elements, as for
++    // XMACC_N over 2 n groups of eight.
 +    // Gas: XMACC_N16_GROUP_GAS = 22 per 16-element group, the same price per element as XMACC_N.
 +    static inline Result xmacc_n16(StackTop stack, int64_t gas_left, ExecutionState& state) noexcept
 +    {
@@ -141,10 +141,13 @@ index 1c594be4..77c365bf 100644
 +        std::memcpy(ab, &vacc, 32);
 +#if defined(__AVX2__)
 +        // Vector path: one 256-bit load per word, byte reversal (shuffle inside each 128-bit half,
-+        // then swap the halves), then vpmaddwd: 16 x 16-bit products summed in pairs to 8 x 32-bit,
-+        // accumulated with wrapping 32-bit addition.
++        // then swap the halves), then vpmaddwd twice, once with the odd and once with the even
++        // 16-bit lanes of x cleared, so that each call yields one exact product per 32-bit lane; the
++        // two products are accumulated in turn with the saturating addition, as in the scalar path.
 +        const __m256i rev = _mm256_set_epi8(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
 +                                            0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15);
++        const __m256i lo16 = _mm256_set1_epi32(0x0000FFFF);
++        const __m256i hi16 = _mm256_set1_epi32(static_cast<int>(0xFFFF0000u));
 +        __m256i acc = _mm256_loadu_si256(reinterpret_cast<const __m256i*>(ab));
 +        for (uint64_t g = 0; g < n; ++g)
 +        {
@@ -152,7 +155,8 @@ index 1c594be4..77c365bf 100644
 +            __m256i x = _mm256_loadu_si256(reinterpret_cast<const __m256i*>(px + g * 32));
 +            w = _mm256_permute2x128_si256(_mm256_shuffle_epi8(w, rev), _mm256_shuffle_epi8(w, rev), 0x01);
 +            x = _mm256_permute2x128_si256(_mm256_shuffle_epi8(x, rev), _mm256_shuffle_epi8(x, rev), 0x01);
-+            acc = _mm256_add_epi32(acc, _mm256_madd_epi16(w, x));
++            acc = sat_add32_v(acc, _mm256_madd_epi16(w, _mm256_and_si256(x, lo16)));   // element 2k
++            acc = sat_add32_v(acc, _mm256_madd_epi16(w, _mm256_and_si256(x, hi16)));   // element 2k+1
 +        }
 +        _mm256_storeu_si256(reinterpret_cast<__m256i*>(ab), acc);
 +#else
@@ -168,7 +172,6 @@ index 1c594be4..77c365bf 100644
 +        {
 +            for (int k = 0; k < 8; ++k)
 +            {
-+                uint32_t s = 0;
 +                for (int h = 0; h < 2; ++h)
 +                {
 +                    const int j = 2 * k + h;
@@ -178,9 +181,8 @@ index 1c594be4..77c365bf 100644
 +                    const int16_t x = static_cast<int16_t>(
 +                        static_cast<uint16_t>(px[g * 32 + 31 - 2 * j]) |
 +                        (static_cast<uint16_t>(px[g * 32 + 30 - 2 * j]) << 8));
-+                    s += static_cast<uint32_t>(static_cast<int32_t>(w) * static_cast<int32_t>(x));
++                    acc[k] = sat_add32(acc[k], static_cast<int32_t>(w) * static_cast<int32_t>(x));
 +                }
-+                acc[k] = static_cast<int32_t>(static_cast<uint32_t>(acc[k]) + s);
 +            }
 +        }
 +        for (int k = 0; k < 8; ++k)

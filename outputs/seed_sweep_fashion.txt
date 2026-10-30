@@ -6,7 +6,7 @@ fashion_meta reference: S=4096 SHIFT1=6 SHIFT2=13 (seed-42 check against the shi
     epoch 15: test acc=0.8703
     epoch 20: test acc=0.8859
     epoch 24: test acc=0.8803
-[seed 42] done (170s): SHIFT=6/13 | 500: float 443 q 441 agree 486 | 10k: float 8803 q 8756 agree 9737
+[seed 42] done (170s): SHIFT=6/13 | 500: float 443 q 441 agree 486 | 10k: float 8803 q 8756 agree 9737 | max |lane partial sum|+|bias| over 10k images 251093903 (11.69% of 2^31-1, no lane reaches the clamp)
   [CHECK seed42] S/SHIFT == fashion_meta: PASSED | quantized parameters == shipped fashion_* files: PASSED | canonical 500 images: float 443 q 441 agree 486
 [seed 7] training...
     epoch 0: test acc=0.7659
@@ -15,7 +15,7 @@ fashion_meta reference: S=4096 SHIFT1=6 SHIFT2=13 (seed-42 check against the shi
     epoch 15: test acc=0.8674
     epoch 20: test acc=0.8662
     epoch 24: test acc=0.8828
-[seed 7] done (171s): SHIFT=6/14 | 500: float 438 q 436 agree 479 | 10k: float 8828 q 8726 agree 9653
+[seed 7] done (175s): SHIFT=6/14 | 500: float 438 q 436 agree 479 | 10k: float 8828 q 8726 agree 9653 | max |lane partial sum|+|bias| over 10k images 210711433 (9.81% of 2^31-1, no lane reaches the clamp)
 [seed 123] training...
     epoch 0: test acc=0.8015
     epoch 5: test acc=0.8551
@@ -23,7 +23,7 @@ fashion_meta reference: S=4096 SHIFT1=6 SHIFT2=13 (seed-42 check against the shi
     epoch 15: test acc=0.8766
     epoch 20: test acc=0.8391
     epoch 24: test acc=0.8762
-[seed 123] done (170s): SHIFT=6/13 | 500: float 441 q 445 agree 485 | 10k: float 8762 q 8747 agree 9679
+[seed 123] done (174s): SHIFT=6/13 | 500: float 441 q 445 agree 485 | 10k: float 8762 q 8747 agree 9679 | max |lane partial sum|+|bias| over 10k images 335861105 (15.64% of 2^31-1, no lane reaches the clamp)
 [seed 2024] training...
     epoch 0: test acc=0.7842
     epoch 5: test acc=0.8492
@@ -31,7 +31,7 @@ fashion_meta reference: S=4096 SHIFT1=6 SHIFT2=13 (seed-42 check against the shi
     epoch 15: test acc=0.8727
     epoch 20: test acc=0.8781
     epoch 24: test acc=0.8698
-[seed 2024] done (171s): SHIFT=6/13 | 500: float 433 q 438 agree 492 | 10k: float 8698 q 8708 agree 9672
+[seed 2024] done (174s): SHIFT=6/13 | 500: float 433 q 438 agree 492 | 10k: float 8698 q 8708 agree 9672 | max |lane partial sum|+|bias| over 10k images 349655512 (16.28% of 2^31-1, no lane reaches the clamp)
 [seed 31337] training...
     epoch 0: test acc=0.7947
     epoch 5: test acc=0.8588
@@ -39,7 +39,7 @@ fashion_meta reference: S=4096 SHIFT1=6 SHIFT2=13 (seed-42 check against the shi
     epoch 15: test acc=0.8799
     epoch 20: test acc=0.8845
     epoch 24: test acc=0.8723
-[seed 31337] done (170s): SHIFT=7/12 | 500: float 436 q 434 agree 477 | 10k: float 8723 q 8681 agree 9533
+[seed 31337] done (174s): SHIFT=7/12 | 500: float 436 q 434 agree 477 | 10k: float 8723 q 8681 agree 9533 | max |lane partial sum|+|bias| over 10k images 281479395 (13.11% of 2^31-1, no lane reaches the clamp)
 
 ================ SEED SWEEP SUMMARY (Fashion-MNIST, 5 seeds) ================
  seed  | SH1/SH2 | f500 | q500 | agr500 | f10k  | q10k  | agr10k
@@ -48,5 +48,6 @@ fashion_meta reference: S=4096 SHIFT1=6 SHIFT2=13 (seed-42 check against the shi
    123 |  6/13   | 441  | 445  |  485   |  8762 |  8747 |  9679
   2024 |  6/13   | 433  | 438  |  492   |  8698 |  8708 |  9672
  31337 |  7/12   | 436  | 434  |  477   |  8723 |  8681 |  9533
+max |lane partial sum|+|bias| over all seeds and 10k images: 349655512 (16.28% of 2^31-1) -> no lane reaches the saturating clamp, so the int64 simulation equals the on-chain arithmetic
 
 10k: float 87.63%±0.48 | int16 87.24%±0.27 | loss 0.39±0.37 points | agreement 96.55%±0.67

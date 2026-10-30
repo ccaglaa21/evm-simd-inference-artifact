@@ -189,7 +189,7 @@ index 6083fcea..bee43c4e 100644
              map.set(i);
      }
 diff --git a/lib/evmone/instructions.hpp b/lib/evmone/instructions.hpp
-index 0d8ee917..def6c770 100644
+index 0d8ee917..c93f8a29 100644
 --- a/lib/evmone/instructions.hpp
 +++ b/lib/evmone/instructions.hpp
 @@ -7,6 +7,10 @@
@@ -203,7 +203,7 @@ index 0d8ee917..def6c770 100644
  #include <evmone_precompiles/keccak.hpp>
  
  namespace evmone
-@@ -148,6 +152,361 @@ namespace instr::core
+@@ -148,6 +152,417 @@ namespace instr::core
  /// Moreover, these implementations _do not_ inform about new stack height
  /// after execution. The adjustment must be performed by the caller.
  inline void noop(StackTop /*stack*/) noexcept {}
@@ -396,20 +396,66 @@ index 0d8ee917..def6c770 100644
 +        return pos + 2;
 +    }
 +    
-+    // --- IMMEDIATE MAC (multiply-accumulate, 8-lane, 16->32 widening) ---
++    // --- Saturating 32-bit lane addition, shared by the accumulation instructions ---
++    // Every accumulation instruction adds each product to its 32-bit lane with this addition: the
++    // exact sum is clamped to [-2^31, 2^31 - 1] instead of wrapping. A product of two int16 values
++    // always fits in 32 bits, so the clamp is the only point at which a lane can leave the exact
++    // integer arithmetic, and it does so deterministically on every build.
++    static inline int32_t sat_add32(int32_t a, int32_t b) noexcept
++    {
++        const int64_t s = static_cast<int64_t>(a) + static_cast<int64_t>(b);
++        if (s > static_cast<int64_t>(INT32_MAX)) return INT32_MAX;
++        if (s < static_cast<int64_t>(INT32_MIN)) return INT32_MIN;
++        return static_cast<int32_t>(s);
++    }
++#if defined(__AVX2__)
++    // The same clamp on eight lanes: the wrapped sum is replaced, in every lane whose addition
++    // overflowed (a and b of one sign, the sum of the other), by INT32_MAX or INT32_MIN according
++    // to the sign of a. Bit-identical to sat_add32 applied lane by lane.
++    static inline __m256i sat_add32_v(__m256i a, __m256i b) noexcept
++    {
++        const __m256i s = _mm256_add_epi32(a, b);
++        const __m256i ovf = _mm256_srai_epi32(
++            _mm256_and_si256(_mm256_xor_si256(a, s), _mm256_xor_si256(b, s)), 31);
++        const __m256i sat = _mm256_xor_si256(_mm256_srai_epi32(a, 31), _mm256_set1_epi32(INT32_MAX));
++        return _mm256_blendv_epi8(s, sat, ovf);
++    }
++#endif
++
++    // --- XMACC (multiply-accumulate, 8-lane, 16->32 widening, saturating accumulation) ---
++    // Stack: [a (8 x int16 in the low 128 bits), b (same), acc (8 x int32)]. acc[j] = sat(acc[j] + a[j]*b[j]).
++    // All lane data goes through byte buffers, so the code is well defined on every build.
 +    static inline code_iterator xmacc_imm(StackTop stack, ExecutionState& state, code_iterator pos) noexcept
 +    {
 +        (void)state;
-+        auto& va = stack[0];
-+        auto& vb = stack[1];
++        const auto& va = stack[0];
++        const auto& vb = stack[1];
 +        auto& vacc = stack[2];
-+       auto a = simdpp::load_u<simdpp::int16<8>>(reinterpret_cast<const uint8_t*>(&va));
-+        auto b = simdpp::load_u<simdpp::int16<8>>(reinterpret_cast<const uint8_t*>(&vb));
-+        auto acc = simdpp::load_u<simdpp::int32<8>>(reinterpret_cast<const uint8_t*>(&vacc));
-+
-+        auto prod = simdpp::mull(a, b);
-+        auto result = simdpp::add(acc, prod);
-+        simdpp::store_u(reinterpret_cast<uint8_t*>(&vacc), result);
++        uint8_t ab[32], bb[32], cb[32];
++        std::memcpy(ab, &va, 32);
++        std::memcpy(bb, &vb, 32);
++        std::memcpy(cb, &vacc, 32);
++#if defined(__AVX2__)
++        const __m256i a32 = _mm256_cvtepi16_epi32(_mm_loadu_si128(reinterpret_cast<const __m128i*>(ab)));
++        const __m256i b32 = _mm256_cvtepi16_epi32(_mm_loadu_si128(reinterpret_cast<const __m128i*>(bb)));
++        const __m256i acc = _mm256_loadu_si256(reinterpret_cast<const __m256i*>(cb));
++        const __m256i res = sat_add32_v(acc, _mm256_mullo_epi32(a32, b32));
++        _mm256_storeu_si256(reinterpret_cast<__m256i*>(cb), res);
++#else
++        for (int j = 0; j < 8; ++j)
++        {
++            const int16_t a = static_cast<int16_t>(static_cast<uint16_t>(ab[2 * j]) | (static_cast<uint16_t>(ab[2 * j + 1]) << 8));
++            const int16_t b = static_cast<int16_t>(static_cast<uint16_t>(bb[2 * j]) | (static_cast<uint16_t>(bb[2 * j + 1]) << 8));
++            uint32_t v = 0;
++            for (int k = 0; k < 4; ++k)
++                v |= static_cast<uint32_t>(cb[4 * j + k]) << (8 * k);
++            const int32_t res = sat_add32(static_cast<int32_t>(v), static_cast<int32_t>(a) * static_cast<int32_t>(b));
++            const uint32_t r = static_cast<uint32_t>(res);
++            for (int k = 0; k < 4; ++k)
++                cb[4 * j + k] = static_cast<uint8_t>((r >> (8 * k)) & 0xFF);
++        }
++#endif
++        std::memcpy(&vacc, cb, 32);
 +        static_cast<void>(stack.pop());
 +        static_cast<void>(stack.pop());
 +        return pos + 1;
@@ -482,11 +528,11 @@ index 0d8ee917..def6c770 100644
 +        __m256i inp_v = _mm256_cvtepi16_epi32(inp16);
 +        __m256i acc = _mm256_loadu_si256(reinterpret_cast<const __m256i*>(pAcc));
 +        __m256i prod = _mm256_mullo_epi32(mat_v, inp_v);
-+        __m256i res = _mm256_add_epi32(acc, prod);
++        __m256i res = sat_add32_v(acc, prod);                              // saturating accumulation
 +        _mm256_storeu_si256(reinterpret_cast<__m256i*>(pAcc), res);
 +#else
 +        // --- SCALAR FALLBACK: when AVX2 is unavailable (ARM, older x86). BIT-EXACT identical to the AVX2 path. ---
-+        // Determinism: the wrap behaviour must be identical to mullo_epi32 / add_epi32.
++        // Determinism: the saturating accumulation must be identical to sat_add32_v.
 +        // All eight matrix, input and accumulator lanes are read before the first write, as the AVX2
 +        // path does, so that an accumulator region overlapping the operands gives the same result.
 +        // EVM memory offsets carry no alignment, so every lane is read and written with memcpy
@@ -503,10 +549,8 @@ index 0d8ee917..def6c770 100644
 +            std::memcpy(&acc_v[j], pAcc + 4 * j, 4);
 +        }
 +        for (int j = 0; j < 8; ++j) {
-+            const int32_t prod  = static_cast<int32_t>(                    // mullo_epi32: low 32-bit wrap
-+                static_cast<uint32_t>(mat_v[j]) * static_cast<uint32_t>(inp_v[j]));
-+            const int32_t res = static_cast<int32_t>(                      // add_epi32: 32-bit wrap
-+                static_cast<uint32_t>(acc_v[j]) + static_cast<uint32_t>(prod));
++            const int32_t prod = mat_v[j] * inp_v[j];                      // exact: both factors are int16
++            const int32_t res = sat_add32(acc_v[j], prod);                 // saturating accumulation
 +            std::memcpy(pAcc + 4 * j, &res, 4);
 +        }
 +#endif
@@ -533,13 +577,25 @@ index 0d8ee917..def6c770 100644
 +        return pos + 2;
 +
 +    }
-+    // --- XSUM32: 8-lane int32 lane reduction (horizontal sum) ---
++    // --- XSUM32: 8-lane int32 lane reduction (horizontal sum, saturating) ---
++    // The eight lanes are summed exactly and the sum is clamped to the int32 range, so the lane
++    // sum of a saturated accumulator cannot wrap either. The result is pushed zero-extended.
 +    static inline void xsum32(StackTop stack) noexcept
 +    {
 +        const auto v = stack.pop();
-+        auto a = simdpp::load_u<simdpp::int32<8>>(reinterpret_cast<const uint8_t*>(&v));
-+        int32_t s = simdpp::reduce_add(a);
-+        uint256 r = static_cast<uint256>(static_cast<uint32_t>(s));
++        uint8_t b[32];
++        std::memcpy(b, &v, 32);
++        int64_t s = 0;
++        for (int j = 0; j < 8; ++j)
++        {
++            uint32_t u = 0;
++            for (int k = 0; k < 4; ++k)
++                u |= static_cast<uint32_t>(b[4 * j + k]) << (8 * k);
++            s += static_cast<int64_t>(static_cast<int32_t>(u));
++        }
++        if (s > static_cast<int64_t>(INT32_MAX)) s = INT32_MAX;
++        if (s < static_cast<int64_t>(INT32_MIN)) s = INT32_MIN;
++        uint256 r = static_cast<uint256>(static_cast<uint32_t>(static_cast<int32_t>(s)));
 +        stack.push(r);
 +    }
 +    // --- XPACK: 8-lane int32 -> 8-lane int16 narrow (saturated pack) ---

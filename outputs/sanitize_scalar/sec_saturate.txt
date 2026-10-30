@@ -1,0 +1,10 @@
+=== SATURATING ACCUMULATION TESTS ===
+[PASS] T1   XMACC: lanes clamp to 2^31-1 and -2^31, in-range lanes exact: yes (lane0=2147483647 lane1=-2147483648 lane2=123505)
+[PASS] T2   XMACC_S: the same three cases through the header-mediated read: yes
+[PASS] T3   XMACC_N: 3 x (+2^30) -> 2^31-1 and 3 x -(2^30-2^15) -> -2^31: yes
+[PASS] T4   XMACC_N16: pair of 2^30 products -> 2^31-1: yes; products of a pair applied in turn to a clamped lane: yes
+[PASS] T5   XSUM32: 8 x (2^31-1) -> 2147483647, 8 x (-2^31) -> -2147483648, 4 + 4 -> -4 (exact -4), in-range sum -> 2 (exact 2): yes
+[PASS] T6   XMACC_N over 16 groups == 16 x XMACC == saturating reference (8 of 8 lanes at a clamp): yes
+[PASS] T7   gas of every program equals the static count: 11 of 11
+
+--- SUMMARY --- 7/7 passed  *** ALL CHECKS PASSED ***

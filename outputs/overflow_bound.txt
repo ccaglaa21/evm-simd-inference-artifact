@@ -1,19 +1,25 @@
 === MNIST (deep_*): S=4096 SHIFT1=7 SHIFT2=13 layers 784->128->64->10, images=500 ===
   weight ranges: W1 [-1648,1337]  W2 [-2565,2660]  W3 [-4859,4894]
-  layer 1: worst-case |accumulator| <= 46888347  over pixels 0..255  -> cannot overflow (bound below 2^31-1)
+  layer 1: worst-case |accumulator| <= 46888347  over pixels 0..255  -> cannot reach the clamp (bound below 2^31-1)
   layer 1: observed max |accumulator| on the canonical images = 7899135  (0.37% of 2^31-1)
-  layer 2: worst-case |accumulator| <= 2860153343  over inputs 0..32767  -> MAY overflow for some admissible input (bound above 2^31-1)
+  layer 1: observed max |lane partial sum| + |bias| = 1637637 (eight lanes, 0.08%), 1877428 (sixteen-lane pairs, 0.09%) -> no lane reaches the clamp
+  layer 2: worst-case |accumulator| <= 2860153343  over inputs 0..32767  -> MAY reach the clamp for some admissible input (bound above 2^31-1)
   layer 2: observed max |accumulator| on the canonical images = 334526172  (15.58% of 2^31-1)
-  layer 3: worst-case |accumulator| <= 2472368451  over inputs 0..32767  -> MAY overflow for some admissible input (bound above 2^31-1)
+  layer 2: observed max |lane partial sum| + |bias| = 123739751 (eight lanes, 5.76%), 136146786 (sixteen-lane pairs, 6.34%) -> no lane reaches the clamp
+  layer 3: worst-case |accumulator| <= 2472368451  over inputs 0..32767  -> MAY reach the clamp for some admissible input (bound above 2^31-1)
   layer 3: observed max |accumulator| on the canonical images = 593170222  (27.62% of 2^31-1)
+  layer 3: observed max |lane partial sum| + |bias| = 216288909 (eight lanes, 10.07%), 202653366 (sixteen-lane pairs, 9.44%) -> no lane reaches the clamp
 
 === Fashion-MNIST (fashion_*): S=4096 SHIFT1=6 SHIFT2=13 layers 784->128->64->10, images=500 ===
   weight ranges: W1 [-1808,1672]  W2 [-2196,1974]  W3 [-3808,4003]
-  layer 1: worst-case |accumulator| <= 52296584  over pixels 0..255  -> cannot overflow (bound below 2^31-1)
+  layer 1: worst-case |accumulator| <= 52296584  over pixels 0..255  -> cannot reach the clamp (bound below 2^31-1)
   layer 1: observed max |accumulator| on the canonical images = 7226155  (0.34% of 2^31-1)
-  layer 2: worst-case |accumulator| <= 2146187268  over inputs 0..32767  -> cannot overflow (bound below 2^31-1)
+  layer 1: observed max |lane partial sum| + |bias| = 2981480 (eight lanes, 0.14%), 2341757 (sixteen-lane pairs, 0.11%) -> no lane reaches the clamp
+  layer 2: worst-case |accumulator| <= 2146187268  over inputs 0..32767  -> cannot reach the clamp (bound below 2^31-1)
   layer 2: observed max |accumulator| on the canonical images = 364039121  (16.95% of 2^31-1)
-  layer 3: worst-case |accumulator| <= 2820911030  over inputs 0..32767  -> MAY overflow for some admissible input (bound above 2^31-1)
+  layer 2: observed max |lane partial sum| + |bias| = 157057283 (eight lanes, 7.31%), 155366988 (sixteen-lane pairs, 7.23%) -> no lane reaches the clamp
+  layer 3: worst-case |accumulator| <= 2820911030  over inputs 0..32767  -> MAY reach the clamp for some admissible input (bound above 2^31-1)
   layer 3: observed max |accumulator| on the canonical images = 768343797  (35.78% of 2^31-1)
+  layer 3: observed max |lane partial sum| + |bias| = 248030467 (eight lanes, 11.55%), 208966469 (sixteen-lane pairs, 9.73%) -> no lane reaches the clamp
 
 limit 2^31-1 = 2147483647

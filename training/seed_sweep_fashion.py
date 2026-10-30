@@ -68,6 +68,19 @@ def train_and_quant(seed):
     while a2s.max()>>SHIFT2>32767: SHIFT2+=1
     return (W1,b1,W2,b2,W3,b3),(W1q,b1i,W2q,b2i,W3q),(S,SHIFT1,SHIFT2)
 
+
+LIM32=2**31-1
+def lane_max(x,Wq,b):
+    """largest |partial sum| of one 32-bit accumulator lane over the batch, plus |bias|, under the eight-lane
+    mapping (lane j holds the inputs i = j mod 8) and the sixteen-lane pair mapping of XMACC_N16 (lane k holds
+    i = 2k, 2k+1 mod 16); the instructions clamp lane by lane at 2^31-1, so this must stay below the limit for
+    the int64 simulation to equal the on-chain result."""
+    x=x.astype(np.int64); Wq=Wq.astype(np.int64); n,d=x.shape; h=Wq.shape[1]
+    babs=np.abs(np.asarray(b,dtype=np.int64)) if b is not None else np.zeros(h,dtype=np.int64)
+    l8=np.einsum('ngj,gjh->njh',x.reshape(n,d//8,8),Wq.reshape(d//8,8,h))
+    l16=np.einsum('ngkp,gkph->nkh',x.reshape(n,d//16,8,2),Wq.reshape(d//16,8,2,h))
+    return int((np.abs(l8).max(axis=(0,1))+babs).max()), int((np.abs(l16).max(axis=(0,1))+babs).max())
+
 def eval_seed(fp,qp,shifts):
     W1,b1,W2,b2,W3,b3=fp; W1q,b1i,W2q,b2i,W3q=qp; S,S1,S2=shifts
     z1=Xte@W1+b1;a1=relu(z1);z2=a1@W2+b2;a2=relu(z2);z3=a2@W3+b3
@@ -77,6 +90,8 @@ def eval_seed(fp,qp,shifts):
     q2=np.clip(np.maximum(0,q1@W2q+b2i)>>S2,0,32767)
     pq=np.argmax(q2@W3q,axis=1)
     r={}
+    lm=[lane_max(imgs,W1q,b1i),lane_max(q1,W2q,b2i),lane_max(q2,W3q,None)]
+    r["lane_max"]=max(max(a,b) for a,b in lm); r["lane_pct"]=100.0*r["lane_max"]/LIM32
     for tag,n in (("500",500),("10k",len(yte))):
         r["facc_"+tag]=int((pf[:n]==yte[:n]).sum())
         r["qacc_"+tag]=int((pq[:n]==yte[:n]).sum())
@@ -93,7 +108,8 @@ for sd in seeds:
     rows.append(r)
     print(f"[seed {sd}] done ({time.time()-t0:.0f}s): SHIFT={sh[1]}/{sh[2]} | "
           f"500: float {r['facc_500']} q {r['qacc_500']} agree {r['agree_500']} | "
-          f"10k: float {r['facc_10k']} q {r['qacc_10k']} agree {r['agree_10k']}", flush=True)
+          f"10k: float {r['facc_10k']} q {r['qacc_10k']} agree {r['agree_10k']} | "
+          f"max |lane partial sum|+|bias| over 10k images {r['lane_max']} ({r['lane_pct']:.2f}% of 2^31-1, {'no lane reaches the clamp' if r['lane_max']<=LIM32 else 'A LANE REACHES THE CLAMP'})", flush=True)
     if sd==42:
         g1 = (sh[0]==mS and sh[1]==mS1 and sh[2]==mS2)
         g2 = shipped_match("fashion", qp)
@@ -109,5 +125,6 @@ qa=np.array([r['qacc_10k'] for r in rows])/100.0
 fa=np.array([r['facc_10k'] for r in rows])/100.0
 ag=np.array([r['agree_10k'] for r in rows])/100.0
 dl=fa-qa
+print(f"max |lane partial sum|+|bias| over all seeds and 10k images: {max(r['lane_max'] for r in rows)} ({max(r['lane_pct'] for r in rows):.2f}% of 2^31-1) -> {'no lane reaches the saturating clamp, so the int64 simulation equals the on-chain arithmetic' if max(r['lane_max'] for r in rows)<=LIM32 else 'A LANE REACHES THE CLAMP: simulation and on-chain result may differ'}")
 print(f"\n10k: float {fa.mean():.2f}%±{fa.std():.2f} | int16 {qa.mean():.2f}%±{qa.std():.2f} | "
       f"loss {dl.mean():.2f}±{dl.std():.2f} points | agreement {ag.mean():.2f}%±{ag.std():.2f}")

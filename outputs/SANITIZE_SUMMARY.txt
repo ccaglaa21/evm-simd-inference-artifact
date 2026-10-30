@@ -9,6 +9,7 @@ Sanitized avx2 build (-march=native -mavx2 -mfma -DSIMDPP_ARCH_X86_AVX2 -O1 -g -
   sec_jumpdest               sanitizer reports 0, identical to the plain run
   sec_fuzz                   sanitizer reports 0, identical to the plain run
   sec_fuzz_lanes             sanitizer reports 0, identical to the plain run
+  sec_saturate               sanitizer reports 0, identical to the plain run
   atv_three_paths            sanitizer reports 0, identical to the plain run
   atv_closed_form            sanitizer reports 0, identical to the plain run
   mnist_unrolled_simd        sanitizer reports 0, identical to the plain run
@@ -28,6 +29,7 @@ Sanitized scalar build (-fno-tree-vectorize -fno-tree-slp-vectorize -O1 -g -fsan
   sec_jumpdest               sanitizer reports 0, identical to the plain run
   sec_fuzz                   sanitizer reports 0, identical to the plain run
   sec_fuzz_lanes             sanitizer reports 0, identical to the plain run
+  sec_saturate               sanitizer reports 0, identical to the plain run
   atv_three_paths            sanitizer reports 0, identical to the plain run
   atv_closed_form            sanitizer reports 0, identical to the plain run
   mnist_unrolled_simd        sanitizer reports 0, identical to the plain run

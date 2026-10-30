@@ -242,7 +242,7 @@ static bool reference(const Trial& t, Ref& r, int64_t static_gas) {
             const uint64_t base = row.w[0] * sr + start.w[0] * sc;      // <= max_elem <= 2^31-1
             int32_t mv[8], iv[8], av[8];
             for (int j = 0; j < 8; ++j) { mv[j] = (int16_t)r.rd16(pm + 2 * (base + (uint64_t)j * sc)); iv[j] = (int16_t)r.rd16(pinp + 2 * j); av[j] = r.rd32s(pacc + 4 * j); }
-            for (int j = 0; j < 8; ++j) { int32_t res = (int32_t)((uint32_t)av[j] + (uint32_t)((uint32_t)mv[j] * (uint32_t)iv[j])); std::memcpy(&r.mem[pacc + 4 * j], &res, 4); }
+            for (int j = 0; j < 8; ++j) { int64_t s = (int64_t)av[j] + (int32_t)mv[j] * (int32_t)iv[j]; int32_t res = s > INT32_MAX ? INT32_MAX : (s < INT32_MIN ? INT32_MIN : (int32_t)s); std::memcpy(&r.mem[pacc + 4 * j], &res, 4); }   // saturating lane addition
             return true;
         }
         case T_XMACC_N: case T_XMACC_N16: {

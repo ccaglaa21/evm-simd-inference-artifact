@@ -63,6 +63,18 @@ def quantize(fp, calib_imgs):
     while a2s.max()>>SHIFT2>32767: SHIFT2+=1
     return (W1q,b1i,W2q,b2i,W3q),(S,SHIFT1,SHIFT2)
 
+LIM32=2**31-1
+def lane_max(x,Wq,b):
+    """largest |partial sum| of one 32-bit accumulator lane over the batch, plus |bias|, under the eight-lane
+    mapping (lane j holds the inputs i = j mod 8) and the sixteen-lane pair mapping of XMACC_N16 (lane k holds
+    i = 2k, 2k+1 mod 16); the instructions clamp lane by lane at 2^31-1, so this must stay below the limit for
+    the int64 simulation to equal the on-chain result."""
+    x=x.astype(np.int64); Wq=Wq.astype(np.int64); n,d=x.shape; h=Wq.shape[1]
+    babs=np.abs(np.asarray(b,dtype=np.int64)) if b is not None else np.zeros(h,dtype=np.int64)
+    l8=np.einsum('ngj,gjh->njh',x.reshape(n,d//8,8),Wq.reshape(d//8,8,h))
+    l16=np.einsum('ngkp,gkph->nkh',x.reshape(n,d//16,8,2),Wq.reshape(d//16,8,2,h))
+    return int((np.abs(l8).max(axis=(0,1))+babs).max()), int((np.abs(l16).max(axis=(0,1))+babs).max())
+
 def evalq(fp,qp,shifts):
     W1,b1,W2,b2,W3,b3=fp; W1q,b1i,W2q,b2i,W3q=qp; S,S1,S2=shifts
     z1=Xte@W1+b1;a1=relu(z1);z2=a1@W2+b2;a2=relu(z2);z3=a2@W3+b3
@@ -72,6 +84,8 @@ def evalq(fp,qp,shifts):
     q2=np.clip(np.maximum(0,q1@W2q+b2i)>>S2,0,32767)
     pq=np.argmax(q2@W3q,axis=1)
     n=len(yte)
+    lm=max(max(a,b) for a,b in (lane_max(imgs,W1q,b1i),lane_max(q1,W2q,b2i),lane_max(q2,W3q,None)))
+    print(f"    max |lane partial sum|+|bias| over 10k images {lm} ({100.0*lm/LIM32:.2f}% of 2^31-1, {'no lane reaches the clamp' if lm<=LIM32 else 'A LANE REACHES THE CLAMP'})", flush=True)
     return (int((pf==yte).sum()), int((pq==yte).sum()), int((pq==pf).sum()),
             int((pf[:500]==yte[:500]).sum()), int((pq[:500]==yte[:500]).sum()), int((pq[:500]==pf[:500]).sum()))
 

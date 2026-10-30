@@ -11,10 +11,10 @@
 //   T7  n*32 beyond gas  -> clean OUT_OF_GAS from the memory-expansion charge, no host memory access
 //   T8  off_w == off_x   -> SUCCESS, lanes equal the squares (overlapping operands are legal)
 //   T9  cross-consistency -> XMACC_N over 40 groups of signed random data equals 40 XMACC steps
-//                            (same lane arithmetic, 32-bit wrap included)
+//                            (same lane arithmetic, saturating accumulation included)
 //   T10 gas accounting   -> gas of T9 equals the static count (11 per group plus the other opcodes)
 //   T11 XMACC_N16 n=2^31 -> clean OUT_OF_GAS (same guards as XMACC_N)
-//   T12 XMACC_N16 over 20 words equals the C++ reference (pairwise sums over the 16 lanes of a word, 32-bit wrap)
+//   T12 XMACC_N16 over 20 words equals the C++ reference (the two products of a pair added in turn, saturating)
 //       and its gas equals the static count (22 per 16-element group)
 // A SUCCESS where OUT_OF_GAS is expected would mean a guard is missing. The program prints one line
 // per test and a summary; the output is deterministic and is compared between the two builds.
@@ -60,6 +60,7 @@ static Res run(const Code& k, int64_t gas) {
 #endif
 // word with eight int16 lanes (lane j at bytes 31-2j, 30-2j), as MLOAD reads it
 static void lanes16(uint8_t* w, const int16_t* v) { std::memset(w, 0, 32); for (int j = 0; j < 8; ++j) { uint16_t u = (uint16_t)v[j]; w[31 - 2 * j] = u & 0xFF; w[30 - 2 * j] = (u >> 8) & 0xFF; } }
+static int32_t sat32(int32_t a, int32_t b) { int64_t s = (int64_t)a + b; return s > INT32_MAX ? INT32_MAX : (s < INT32_MIN ? INT32_MIN : (int32_t)s); }   // the saturating lane addition of the specification
 static int32_t lane32(const uint8_t* w, int j) { uint32_t v = 0; for (int k = 0; k < 4; ++k) v |= (uint32_t)w[31 - 4 * j - k] << (8 * k); return (int32_t)v; }   // w: big-endian word bytes
 static uint32_t rnd = 12345u; static int16_t rnd16() { rnd = rnd * 1664525u + 1013904223u; return (int16_t)(rnd >> 16); }
 
@@ -109,15 +110,15 @@ int main() {
     { Code k = one(1ULL << 30, nullptr, W, nullptr, X, nullptr); Res r = run(k, 100000000000LL); char d[128]; std::snprintf(d, sizeof d, "n=2^30 (32 GiB) with 1e11 gas: status=%d (OUT_OF_GAS=3 expected from the memory charge)", (int)r.st); report("T7", r.st == EVMC_OUT_OF_GAS, d); }
     // T8: overlapping operands off_w == off_x (squares)
     { Code k = one(8, nullptr, W, nullptr, W, nullptr); Res r = run(k, GAS_BIG); bool ok = r.st == EVMC_SUCCESS && r.out.size() == 64;
-      if (ok) for (int j = 0; j < 8; ++j) { int32_t ref = j + 1; for (int g = 0; g < 8; ++g) ref = (int32_t)((uint32_t)ref + (uint32_t)((int32_t)wl[g][j] * (int32_t)wl[g][j])); if (lane32(r.out.data(), j) != ref) ok = false; }
+      if (ok) for (int j = 0; j < 8; ++j) { int32_t ref = j + 1; for (int g = 0; g < 8; ++g) ref = sat32(ref, (int32_t)wl[g][j] * (int32_t)wl[g][j]); if (lane32(r.out.data(), j) != ref) ok = false; }
       char d[96]; std::snprintf(d, sizeof d, "off_w == off_x, n=8: status=%d lanes == squares: %s", (int)r.st, ok ? "yes" : "no"); report("T8", ok, d); }
     // T9 + T10: 40 groups, XMACC_N against 40 XMACC steps and against the C++ reference; gas against the static count
     { Code kn = one(40, nullptr, W, nullptr, X, nullptr); Res rn = run(kn, GAS_BIG);
       Code kb; prelude(kb); kb.W32(accw); for (int g = 0; g < 40; ++g) { kb.PUSH(X + 32 * g); kb.MLOAD(); kb.PUSH(W + 32 * g); kb.MLOAD(); kb.XMACC(); }
       kb.PUSH(OUT); kb.MSTORE(); kb.op(0x59, 2); kb.PUSH(OUT + 32); kb.MSTORE(); kb.RET(OUT, 64); Res rb = run(kb, GAS_BIG);
       bool ok = rn.st == EVMC_SUCCESS && rb.st == EVMC_SUCCESS && rn.out.size() == 64 && rb.out.size() == 64 && std::memcmp(rn.out.data(), rb.out.data(), 32) == 0;
-      bool okref = ok; if (ok) for (int j = 0; j < 8; ++j) { int32_t ref = j + 1; for (int g = 0; g < 40; ++g) ref = (int32_t)((uint32_t)ref + (uint32_t)((int32_t)wl[g][j] * (int32_t)xl[g][j])); if (lane32(rn.out.data(), j) != ref) okref = false; }
-      char d[160]; std::snprintf(d, sizeof d, "40 groups: XMACC_N == 40 x XMACC: %s, == C++ reference (32-bit wrap): %s", ok ? "yes" : "no", okref ? "yes" : "no"); report("T9", ok && okref, d);
+      bool okref = ok; if (ok) for (int j = 0; j < 8; ++j) { int32_t ref = j + 1; for (int g = 0; g < 40; ++g) ref = sat32(ref, (int32_t)wl[g][j] * (int32_t)xl[g][j]); if (lane32(rn.out.data(), j) != ref) okref = false; }
+      char d[160]; std::snprintf(d, sizeof d, "40 groups: XMACC_N == 40 x XMACC: %s, == C++ reference (saturating): %s", ok ? "yes" : "no", okref ? "yes" : "no"); report("T9", ok && okref, d);
       long long memw = (OUT + 64 + 31) / 32; long long memgas = 3 * memw + (memw * memw) / 512;
       long long pred = kn.sgas + memgas; char e[160]; std::snprintf(e, sizeof e, "gas measured %lld, static count %lld (11 gas x 40 groups included): %s", rn.gas, pred, rn.gas == pred ? "equal" : "DIFFERENT"); report("T10", rn.gas == pred, e); }
     // T11, T12: the 16-lane variant XMACC_N16 (0xe7): guards and reference (pairwise sums, 22 gas per group)
@@ -126,12 +127,12 @@ int main() {
     { Code k; prelude(k); k.W32(accw); k.PUSH(X); k.PUSH(W); k.PUSH(20); k.op(0xE7, 22 * 20); k.PUSH(OUT); k.MSTORE(); k.RET(OUT, 32);
       Res r = run(k, GAS_BIG); bool ok = r.st == EVMC_SUCCESS && r.out.size() == 32;
       if (ok) for (int kk = 0; kk < 8; ++kk) { int32_t ref = kk + 1;
-          for (int g = 0; g < 20; ++g) { uint32_t sum = 0; for (int h = 0; h < 2; ++h) { int j = 2 * kk + h;
+          for (int g = 0; g < 20; ++g) { for (int h = 0; h < 2; ++h) { int j = 2 * kk + h;
               int16_t w = (int16_t)(ww[g][31 - 2 * j] | (ww[g][30 - 2 * j] << 8)); int16_t x = (int16_t)(xw[g][31 - 2 * j] | (xw[g][30 - 2 * j] << 8));
-              sum += (uint32_t)((int32_t)w * (int32_t)x); } ref = (int32_t)((uint32_t)ref + sum); }
+              ref = sat32(ref, (int32_t)w * (int32_t)x); } }
           if (lane32(r.out.data(), kk) != ref) ok = false; }
       long long memw = (OUT + 32 + 31) / 32; long long pred = k.sgas + 3 * memw + (memw * memw) / 512;
-      char d[160]; std::snprintf(d, sizeof d, "XMACC_N16 over 20 words == C++ reference (pairwise sums over all 16 lanes, 32-bit wrap): %s | gas %lld == static %lld: %s", ok ? "yes" : "no", r.gas, pred, r.gas == pred ? "yes" : "no"); report("T12", ok && r.gas == pred, d); }
+      char d[160]; std::snprintf(d, sizeof d, "XMACC_N16 over 20 words == C++ reference (the two products of a pair in turn, saturating): %s | gas %lld == static %lld: %s", ok ? "yes" : "no", r.gas, pred, r.gas == pred ? "yes" : "no"); report("T12", ok && r.gas == pred, d); }
     std::printf("\n--- SUMMARY --- %d/%d passed%s\n", pass, total, pass == total ? "  *** ALL CHECKS PASSED ***" : "  *** INSPECT ***");
 #ifndef LOCAL_TEST
     VM->destroy(VM); dlclose(h);

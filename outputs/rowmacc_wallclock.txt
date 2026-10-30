@@ -1,15 +1,15 @@
 Bytecode: S=140627 B=123516 N=2182 N16=2164 bytes | calldata 1011360 bytes | 128 neurons x 784 inputs = 100352 multiply-accumulates
-  [S] bit-exact against the C++ reference (128 outputs, 32-bit wrap): PASSED | gas 656224
-  [S] med=0.000254 s  min=0.000246  max=0.000257  CV=1.6%  (samples=31, inner-reps=28)
-  [B] bit-exact against the C++ reference (128 outputs, 32-bit wrap): PASSED | gas 685199
-  [B] med=0.000143 s  min=0.000141  max=0.000146  CV=0.6%  (samples=31, inner-reps=69)
-  [N] bit-exact against the C++ reference (128 outputs, 32-bit wrap): PASSED | gas 535823
-  [N] med=0.000033 s  min=0.000032  max=0.000033  CV=0.7%  (samples=31, inner-reps=294)
-  [N16] bit-exact against the C++ reference (128 outputs, 32-bit wrap): PASSED | gas 260625
-  [N16] med=0.000018 s  min=0.000018  max=0.000018  CV=0.3%  (samples=31, inner-reps=551)
+  [S] bit-exact against the C++ reference (128 outputs): PASSED | gas 656224
+  [S] med=0.000269 s  min=0.000256  max=0.000272  CV=1.5%  (samples=31, inner-reps=28)
+  [B] bit-exact against the C++ reference (128 outputs): PASSED | gas 685199
+  [B] med=0.000164 s  min=0.000162  max=0.000170  CV=1.1%  (samples=31, inner-reps=60)
+  [N] bit-exact against the C++ reference (128 outputs): PASSED | gas 535823
+  [N] med=0.000048 s  min=0.000048  max=0.000050  CV=0.8%  (samples=31, inner-reps=200)
+  [N16] bit-exact against the C++ reference (128 outputs): PASSED | gas 260625
+  [N16] med=0.000038 s  min=0.000037  max=0.000040  CV=1.3%  (samples=31, inner-reps=267)
 
 ================ ROW-LEVEL INSTRUCTION, WALL-CLOCK (layer-1 shape, 100352 multiply-accumulates) ================
-  median time per execution: S 0.254 ms | B 0.143 ms | N 0.033 ms | N16 0.018 ms
-  time ratios: S/N = 7.78 | B/N = 4.37 | S/B = 1.78 | S/N16 = 14.28 | N/N16 = 1.84
-  nanoseconds per multiply-accumulate: S 2.53 | B 1.42 | N 0.32 | N16 0.18
+  median time per execution: S 0.269 ms | B 0.164 ms | N 0.048 ms | N16 0.038 ms
+  time ratios: S/N = 5.59 | B/N = 3.40 | S/B = 1.64 | S/N16 = 7.14 | N/N16 = 1.28
+  nanoseconds per multiply-accumulate: S 2.68 | B 1.63 | N 0.48 | N16 0.38
 *** ALL CHECKS PASSED -> timing numbers are valid for this build ***

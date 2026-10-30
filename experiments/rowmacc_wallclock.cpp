@@ -11,7 +11,8 @@
 //   Path N16 row-level XMACC_N16 on 16-lane words (half the words, same price per element), then XSUM32
 // Method as in atv_wallclock: steady_clock around vm->execute only, adaptive inner repetition
 // (sample >= 10 ms), 7..31 samples, MEDIAN + min-max + CV%. The warm-up run checks the outputs of
-// all three programs against the C++ reference (bit-exact, 32-bit wrap) and records the gas.
+// all three programs against the C++ reference (bit-exact; the data keep every lane sum below 2^31, so the
+// saturating accumulation of the instructions is not reached) and records the gas.
 // This program is run on the AVX2 build and on the scalar-fallback build; the two output files are
 // compared by eye (timing is excluded from the automatic comparison), the result lines of the
 // bit-exact checks and the gas values must be identical.
@@ -126,7 +127,7 @@ int main() {
             if (ok) for (int n = 0; n < NEU && ok; ++n) { const uint8_t* w = r.output_data + MOcur + (size_t)n * 32;
                 uint32_t got = 0; for (int i = 28; i < 32; ++i) got = (got << 8) | w[i];        // low 32 bits of the word
                 (void)lanes; if (got != ref[n]) ok = false; }
-            std::printf("  [%s] bit-exact against the C++ reference (128 outputs, 32-bit wrap): %s | gas %lld\n", name, ok ? "PASSED" : "FAILED", g);
+            std::printf("  [%s] bit-exact against the C++ reference (128 outputs): %s | gas %lld\n", name, ok ? "PASSED" : "FAILED", g);
             if (!ok) fail = 1;
         }
         if (r.release) r.release(&r);
