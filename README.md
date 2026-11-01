@@ -139,6 +139,9 @@ identical to the AVX2 run. The fallback outputs are kept in
 | Scale check of the hidden-layer-2 bias and per-layer saturation counts on the canonical images | `training/bias_scale.py` | `bias_scale.txt` |
 | Effect of the omitted output-layer bias: predictions with and without `b3` on the 500 canonical images, agreement with the float model and label accuracy | `training/output_bias.py` (reads `deep_b3.txt`, `fashion_b3.txt`, written by the training scripts at the scale 255 S^3 / 2^(SHIFT1+SHIFT2)) | `output_bias.txt` |
 | Figure 1, cold single-image cost of five contracts (drawn on the host from the output files, needs matplotlib: `python3 training/fig_cold_cost.py`) | `training/fig_cold_cost.py` | `fig_cold_cost.pdf` |
+| Figure 2, gas of the transposed product $A^\top v$ for Paths A, B and C (`python3 training/fig_kernel_scaling.py`) | `training/fig_kernel_scaling.py` | `outputs/fig_kernel_scaling.pdf` |
+| Figure 3, cost anatomy of Path B and Path C (`python3 training/fig_cost_anatomy.py`) | `training/fig_cost_anatomy.py` | `outputs/fig_cost_anatomy.pdf` |
+| Figure of the MatrixHeader layout, a schematic with no data (`python3 training/fig_header.py`) | `training/fig_header.py` | `fig_header.pdf` |
 | 32-bit accumulator analysis: worst-case bound per layer over the admissible input range (above the bound the accumulation clamps) and the largest value reached on the canonical images | `training/overflow_bound.py` | `overflow_bound.txt` |
 | Quantization loss over five seeds and 10,000 images; calibration experiment | `training/seed_sweep.py`, `training/seed_sweep_fashion.py`, `training/seed_sweep_fashion_cal.py` via `RUN_SWEEPS=1` | `seed_sweep.txt`, `seed_sweep_fashion.txt`, `seed_sweep_fashion_cal.txt` |
 | int8 accuracy study | `training/int8_accuracy.py`, `training/int8_accuracy_fashion.py` | `int8_accuracy.txt`, `int8_accuracy_fashion.txt` |
