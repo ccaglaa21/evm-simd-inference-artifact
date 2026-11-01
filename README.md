@@ -1,9 +1,9 @@
-# Artifact: Data Vectorization in Smart Contracts
+# Artifact: Data Vectorization in EVM Smart Contracts
 
 This repository is the reproducibility artifact of the manuscript
-*"Data Vectorization in Smart Contracts: SIMD Instructions and Memory Views for On-Chain Machine Learning Inference"*
-(Ç. Nazar, S. Topal; submitted to the Journal of Parallel and Distributed
-Computing). It contains the evmone patch that adds the
+*"Data Vectorization in EVM Smart Contracts: SIMD Instructions and Memory Views for On-Chain Machine Learning Inference"*
+(Ç. Nazar, S. Topal; submitted to the Journal of Systems
+Architecture). It contains the evmone patch that adds the
 `MatrixHeader` descriptor and the SIMD instruction family, every measurement
 program behind the numbers reported in the paper, the canonical trained
 weights, and the reference outputs of a complete run.
