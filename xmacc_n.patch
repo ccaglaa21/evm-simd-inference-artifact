@@ -15,7 +15,7 @@ diff --git a/lib/evmone/instructions.hpp b/lib/evmone/instructions.hpp
 index c93f8a29..b2deccc4 100644
 --- a/lib/evmone/instructions.hpp
 +++ b/lib/evmone/instructions.hpp
-@@ -406,6 +406,183 @@ inline void noop(StackTop /*stack*/) noexcept {}
+@@ -406,6 +406,187 @@ inline void noop(StackTop /*stack*/) noexcept {}
          return pos + 1;
      }
  
@@ -25,7 +25,7 @@ index c93f8a29..b2deccc4 100644
 +    // For every group g the eight int16 lanes of the memory words at off_w+32g and off_x+32g are
 +    // multiplied and accumulated with the same lane arithmetic as XMACC (16->32 widening, saturating
 +    // 32-bit addition). The words are read exactly as MLOAD reads them, so the lane layout is that of XMACC.
-+    // Gas: XMACC_N_GROUP_GAS per group (the price of one XMACC), charged before any memory access;
++    // Gas: XMACC_N_GROUP_GAS per group (the price of one XMACC), G_verylow for a zero count, charged before any memory access;
 +    // memory expansion is charged by check_memory as for every memory instruction.
 +    // SECURITY: n must fit in 31 bits; both regions are bounds-checked before any read.
 +    static inline Result xmacc_n(StackTop stack, int64_t gas_left, ExecutionState& state) noexcept
@@ -38,7 +38,10 @@ index c93f8a29..b2deccc4 100644
 +            return {EVMC_OUT_OF_GAS, gas_left};
 +        const uint64_t n = n_u[0];
 +        constexpr int64_t XMACC_N_GROUP_GAS = 11;
-+        if ((gas_left -= static_cast<int64_t>(n) * XMACC_N_GROUP_GAS) < 0)
++        // A zero count is charged G_verylow (3), as every instruction dispatch is; the schedule's
++        // variable-cost instructions never execute for free.
++        const int64_t charge = n == 0 ? 3 : static_cast<int64_t>(n) * XMACC_N_GROUP_GAS;
++        if ((gas_left -= charge) < 0)
 +            return {EVMC_OUT_OF_GAS, gas_left};
 +        if (n == 0)
 +            return {EVMC_SUCCESS, gas_left};
@@ -126,7 +129,8 @@ index c93f8a29..b2deccc4 100644
 +            return {EVMC_OUT_OF_GAS, gas_left};
 +        const uint64_t n = n_u[0];
 +        constexpr int64_t XMACC_N16_GROUP_GAS = 22;
-+        if ((gas_left -= static_cast<int64_t>(n) * XMACC_N16_GROUP_GAS) < 0)
++        const int64_t charge = n == 0 ? 3 : static_cast<int64_t>(n) * XMACC_N16_GROUP_GAS;   // G_verylow for n = 0
++        if ((gas_left -= charge) < 0)
 +            return {EVMC_OUT_OF_GAS, gas_left};
 +        if (n == 0)
 +            return {EVMC_SUCCESS, gas_left};

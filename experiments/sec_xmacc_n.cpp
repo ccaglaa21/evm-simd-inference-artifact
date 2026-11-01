@@ -2,7 +2,7 @@
 //
 // XMACC_N pops n (group count), off_w and off_x and accumulates n consecutive 8-lane groups into the
 // accumulator word that stays on the stack. The tests check the guards of the instruction:
-//   T1  n = 0            -> SUCCESS, accumulator unchanged, no memory expansion (MSIZE as expected)
+//   T1  n = 0            -> SUCCESS, accumulator unchanged, no memory expansion (MSIZE as expected), 3 gas charged
 //   T2  n = 2^31         -> clean OUT_OF_GAS (n limited to 31 bits, before any memory access)
 //   T3  n = 2^255        -> clean OUT_OF_GAS (high limbs non-zero)
 //   T4  gas < 11 n       -> clean OUT_OF_GAS (the per-group gas is charged before the memory check)
@@ -95,7 +95,9 @@ int main() {
       bool ok = r.st == EVMC_SUCCESS && r.out.size() == 64 && std::memcmp(r.out.data(), accw, 32) == 0;
       uint64_t ms = 0; if (r.out.size() == 64) for (int i = 24; i < 32; ++i) ms = (ms << 8) | r.out[32 + i];
       ok = ok && ms == (uint64_t)(OUT + 32);                     // MSIZE is read after the first store, before the second
-      char d[160]; std::snprintf(d, sizeof d, "n=0: status=%d output words=%zu accumulator unchanged=%s MSIZE=%llu (expected %d)", (int)r.st, r.out.size() / 32, (r.out.size() == 64 && std::memcmp(r.out.data(), accw, 32) == 0) ? "yes" : "no", (unsigned long long)ms, OUT + 32); report("T1", ok, d); }
+      long long memw0 = (OUT + 64 + 31) / 32; long long pred0 = k.sgas + 3 + 3 * memw0 + (memw0 * memw0) / 512;   // the zero count is charged G_verylow = 3
+      ok = ok && r.gas == pred0;
+      char d[200]; std::snprintf(d, sizeof d, "n=0: status=%d output words=%zu accumulator unchanged=%s MSIZE=%llu (expected %d) gas %lld == static count with 3 for the zero count %lld: %s", (int)r.st, r.out.size() / 32, (r.out.size() == 64 && std::memcmp(r.out.data(), accw, 32) == 0) ? "yes" : "no", (unsigned long long)ms, OUT + 32, r.gas, pred0, r.gas == pred0 ? "yes" : "no"); report("T1", ok, d); }
     // T2: n = 2^31
     { Code k = one(0x80000000ULL, nullptr, W, nullptr, X, nullptr); Res r = run(k, GAS_BIG); char d[96]; std::snprintf(d, sizeof d, "n=2^31: status=%d (OUT_OF_GAS=3 expected)", (int)r.st); report("T2", r.st == EVMC_OUT_OF_GAS, d); }
     // T3: n = 2^255

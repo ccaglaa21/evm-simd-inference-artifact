@@ -249,7 +249,7 @@ static bool reference(const Trial& t, Ref& r, int64_t static_gas) {
             const U256 n = o[3], ow = o[2], ox = o[1];
             if (!high_zero(n) || n.w[0] > 0x7FFFFFFFULL) return false;
             const uint64_t nn = n.w[0];
-            if (!r.charge((int64_t)nn * (t.ins == T_XMACC_N ? 11 : 22))) return false;
+            if (!r.charge(nn == 0 ? 3 : (int64_t)nn * (t.ins == T_XMACC_N ? 11 : 22))) return false;   // G_verylow for n = 0
             if (nn == 0) return true;
             const uint64_t bytes = nn * 32;
             if (!r.check64(ow, bytes)) return false;

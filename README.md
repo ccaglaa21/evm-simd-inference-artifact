@@ -125,7 +125,7 @@ identical to the AVX2 run. The fallback outputs are kept in
 | Seed-31337 spot check (100/100) | `experiments/seedchk_evm.cpp` (weights from `training/seedchk_write.py`) | `seedchk_evm.txt` |
 | Dual-path determinism: the AVX2 build and the scalar-fallback build give bit-identical outputs (500 + 500 + 100 images and every gas value) | the 32 gas programs rerun against `build_noavx2/lib/libevmone.so` via `RUN_FALLBACK=1` | `fallback/*.txt`, `FALLBACK_COMPARISON.txt` |
 | Wall-clock time of the scalar-fallback build (AVX2 versus scalar execution time of the same bytecode) | `experiments/atv_wallclock.cpp` on `build_noavx2` via `RUN_FALLBACK=1` | `fallback/atv_wallclock.txt` |
-| Analytic bound of a dot-product precompile (one CALL per neuron, identity-style word price, unknown per-element price) against the XMACC_N part of Path N, from the gas schedule, with the break-even per-element price | `training/precompile_bound.py` (reads `mnist_rowmacc.txt` and `deep_meta.txt`) | `precompile_bound.txt` |
+| Analytic bound of a dot-product precompile (one CALL per neuron, identity-style word price, unknown per-element price; since update 17 also one CALL per layer, under the eight-lane and the sixteen-lane layout) against the XMACC_N part of Path N, from the gas schedule, with the break-even per-element price | `training/precompile_bound.py` (reads `mnist_rowmacc.txt` and `deep_meta.txt`) | `precompile_bound.txt` |
 | Sanitizer check: no AddressSanitizer or UndefinedBehaviorSanitizer report in the security programs and in eight experiment programs on either build, outputs identical to the uninstrumented run | the programs listed in `SANITIZE_PROGS` against `build_san/lib/libevmone.so` via `RUN_SANITIZE=1` | `sanitize_avx2/*.txt`, `sanitize_scalar/*.txt`, `SANITIZE_SUMMARY.txt` |
 | Wall-clock time of the row-level instructions: Paths S, B, N and N16 on a layer-1-shaped kernel (128 x 784), AVX2 build and fallback build | `experiments/rowmacc_wallclock.cpp` via `RUN_TIMING=1` (and `RUN_FALLBACK=1`) | `rowmacc_wallclock.txt`, `fallback/rowmacc_wallclock.txt` |
 | Packed-multiplication scalar baseline (Path S): pure computational cost of the unrolled network with standard instructions only, compared with Paths B and C | `experiments/mnist_swar_baseline.cpp` | `mnist_swar_baseline.txt` |
@@ -139,7 +139,7 @@ identical to the AVX2 run. The fallback outputs are kept in
 | Scale check of the hidden-layer-2 bias and per-layer saturation counts on the canonical images | `training/bias_scale.py` | `bias_scale.txt` |
 | Effect of the omitted output-layer bias: predictions with and without `b3` on the 500 canonical images, agreement with the float model and label accuracy | `training/output_bias.py` (reads `deep_b3.txt`, `fashion_b3.txt`, written by the training scripts at the scale 255 S^3 / 2^(SHIFT1+SHIFT2)) | `output_bias.txt` |
 | Figure 1, cold single-image cost of five contracts (drawn on the host from the output files, needs matplotlib: `python3 training/fig_cold_cost.py`) | `training/fig_cold_cost.py` | `fig_cold_cost.pdf` |
-| 32-bit accumulator analysis: worst-case bound per layer over the admissible input range (above the bound the accumulation clamps), the largest neuron sum and the largest single-lane partial sum (eight-lane and sixteen-lane mapping) reached on the canonical images | `training/overflow_bound.py` | `overflow_bound.txt` |
+| 32-bit accumulator analysis: worst-case bound per layer over the admissible input range (above the bound the accumulation clamps) and the largest value reached on the canonical images | `training/overflow_bound.py` | `overflow_bound.txt` |
 | Quantization loss over five seeds and 10,000 images; calibration experiment | `training/seed_sweep.py`, `training/seed_sweep_fashion.py`, `training/seed_sweep_fashion_cal.py` via `RUN_SWEEPS=1` | `seed_sweep.txt`, `seed_sweep_fashion.txt`, `seed_sweep_fashion_cal.txt` |
 | int8 accuracy study | `training/int8_accuracy.py`, `training/int8_accuracy_fashion.py` | `int8_accuracy.txt`, `int8_accuracy_fashion.txt` |
 | Memory-safety suite | `experiments/sec_oob.cpp`, `sec_xgather.cpp`, `sec_xgather2.cpp`, `sec_xtranspose_big.cpp`, `sec_xmacc_n.cpp`, `test_security_opcodes.cpp`, `test_security_matrix.cpp` | `sec_*.txt`, `test_security_*.txt` |
@@ -178,7 +178,9 @@ plain integer code on the fallback), at 22 gas per 16-element group, the same
 price per element as `XMACC_N`. `XMACC_N` pops a group count, a weight offset and an input
 offset, and accumulates that many eight-lane groups into the accumulator word on
 the stack with the arithmetic of `XMACC`; it is priced at 11 gas per group
-(charged inside the instruction) with no static cost. On the AVX2 build the
+(charged inside the instruction) with no static cost, except that a zero count
+is charged `G_verylow` (3 gas), so that no dispatch of the instruction is free
+(update 17). On the AVX2 build the
 lanes are processed with AVX2 intrinsics (one 128-bit load and one byte
 shuffle per word, 16-to-32-bit sign extension, 32-bit multiply and saturating
 add); the scalar fallback is plain integer code with the same arithmetic.
@@ -193,8 +195,7 @@ sums the eight lanes exactly and clamps the sum. On AVX2 the clamp is
 blend with INT32_MAX or INT32_MIN); on the fallback it is `sat_add32` in
 64-bit arithmetic. The two are required to agree bit for bit and are tested by
 `sec_saturate.cpp` on both builds (see below). The prices are unchanged. On the
-canonical networks no lane reaches the clamp (`overflow_bound.txt` for the 500
-canonical images, `seed_sweep*.txt` for the 10,000 test images of every seed), so every
+canonical networks no lane reaches the clamp (`overflow_bound.txt`), so every
 gas, accuracy and security figure is the same as with the earlier wrapping
 accumulation; only the wall-clock figures of the row-level instruction change
 with the extra vector operations. Nine opcodes of the first
@@ -271,12 +272,7 @@ replaces the wrap by a saturating addition in `XMACC`, `XMACC_S`, `XMACC_N`,
 `sec_xmacc_n.cpp` reach the clamp, so that test now exercises it). The C++ references of the
 network programs accumulate in 64 bits and are unchanged: on the canonical
 images no lane reaches the clamp, so the saturating result equals the exact
-one, and every gas, accuracy and security figure is unchanged. `overflow_bound.py`
-and the three seed-sweep scripts now also report the largest partial sum of a
-single accumulator lane (under the eight-lane mapping of `XMACC`/`XMACC_N` and
-the pair mapping of `XMACC_N16`, plus the bias that starts the accumulator), which
-is the quantity the clamp applies to; the int64 simulation of the sweeps equals
-the on-chain arithmetic as long as this stays below 2^31 - 1. The wall-clock
+one, and every gas, accuracy and security figure is unchanged. The wall-clock
 figures of `rowmacc_wallclock` and `atv_wallclock` are re-measured.
 
 ## License
@@ -290,3 +286,15 @@ libsimdpp is distributed under the Boost Software License 1.0. See
 
 See `CITATION.cff`. The archived release of this repository (v1.0.0) is
 available at Zenodo: https://doi.org/10.5281/zenodo.23495118
+
+## Zero-count charge and layer-level precompile bound (update 17)
+
+`XMACC_N` and `XMACC_N16` with a group count of zero used to charge no gas. Since
+update 17 a zero count is charged `G_verylow` (3 gas), the base charge of every
+dispatch, in line with the two-part form of the schedule's variable-cost
+instructions; `sec_fuzz.cpp` models the same charge and `sec_xmacc_n.cpp` T1
+checks it. No contract of the paper uses a zero count, so every reported figure
+is unchanged. `precompile_bound.py` additionally prints the bound for a
+precompile called once per layer (three calls per image) under the eight-lane
+and the sixteen-lane layout.
+

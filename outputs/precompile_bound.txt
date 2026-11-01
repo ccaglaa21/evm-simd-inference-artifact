@@ -15,3 +15,8 @@ break-even per-element price of the precompile: p* = (151946 - 109360) / 109184 
 (the row-level instruction charges 11 gas per group of 8, 1.375 gas per multiply-accumulate; at that price the precompile costs 1.71 times the row-level side)
 Reading: the precompile is cheaper only when its per-element price is below p*; the fixed call and
 input-word charges of one call per neuron are what the row-level instruction avoids.
+
+Layer-level precompile (one CALL per layer, three per image):
+   8 lanes per word: fixed part 3 x 136 + 3 x (13648 weight + 122 input words) = 41718 gas; p* = (151946 - 41718) / 109184 = 1.010 gas per multiply-accumulate; at 1.375 the precompile costs 1.26 times the row-level side
+  16 lanes per word: fixed part 3 x 136 + 3 x (6824 weight + 61 input words) = 21063 gas; p* = (151946 - 21063) / 109184 = 1.199 gas per multiply-accumulate; at 1.375 the precompile costs 1.13 times the row-level side
+(the row-level side is the same 151,946-gas quantity in both layouts, since XMACC_N16 charges the same per element)

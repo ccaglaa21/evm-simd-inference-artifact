@@ -54,3 +54,19 @@ print(f"break-even per-element price of the precompile: p* = ({rowlevel} - {fixe
 print(f"(the row-level instruction charges {price} gas per group of 8, {price / 8:.3f} gas per multiply-accumulate; at that price the precompile costs {(fixed + price / 8 * macs) / rowlevel:.2f} times the row-level side)")
 print("Reading: the precompile is cheaper only when its per-element price is below p*; the fixed call and")
 print("input-word charges of one call per neuron are what the row-level instruction avoids.")
+
+# Layer-level alternative: one CALL per layer (three per image) that receives the whole weight matrix of the
+# layer and the input vector once, instead of one call per neuron. The weight words are the same as above,
+# the input vector is passed once per layer instead of once per neuron. Under the sixteen-lane layout the
+# word counts halve, as for XMACC_N16, whose price per element is the same as that of XMACC_N (22 per 16).
+print()
+print("Layer-level precompile (one CALL per layer, three per image):")
+for lanes in (8, 16):
+    wwords = sum(n * (i // lanes) for i, n in layers)      # weight words of all layers
+    xwords = sum(i // lanes for i, n in layers)            # input vector, once per layer
+    fixed_l = len(layers) * (CALL_WARM + 7 * PUSH + BASE) + PER_WORD * (wwords + xwords)
+    pstar_l = (rowlevel - fixed_l) / macs
+    at_prov = (fixed_l + price / 8 * macs) / rowlevel
+    print(f"  {lanes:2d} lanes per word: fixed part {len(layers)} x {CALL_WARM + 7 * PUSH + BASE} + {PER_WORD} x ({wwords} weight + {xwords} input words) = {fixed_l} gas; "
+          f"p* = ({rowlevel} - {fixed_l}) / {macs} = {pstar_l:.3f} gas per multiply-accumulate; at {price / 8:.3f} the precompile costs {at_prov:.2f} times the row-level side")
+print("(the row-level side is the same 151,946-gas quantity in both layouts, since XMACC_N16 charges the same per element)")
