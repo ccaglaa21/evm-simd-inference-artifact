@@ -20,8 +20,8 @@ Blockchain Smart Contracts* (Gebze Technical University, May 2026).
 | `evmc_changes.patch` | one enum entry added to the EVMC header |
 | `numpy_simd.hpp` | `MatrixHeader` operations (copied into `lib/evmone/` before the patch is applied) |
 | `libsimdpp-2.1/` | header-only SIMD library, vendored from github.com/p12tic/libsimdpp @ `55860b50` (Boost Software License 1.0, see `THIRD_PARTY_LICENSES`) |
-| `experiments/` | 33 C++ measurement programs and the Solidity baseline contract (`ATVBaseline.sol`) |
-| `training/` | 13 Python scripts: training, quantization, seed sweeps, calibration experiment, int8 study, accumulator overflow bound, time-neutral price |
+| `experiments/` | 34 C++ measurement programs and the Solidity baseline contract (`ATVBaseline.sol`) |
+| `training/` | 20 Python scripts: training, quantization, seed sweeps, calibration experiment, int8 study, accumulator overflow bound, time-neutral price, precompile bound, figure drawing |
 | `data/` | canonical seed-42 weights and biases, 500-image batches, float reference predictions, seed-31337 spot-check weights |
 | `Dockerfile`, `run_selftest.sh` | isolated build of the patched interpreter and the closed-form self-test |
 | `run_all.sh` | compiles and runs every program and writes one output file per program |
@@ -58,7 +58,7 @@ mkdir -p outputs
 docker run --rm -m 6g -v "$PWD/outputs:/out" evmone-simd sh /work/evmone/run_all.sh
 ```
 
-This runs the 33 C++ programs (one of them twice, for the two datasets) and the 7 Python scripts that need only the
+This runs the 32 C++ programs of the default stage and the 9 Python scripts that need only the
 shipped `data/` (about 4 minutes) and writes `outputs/<program>.txt` plus
 `outputs/MANIFEST.txt`. Four optional stages are enabled with environment
 variables:
@@ -120,7 +120,7 @@ identical to the AVX2 run. The fallback outputs are kept in
 | Looped weight loader: 538,979 B to 1,264 B, 84.01 gas per slot, 3.42 % | `experiments/mnist_loader_loop.cpp` | `mnist_loader_loop.txt` |
 | Unrolled SIMD upper bound 23.29, 3,462,418 gas, loop factor 4.74, gas per multiply-accumulate | `experiments/mnist_unrolled_simd.cpp` | `mnist_unrolled_simd.txt` |
 | MNIST fidelity and accuracy (500/500, 490/500) | `experiments/test_fullnet_500_acc.cpp` | `test_fullnet_500_acc.txt` |
-| Fashion-MNIST fidelity, quantization match and accuracy (500/500, 466/500, 434/500, 443/500) | `experiments/fashion_onchain_acc.cpp` | `fashion_onchain_acc.txt` |
+| Fashion-MNIST fidelity, quantization match and accuracy (500/500, 486/500, 441/500, 443/500) | `experiments/fashion_onchain_acc.cpp` | `fashion_onchain_acc.txt` |
 | Seed-31337 spot check (100/100) | `experiments/seedchk_evm.cpp` (weights from `training/seedchk_write.py`) | `seedchk_evm.txt` |
 | Dual-path determinism: the AVX2 build and the scalar-fallback build give bit-identical outputs (500 + 500 + 100 images and every gas value) | the 32 gas programs rerun against `build_noavx2/lib/libevmone.so` via `RUN_FALLBACK=1` | `fallback/*.txt`, `FALLBACK_COMPARISON.txt` |
 | Wall-clock time of the scalar-fallback build (AVX2 versus scalar execution time of the same bytecode) | `experiments/atv_wallclock.cpp` on `build_noavx2` via `RUN_FALLBACK=1` | `fallback/atv_wallclock.txt` |
@@ -136,8 +136,9 @@ identical to the AVX2 run. The fallback outputs are kept in
 | Time-neutral price of `XMACC_N`, `XMACC_N16` and `XMACC` from the row-level timing on both builds: the price at which the gas ratio of the pure computation equals the measured time ratio | `training/price_neutral.py` (reads `rowmacc_wallclock.txt` and `fallback/rowmacc_wallclock.txt`) | `price_neutral.txt` |
 | Break-even price of `XMACC_N` and `XMACC_N16`: the price per group at which the row-level path costs the same gas as the packed scalar baseline, for the 128 x 784 kernel, the full network with unrolled code and the deployable looped contracts | `training/break_even_price.py` (reads `rowmacc_wallclock.txt`, `mnist_rowmacc.txt`, `mnist_loops.txt`, `mnist_codecopy16.txt`, `mnist_swar_baseline.txt`, `price_neutral.txt` and `deep_meta.txt`) | `break_even_price.txt` |
 | Scale check of the hidden-layer-2 bias and per-layer saturation counts on the canonical images | `training/bias_scale.py` | `bias_scale.txt` |
+| Fashion-MNIST mismatch diagnostics (score gap of the 14 images where the integer and the float model disagree) | `training/fashion_diag.py` | `fashion_diag.txt` |
 | Effect of the omitted output-layer bias: predictions with and without `b3` on the 500 canonical images, agreement with the float model and label accuracy | `training/output_bias.py` (reads `deep_b3.txt`, `fashion_b3.txt`, written by the training scripts at the scale 255 S^3 / 2^(SHIFT1+SHIFT2)) | `output_bias.txt` |
-| Figure 1, cold single-image cost of five contracts (drawn on the host from the output files, needs matplotlib: `python3 training/fig_cold_cost.py`) | `training/fig_cold_cost.py` | `fig_cold_cost.pdf` |
+| Figure 1, cold single-image cost of five contracts (drawn on the host from the output files, needs matplotlib: `python3 training/fig_cold_cost.py`) | `training/fig_cold_cost.py` | `outputs/fig_cold_cost.pdf` |
 | Figure 2, gas of the transposed product $A^\top v$ for Paths A, B and C (`python3 training/fig_kernel_scaling.py`) | `training/fig_kernel_scaling.py` | `outputs/fig_kernel_scaling.pdf` |
 | Figure 3, cost anatomy of Path B and Path C (`python3 training/fig_cost_anatomy.py`) | `training/fig_cost_anatomy.py` | `outputs/fig_cost_anatomy.pdf` |
 | Figure of the MatrixHeader layout, a schematic with no data (`python3 training/fig_header.py`) | `training/fig_header.py` | `fig_header.pdf` |
