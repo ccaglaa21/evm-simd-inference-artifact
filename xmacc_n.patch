@@ -12,10 +12,19 @@ index 2a6bb248..e9b516b9 100644
                      t.fn = op_undefined;
                      t.gas_cost = 0;
 diff --git a/lib/evmone/instructions.hpp b/lib/evmone/instructions.hpp
-index c93f8a29..b2deccc4 100644
+index c93f8a29..b4fdbfff 100644
 --- a/lib/evmone/instructions.hpp
 +++ b/lib/evmone/instructions.hpp
-@@ -406,6 +406,187 @@ inline void noop(StackTop /*stack*/) noexcept {}
+@@ -10,6 +10,8 @@
+ #include "numpy_simd.hpp"
+ #if defined(__AVX2__)
+ #include <immintrin.h>  // AVX2 gather (XMACC_S); the scalar fallback is used when AVX2 is unavailable
++#elif defined(__ARM_NEON) && !defined(EVMONE_NO_NEON)
++#include <arm_neon.h>   // NEON path of the row-level instructions (XMACC_N, XMACC_N16); EVMONE_NO_NEON selects the scalar path
+ #endif
+ #include <evmone_precompiles/keccak.hpp>
+ 
+@@ -406,6 +408,233 @@ inline void noop(StackTop /*stack*/) noexcept {}
          return pos + 1;
      }
  
@@ -76,6 +85,25 @@ index c93f8a29..b2deccc4 100644
 +            acc = sat_add32_v(acc, _mm256_mullo_epi32(w32, x32));
 +        }
 +        _mm256_storeu_si256(reinterpret_cast<__m256i*>(ab), acc);
++#elif defined(__ARM_NEON) && !defined(EVMONE_NO_NEON)
++        // NEON path: the sixteen lane bytes of a word are loaded with one 128-bit load and reversed
++        // (byte reversal inside each 64-bit half, then the halves are swapped), which yields the
++        // eight int16 lanes in lane order. The widening multiply vmull_s16 gives the exact 32-bit
++        // products of four lanes, and vqaddq_s32 is the saturating 32-bit addition, the same clamp
++        // as sat_add32. The eight accumulators are kept in two 128-bit registers.
++        int32x4_t acc_lo = vreinterpretq_s32_u8(vld1q_u8(ab));
++        int32x4_t acc_hi = vreinterpretq_s32_u8(vld1q_u8(ab + 16));
++        for (uint64_t g = 0; g < n; ++g)
++        {
++            uint8x16_t wb = vrev64q_u8(vld1q_u8(pw + g * 32 + 16));
++            uint8x16_t xb = vrev64q_u8(vld1q_u8(px + g * 32 + 16));
++            const int16x8_t w16 = vreinterpretq_s16_u8(vcombine_u8(vget_high_u8(wb), vget_low_u8(wb)));
++            const int16x8_t x16 = vreinterpretq_s16_u8(vcombine_u8(vget_high_u8(xb), vget_low_u8(xb)));
++            acc_lo = vqaddq_s32(acc_lo, vmull_s16(vget_low_s16(w16), vget_low_s16(x16)));
++            acc_hi = vqaddq_s32(acc_hi, vmull_s16(vget_high_s16(w16), vget_high_s16(x16)));
++        }
++        vst1q_u8(ab, vreinterpretq_u8_s32(acc_lo));
++        vst1q_u8(ab + 16, vreinterpretq_u8_s32(acc_hi));
 +#else
 +        // Scalar path (no vector backend): the same lane arithmetic in plain integer code.
 +        int32_t acc[8];
@@ -163,6 +191,33 @@ index c93f8a29..b2deccc4 100644
 +            acc = sat_add32_v(acc, _mm256_madd_epi16(w, _mm256_and_si256(x, hi16)));   // element 2k+1
 +        }
 +        _mm256_storeu_si256(reinterpret_cast<__m256i*>(ab), acc);
++#elif defined(__ARM_NEON) && !defined(EVMONE_NO_NEON)
++        // NEON path: the 32 bytes of a word are reversed in two 128-bit halves, which yields the
++        // sixteen int16 lanes in lane order (lanes 0..7 from bytes 31..16, lanes 8..15 from bytes
++        // 15..0). The even and the odd elements are separated with vuzp1q/vuzp2q, multiplied
++        // exactly with vmull_s16, and accumulated in turn (element 2k, then element 2k+1) with the
++        // saturating addition vqaddq_s32, as in the scalar path.
++        int32x4_t acc_lo = vreinterpretq_s32_u8(vld1q_u8(ab));
++        int32x4_t acc_hi = vreinterpretq_s32_u8(vld1q_u8(ab + 16));
++        for (uint64_t g = 0; g < n; ++g)
++        {
++            uint8x16_t wa = vrev64q_u8(vld1q_u8(pw + g * 32 + 16));
++            uint8x16_t wb = vrev64q_u8(vld1q_u8(pw + g * 32));
++            uint8x16_t xa = vrev64q_u8(vld1q_u8(px + g * 32 + 16));
++            uint8x16_t xb = vrev64q_u8(vld1q_u8(px + g * 32));
++            const int16x8_t w0 = vreinterpretq_s16_u8(vcombine_u8(vget_high_u8(wa), vget_low_u8(wa)));
++            const int16x8_t w1 = vreinterpretq_s16_u8(vcombine_u8(vget_high_u8(wb), vget_low_u8(wb)));
++            const int16x8_t x0 = vreinterpretq_s16_u8(vcombine_u8(vget_high_u8(xa), vget_low_u8(xa)));
++            const int16x8_t x1 = vreinterpretq_s16_u8(vcombine_u8(vget_high_u8(xb), vget_low_u8(xb)));
++            const int16x8_t we = vuzp1q_s16(w0, w1), wo = vuzp2q_s16(w0, w1);
++            const int16x8_t xe = vuzp1q_s16(x0, x1), xo = vuzp2q_s16(x0, x1);
++            acc_lo = vqaddq_s32(acc_lo, vmull_s16(vget_low_s16(we), vget_low_s16(xe)));    // element 2k
++            acc_hi = vqaddq_s32(acc_hi, vmull_s16(vget_high_s16(we), vget_high_s16(xe)));
++            acc_lo = vqaddq_s32(acc_lo, vmull_s16(vget_low_s16(wo), vget_low_s16(xo)));    // element 2k+1
++            acc_hi = vqaddq_s32(acc_hi, vmull_s16(vget_high_s16(wo), vget_high_s16(xo)));
++        }
++        vst1q_u8(ab, vreinterpretq_u8_s32(acc_lo));
++        vst1q_u8(ab + 16, vreinterpretq_u8_s32(acc_hi));
 +#else
 +        int32_t acc[8];
 +        for (int k = 0; k < 8; ++k)

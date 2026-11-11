@@ -174,8 +174,19 @@ fi
 
 if [ "${RUN_FALLBACK:-0}" = "1" ]; then
   echo "== scalar fallback: building libevmone without AVX2 and without auto-vectorization (build_noavx2) =="
-  AVX2_FLAGS="-march=native -mavx2 -mfma -O3 -DSIMDPP_ARCH_X86_AVX2"
-  NOAVX2_FLAGS="-O3 -fno-tree-vectorize -fno-tree-slp-vectorize"
+  if [ "$(uname -m)" = "x86_64" ]; then
+    AVX2_FLAGS="-march=native -mavx2 -mfma -O3 -DSIMDPP_ARCH_X86_AVX2"
+    NOAVX2_FLAGS="-O3 -fno-tree-vectorize -fno-tree-slp-vectorize"
+    FB_NOTE="no -mavx2, no SIMDPP_ARCH_X86_AVX2"; VPAT="ymm"; VNOTE="ymm (256-bit AVX) instructions: "; VLIB="AVX2 library"
+    CMP_HDR="Scalar-fallback run (build_noavx2: -O3 only, no AVX2) compared with the AVX2 run, file by file (cmp):"
+  else
+    # 64-bit ARM: the vector build is plain -O3 (NEON path of the row-level instructions); the fallback build
+    # switches that path off with EVMONE_NO_NEON and disables auto-vectorization.
+    AVX2_FLAGS="-O3"
+    NOAVX2_FLAGS="-O3 -fno-tree-vectorize -fno-tree-slp-vectorize -DEVMONE_NO_NEON"
+    FB_NOTE="no auto-vectorization, NEON path switched off with EVMONE_NO_NEON"; VPAT="sqadd"; VNOTE="sqadd (NEON saturating add) instructions: "; VLIB="NEON library"
+    CMP_HDR="Scalar-fallback run (build_noavx2: no NEON path, no auto-vectorization) compared with the NEON run, file by file (cmp):"
+  fi
   sed -i "s/add_compile_options($AVX2_FLAGS)/add_compile_options($NOAVX2_FLAGS)/" CMakeLists.txt
   if grep -q "add_compile_options($NOAVX2_FLAGS)" CMakeLists.txt; then
     if cmake -S . -B build_noavx2 -DCMAKE_BUILD_TYPE=Release > "$OUT/rebuild_noavx2.log" 2>&1 && \
@@ -183,9 +194,9 @@ if [ "${RUN_FALLBACK:-0}" = "1" ]; then
       mkdir -p "$OUT/fallback"
       cp build/lib/libevmone.so /tmp/libevmone_avx2.so
       cp build_noavx2/lib/libevmone.so build/lib/libevmone.so
-      echo "fallback library:            build_noavx2/lib/libevmone.so (compiled with $NOAVX2_FLAGS: no -mavx2, no SIMDPP_ARCH_X86_AVX2)" >> "$MAN"
-      YMM_F=$(objdump -d build_noavx2/lib/libevmone.so | grep -c ymm); YMM_A=$(objdump -d /tmp/libevmone_avx2.so | grep -c ymm)
-      echo "ymm (256-bit AVX) instructions:  fallback library $YMM_F, AVX2 library $YMM_A (objdump -d | grep -c ymm)" >> "$MAN"
+      echo "fallback library:            build_noavx2/lib/libevmone.so (compiled with $NOAVX2_FLAGS: $FB_NOTE)" >> "$MAN"
+      YMM_F=$(objdump -d build_noavx2/lib/libevmone.so | grep -c "$VPAT"); YMM_A=$(objdump -d /tmp/libevmone_avx2.so | grep -c "$VPAT")
+      echo "$VNOTE fallback library $YMM_F, $VLIB $YMM_A (objdump -d | grep -c $VPAT)" >> "$MAN"
       rm -rf build_noavx2      # the object files of the second build are not needed any more; this keeps the
                                # memory of the container (-m 6g) free for the large K=4096 kernel programs
       for n in $ALL_PROGS; do run_cpp "$n" "$OUT/fallback"; done
@@ -206,7 +217,7 @@ if [ "${RUN_FALLBACK:-0}" = "1" ]; then
       fi
       cp /tmp/libevmone_avx2.so build/lib/libevmone.so
       {
-        echo "Scalar-fallback run (build_noavx2: -O3 only, no AVX2) compared with the AVX2 run, file by file (cmp):"
+        echo "$CMP_HDR"
         for f in "$OUT"/fallback/*.txt; do
           b=$(basename "$f")
           [ "$b" = "atv_wallclock.txt" ] && continue
