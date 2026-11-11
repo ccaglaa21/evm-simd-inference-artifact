@@ -11,6 +11,10 @@
 #                   about 2 minutes, machine dependent; with RUN_FALLBACK=1 both are also run on the fallback
 #                   build. Without RUN_TIMING=1 the timing files of an earlier run are kept, so a rerun of the
 #                   gas programs never changes the timing figures reported in the paper.
+#   RUN_SCALING=1   rowmacc_scaling (row-length scaling of the row-level instruction: gas and wall-clock of
+#                   Paths S, B, N and N16 for nine row lengths), about 2 minutes; the gas tables are machine
+#                   independent, the timing table is machine dependent; with RUN_FALLBACK=1 it is also run on
+#                   the fallback build and the gas tables of the two builds are compared.
 #   RUN_TRAIN=1     train_deep.py, train_deep_fashion.py, seedchk_write.py, deep_reference.py: regenerate the canonical
 #                   weight files into /out/data_regen/ (about 10 minutes); needs the raw datasets mounted as below
 #   RUN_SWEEPS=1    seed_sweep.py, seed_sweep_fashion.py, seed_sweep_fashion_cal.py (about 50 minutes);
@@ -132,6 +136,13 @@ else
   kept rowmacc_wallclock.txt RUN_TIMING
 fi
 
+if [ "${RUN_SCALING:-0}" = "1" ]; then
+  echo "== row-length scaling of the row-level instruction (rowmacc_scaling): gas and wall-clock =="
+  run_cpp rowmacc_scaling
+else
+  kept rowmacc_scaling.txt RUN_SCALING
+fi
+
 if [ "${RUN_TRAIN:-0}" = "1" ]; then
   echo "== regenerating the canonical weight files (need mnist_data/ and fashion_data/) =="
   if [ -d mnist_data ] && [ -d fashion_data ]; then
@@ -187,6 +198,12 @@ if [ "${RUN_FALLBACK:-0}" = "1" ]; then
         kept fallback/atv_wallclock.txt RUN_TIMING
         kept fallback/rowmacc_wallclock.txt RUN_TIMING
       fi
+      if [ "${RUN_SCALING:-0}" = "1" ]; then
+        echo "== row-length scaling on the fallback build =="
+        run_cpp rowmacc_scaling "$OUT/fallback"
+      else
+        kept fallback/rowmacc_scaling.txt RUN_SCALING
+      fi
       cp /tmp/libevmone_avx2.so build/lib/libevmone.so
       {
         echo "Scalar-fallback run (build_noavx2: -O3 only, no AVX2) compared with the AVX2 run, file by file (cmp):"
@@ -194,6 +211,11 @@ if [ "${RUN_FALLBACK:-0}" = "1" ]; then
           b=$(basename "$f")
           [ "$b" = "atv_wallclock.txt" ] && continue
           [ "$b" = "rowmacc_wallclock.txt" ] && continue
+          if [ "$b" = "rowmacc_scaling.txt" ]; then   # gas tables and check lines must agree; the timing table is excluded
+            gasof() { sed -n '/^TOTAL GAS/,/^TIME/p' "$1"; grep -E 'bit-exact|harness|CHECK' "$1"; }
+            if [ -f "$OUT/$b" ] && [ "$(gasof "$f")" = "$(gasof "$OUT/$b")" ]; then echo "identical   $b (gas tables and check lines, timing excluded)"; else echo "DIFFERENT   $b (gas tables or check lines)"; fi
+            continue
+          fi
           if cmp -s "$f" "$OUT/$b"; then echo "identical   $b"; else echo "DIFFERENT   $b"; fi
         done
       } > "$OUT/FALLBACK_COMPARISON.txt"
