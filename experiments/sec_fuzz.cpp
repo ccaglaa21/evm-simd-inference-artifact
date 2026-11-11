@@ -146,7 +146,13 @@ static Trial make_trial(Instr ins) {
     const int nstores = 1 + rnd() % 6;
     for (int i = 0; i < nstores; ++i) {
         uint64_t off = small_off();
-        if (rnd() % 2) t.stores.push_back({off, header_word(edge_or_random64(), edge_or_random64(), edge_or_random64(), edge_or_random64())});
+        if (rnd() % 2) {
+            // The four fields are drawn in a fixed order (sc, sr, cols, rows). The order in which the arguments of
+            // a call are evaluated is unspecified in C++ and differs between x86-64 and AArch64 with GCC; drawing
+            // them into named variables keeps the trial sequence the same on every platform.
+            const uint64_t h_sc = edge_or_random64(), h_sr = edge_or_random64(), h_cols = edge_or_random64(), h_rows = edge_or_random64();
+            t.stores.push_back({off, header_word(h_rows, h_cols, h_sr, h_sc)});
+        }
         else t.stores.push_back({off, random_word()});
     }
     auto off_operand = [&]() -> U256 {
