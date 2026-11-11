@@ -1,0 +1,31 @@
+# Runs the artifact on a 64-bit ARM machine (GitHub-hosted runner) and compares every gas and security output
+# with the x86-64 reference outputs committed in outputs/. No timing figure is taken from this run.
+name: arm64-equivalence
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+jobs:
+  arm64:
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - name: Machine
+        run: |
+          uname -m
+          lscpu | grep -E "Architecture|Model name|Vendor ID|Flags" | cut -c1-300
+      - name: Build the image
+        run: docker build -t evmone-simd .
+      - name: Run the gas and security programs
+        run: |
+          mkdir -p out_arm64
+          docker run --rm -e RUN_SCALING=1 -v "$PWD/out_arm64:/out" evmone-simd sh /work/evmone/run_all.sh
+      - name: Compare with the x86-64 reference outputs
+        run: sh compare_outputs.sh outputs out_arm64 out_arm64/ARM64_COMPARISON.txt
+      - name: Upload the outputs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: out_arm64
+          path: out_arm64
