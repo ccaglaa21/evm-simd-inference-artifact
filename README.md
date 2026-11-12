@@ -16,16 +16,18 @@ Blockchain Smart Contracts* (Gebze Technical University, May 2026).
 |---|---|
 | `EVMONE_COMMIT.txt`, `EVMC_COMMIT.txt` | pinned upstream commits: evmone `4938c0a3`, EVMC `496ce0f` |
 | `simd_opcodes.patch` | the extension (743 lines): instruction bodies, gas table, traits, build glue |
-| `xmacc_n.patch` | the row-level instructions `XMACC_N` (0xe6, element-count operand, 8 lanes per word) and `XMACC_N16` (0xe7, 16 lanes per word), applied after `simd_opcodes.patch` |
+| `xmacc_n.patch` | the row-level instructions `XMACC_N` (0xe6, element-count operand, 8 lanes per word) and `XMACC_N16` (0xe7, 16 lanes per word), applied after `simd_opcodes.patch`; since update 18 both have a NEON path next to the AVX2 path and the scalar path |
 | `evmc_changes.patch` | one enum entry added to the EVMC header |
 | `numpy_simd.hpp` | `MatrixHeader` operations (copied into `lib/evmone/` before the patch is applied) |
 | `libsimdpp-2.1/` | header-only SIMD library, vendored from github.com/p12tic/libsimdpp @ `55860b50` (Boost Software License 1.0, see `THIRD_PARTY_LICENSES`) |
-| `experiments/` | 34 C++ measurement programs and the Solidity baseline contract (`ATVBaseline.sol`) |
-| `training/` | 20 Python scripts: training, quantization, seed sweeps, calibration experiment, int8 study, accumulator overflow bound, time-neutral price, precompile bound, figure drawing |
+| `experiments/` | 35 C++ measurement programs and the Solidity baseline contract (`ATVBaseline.sol`) |
+| `training/` | 22 Python scripts: training, quantization, seed sweeps, calibration experiment, int8 study, accumulator overflow bound, time-neutral price, precompile bound, summary of the scaling runs, figure drawing |
 | `data/` | canonical seed-42 weights and biases, 500-image batches, float reference predictions, seed-31337 spot-check weights |
 | `Dockerfile`, `run_selftest.sh` | isolated build of the patched interpreter and the closed-form self-test |
 | `run_all.sh` | compiles and runs every program and writes one output file per program |
-| `outputs/` | reference outputs of `run_all.sh` on the declared machine, with `MANIFEST.txt` (date, commits, compiler, CPU, sha256 of every file) |
+| `outputs/` | reference outputs of `run_all.sh` on the declared machine, with `MANIFEST.txt` (date, commits, compiler, CPU, sha256 of every file); `outputs/scaling_runs/` holds the twelve row-length scaling runs (two machines, two builds, three runs) and `outputs/arm64/` the records of the AArch64 runs |
+| `compare_outputs.sh` | compares the outputs of a run on another machine with the reference outputs, file by file |
+| `.github/workflows/arm64.yml` | workflow that builds and runs the artifact on a 64-bit ARM runner of GitHub Actions and compares every output with `outputs/` |
 
 ## Build and self-test (about 10 minutes, Docker)
 
@@ -43,7 +45,9 @@ line must be `SELFTEST: OK (closed-form reproduced, zero error)`.
 
 The patched build is compiled with `-march=native -mavx2 -mfma -O3
 -DSIMDPP_ARCH_X86_AVX2` (one `add_compile_options` line in `CMakeLists.txt`),
-so the Docker host must be an x86-64 machine with AVX2. Compiling with
+so on x86-64 the Docker host must have AVX2. On a 64-bit ARM host the
+Dockerfile replaces that line by `-O3 -DSIMDPP_ARCH_ARM_NEON` (see *Row-length
+scaling and the AArch64 run* below). Compiling with
 `-O3 -fno-tree-vectorize -fno-tree-slp-vectorize` instead gives the
 scalar-fallback build of the same interpreter, in which every instruction runs
 its scalar path and the compiler does not auto-vectorize it (the manifest
@@ -68,6 +72,7 @@ variables:
 | `-e RUN_PRICE=1` | rebuilds `libevmone` with the `XMACC_S` price set to 26 and then 84 and reruns `atv_cost_split` at each price (`atv_cost_split_xmaccs26.txt`, `atv_cost_split_xmaccs84.txt`) | nothing | about 2 x 2 min |
 | `-e RUN_TIMING=1` | `atv_wallclock` (wall-clock time vs gas, time-neutral price `g*`) and `rowmacc_wallclock` (row-level instruction timing); without it the timing files of an earlier run are kept, so a rerun of the gas programs never changes the reported timing figures | nothing | about 2 min (adaptive sampling) |
 | `-e RUN_FALLBACK=1` | builds a second `libevmone` without AVX2 and without auto-vectorization (`-O3 -fno-tree-vectorize -fno-tree-slp-vectorize`, directory `build_noavx2`), reruns the 32 gas programs against it into `outputs/fallback/` and compares every file with the AVX2 run (`FALLBACK_COMPARISON.txt`); with `RUN_TIMING=1` also runs `atv_wallclock` and `rowmacc_wallclock` on the fallback build (`fallback/atv_wallclock.txt`, `fallback/rowmacc_wallclock.txt`, timing only) | nothing | about 13 min |
+| `-e RUN_SCALING=1` | `rowmacc_scaling`: gas and wall-clock time of Paths S, B, N and N16 for nine row lengths between 16 and 2,048 elements (128 neurons each); with `RUN_FALLBACK=1` it also runs on the fallback build and the gas tables of the two builds are compared | nothing | about 15 s per build |
 | `-e RUN_SANITIZE=1` | builds `libevmone` twice more with AddressSanitizer and UndefinedBehaviorSanitizer (`-O1 -g -fsanitize=address,undefined -fno-sanitize-recover=undefined`, directory `build_san`), once with AVX2 and once scalar, and runs the eleven security programs and eight deterministic experiment programs against each with the sanitizer runtimes preloaded (`outputs/sanitize_avx2/`, `outputs/sanitize_scalar/`); any report ends the program with a non-zero code; `SANITIZE_SUMMARY.txt` counts the reports and compares every output with the uninstrumented run; the program list can be changed with `-e SANITIZE_PROGS="..."` | nothing | about 15 min |
 | `-e RUN_TRAIN=1` | `train_deep.py`, `train_deep_fashion.py`, `seedchk_write.py`, `deep_reference.py`: regenerate the canonical weight files into `outputs/data_regen/` (copy them into `data/` to use them) | the raw MNIST and Fashion-MNIST IDX files mounted as for `RUN_SWEEPS` | about 10 min |
 | `-e RUN_SWEEPS=1` | `seed_sweep.py`, `seed_sweep_fashion.py`, `seed_sweep_fashion_cal.py` (five seeds each) | the raw MNIST and Fashion-MNIST IDX files mounted at `/work/evmone/mnist_data` and `/work/evmone/fashion_data` | about 50 min |
@@ -86,9 +91,12 @@ All gas values are deterministic: the `outputs/` shipped here were produced
 on an Intel i7-11800H (8 cores, AVX2, 15 GB) running Ubuntu 22.04.5 natively, and
 every gas, accuracy and security file is byte-identical to the run on an Intel
 i5-1135G7 inside a VirtualBox virtual machine and to the original development
-host. Only the wall-clock figures in `atv_wallclock.txt`, `rowmacc_wallclock.txt`
-and their `fallback/` copies depend on the machine, and `price_neutral.txt` is
-derived from them. The regenerated weight files of `data_regen/` were also
+host. Since update 18 they are also byte-identical to three runs on a 64-bit
+ARM machine (Arm Neoverse-N2, GitHub-hosted runner), on its NEON build and on
+its scalar fallback build (`outputs/arm64/`). Only the wall-clock figures in
+`atv_wallclock.txt`, `rowmacc_wallclock.txt`, the timing table of
+`rowmacc_scaling.txt` and their `fallback/` copies depend on the machine, and
+`price_neutral.txt` is derived from them. The regenerated weight files of `data_regen/` were also
 byte-identical on both machines.
 
 The dual-path claim of the paper (the AVX2 path and the scalar fallback of
@@ -127,6 +135,10 @@ identical to the AVX2 run. The fallback outputs are kept in
 | Analytic bound of a dot-product precompile (one CALL per neuron, identity-style word price, unknown per-element price; since update 17 also one CALL per layer, under the eight-lane and the sixteen-lane layout) against the XMACC_N part of Path N, from the gas schedule, with the break-even per-element price | `training/precompile_bound.py` (reads `mnist_rowmacc.txt` and `deep_meta.txt`) | `precompile_bound.txt` |
 | Sanitizer check: no AddressSanitizer or UndefinedBehaviorSanitizer report in the security programs and in eight experiment programs on either build, outputs identical to the uninstrumented run | the programs listed in `SANITIZE_PROGS` against `build_san/lib/libevmone.so` via `RUN_SANITIZE=1` | `sanitize_avx2/*.txt`, `sanitize_scalar/*.txt`, `SANITIZE_SUMMARY.txt` |
 | Wall-clock time of the row-level instructions: Paths S, B, N and N16 on a layer-1-shaped kernel (128 x 784), AVX2 build and fallback build | `experiments/rowmacc_wallclock.cpp` via `RUN_TIMING=1` (and `RUN_FALLBACK=1`) | `rowmacc_wallclock.txt`, `fallback/rowmacc_wallclock.txt` |
+| Row-length scaling of the row-level instruction: gas and wall-clock time of Paths S, B, N and N16 for nine row lengths, with a copy-only harness program whose gas is subtracted to give the computational gas; the row of 784 elements repeats the kernel of `rowmacc_wallclock` | `experiments/rowmacc_scaling.cpp` via `RUN_SCALING=1` (and `RUN_FALLBACK=1`) | `rowmacc_scaling.txt`, `fallback/rowmacc_scaling.txt`, `scaling_runs/*.txt` |
+| Scaling table and the layer-1 time ratios on two architectures: median, smallest and largest value of three runs per build, and the check that the gas tables of the twelve files are identical (`python3 training/scaling_summary.py`, run on the host) | `training/scaling_summary.py` | `scaling_summary.txt` |
+| Figure of the row-length scaling on two architectures (`python3 training/fig_scaling.py`) | `training/fig_scaling.py` | `outputs/fig_scaling.pdf` |
+| Equivalence on a second architecture: every gas, accuracy and security output on AArch64 is byte-identical to the x86-64 reference, on the NEON build and on the scalar fallback build | `.github/workflows/arm64.yml` with `compare_outputs.sh` | `arm64/ARM64_COMPARISON_run*.txt`, `arm64/FALLBACK_COMPARISON_run*.txt`, `arm64/MANIFEST_run*.txt`, `arm64/MACHINE.txt` |
 | Packed-multiplication scalar baseline (Path S): pure computational cost of the unrolled network with standard instructions only, compared with Paths B and C | `experiments/mnist_swar_baseline.cpp` | `mnist_swar_baseline.txt` |
 | Row-level instruction (Path N, `XMACC_N`): unrolled single-image compute with one instruction per neuron, and the deployable looped contract with its marginal cost per image | `experiments/mnist_rowmacc.cpp` | `mnist_rowmacc.txt` |
 | Code-as-storage contract with sixteen 16-bit lanes per word and the pairwise row-level instruction `XMACC_N16` (22 gas per 16-element group, the same price per element): half the weight words, half the memory expansion and copy cost, 10 data contracts | `experiments/mnist_codecopy16.cpp` | `mnist_codecopy16.txt` |
@@ -301,3 +313,64 @@ is unchanged. `precompile_bound.py` additionally prints the bound for a
 precompile called once per layer (three calls per image) under the eight-lane
 and the sixteen-lane layout.
 
+## Row-length scaling and the AArch64 run (update 18)
+
+**Row-length scaling.** `rowmacc_scaling.cpp` generalises `rowmacc_wallclock.cpp`
+from one shape to nine: 128 neurons by 16, 32, 64, 128, 256, 512, 784, 1,024
+and 2,048 inputs, with the same data generator, the same four programs, the
+same bit-exact checks and the same timing method. A harness program that only
+performs the two copies and the return gives the gas that every path pays for
+calldata and memory; the computational gas is the total minus that harness
+gas. The row of 784 elements reproduces the four gas values of
+`rowmacc_wallclock` (656,224, 685,199, 535,823 and 260,625), and the program
+fails if it does not.
+
+**NEON path.** `XMACC_N` and `XMACC_N16` have a third implementation for 64-bit
+ARM, next to the AVX2 path and the scalar path: one 128-bit load per half
+word, a byte reversal, the widening multiply `vmull_s16` and the saturating
+addition `vqaddq_s32`, which is the same clamp as the scalar path. The AVX2
+path is unchanged, and the x86-64 library built from the new patch is
+byte-identical to the one built from the previous patch. On AArch64 the
+element-wise instructions use the NEON backend of libsimdpp
+(`-DSIMDPP_ARCH_ARM_NEON`). The fixed-width `XMACC` and the strided `XMACC_S`
+have AVX2 intrinsics only and run their scalar path on AArch64. The macro
+`EVMONE_NO_NEON` switches the NEON path off; the fallback stage of
+`run_all.sh` uses it on AArch64 together with `-fno-tree-vectorize`, and
+records the number of NEON saturating-add instructions (`sqadd`) in each
+library (6 in the NEON library, 0 in the fallback library).
+
+**AArch64 run.** The workflow `.github/workflows/arm64.yml` builds the image on
+a 64-bit ARM runner of GitHub Actions (Arm Neoverse-N2, 4 cores), runs
+`run_all.sh` with `RUN_SCALING=1 RUN_FALLBACK=1` three times, and compares
+every output with `outputs/` by means of `compare_outputs.sh`. In each of the
+three runs the 34 compared files are identical to the x86-64 reference, and
+the NEON build and the fallback build are identical to each other. When the
+workflow is started by hand it commits the records of the three runs to
+`outputs/arm64/` and the six scaling files to `outputs/scaling_runs/`. The
+runner is a shared cloud machine, so its timing is reported with the range of
+the three runs.
+
+**A portability fault in a test program.** The first AArch64 run differed from
+the reference in one file, `sec_fuzz.txt`: the numbers of accepted and
+rejected trials of `XGATHER` and `XMACC_S` were different, with zero
+mismatches on both machines. The cause was in the test generator, not in the
+interpreter. It drew the four header fields as four calls in one argument
+list, and the order in which the arguments of a call are evaluated is
+unspecified in C++ (GCC evaluated them right to left on x86-64 and in another
+order on AArch64). The fields are now drawn into named variables in the order
+that x86-64 used, so the output on x86-64 is unchanged and the output on
+AArch64 is identical to it.
+
+**Three runs instead of one.** The time ratio of the layer-1 kernel was taken
+from a single run of `rowmacc_wallclock` (S/N = 5.59 on the AVX2 build, 2.30
+on the fallback build). Three later runs of the same kernel on the same host
+give between 5.26 and 5.31 on the AVX2 build, about 6 % below the single run,
+so a single run is not a reliable figure. The paper therefore
+quotes the median of three complete runs of `rowmacc_scaling` per build, with
+the smallest and the largest run, from `outputs/scaling_summary.txt`: 5.27
+[5.26, 5.31] (AVX2) and
+2.30 [2.30, 2.33] (fallback) on the x86-64 host, 6.10 [6.02, 6.10] (NEON) and
+2.45 [2.44, 2.45] (fallback) on the AArch64 runner. The computational gas of
+the same kernel is 261,457 for Path S and 141,056 for Path N on every build
+and machine. `rowmacc_wallclock.txt` and the files derived from it are kept
+as they were measured.
