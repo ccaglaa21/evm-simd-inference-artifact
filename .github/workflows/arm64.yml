@@ -1,15 +1,19 @@
-# Runs the artifact on a 64-bit ARM machine (GitHub-hosted runner): the vector build (NEON path of the row-level
-# instructions) and the scalar fallback build. Every gas and security output is compared with the x86-64
-# reference outputs committed in outputs/, and the two builds are compared with each other.
+# Runs the artifact on a 64-bit ARM machine (GitHub-hosted runner), three times in a row. Each run builds the
+# vector library (NEON) and the scalar fallback library, compares every gas and security output with the x86-64
+# reference outputs committed in outputs/, and compares the two builds with each other. When the workflow is
+# started by hand (Run workflow), the outputs of the three runs are committed to outputs/arm64 and
+# outputs/scaling_runs.
 name: arm64-equivalence
 on:
   workflow_dispatch:
   push:
     branches: [main]
+permissions:
+  contents: write
 jobs:
   arm64:
     runs-on: ubuntu-24.04-arm
-    timeout-minutes: 120
+    timeout-minutes: 180
     steps:
       - uses: actions/checkout@v4
       - name: Machine
@@ -18,23 +22,56 @@ jobs:
           lscpu | grep -E "Architecture|Model name|Vendor ID|Flags" | cut -c1-300
       - name: Build the image
         run: docker build -t evmone-simd .
-      - name: Run the gas and security programs on both builds
+      - name: Run the gas and security programs on both builds, three times
         run: |
-          mkdir -p out_arm64
-          docker run --rm -e RUN_SCALING=1 -e RUN_FALLBACK=1 -v "$PWD/out_arm64:/out" evmone-simd sh /work/evmone/run_all.sh
+          for r in 1 2 3; do
+            mkdir -p out_arm64_$r
+            docker run --rm -e RUN_SCALING=1 -e RUN_FALLBACK=1 -v "$PWD/out_arm64_$r:/out" evmone-simd sh /work/evmone/run_all.sh > run_$r.log 2>&1
+            echo "run $r finished, exit status $?"
+            grep -c "rc=[1-9]" out_arm64_$r/MANIFEST.txt || true
+          done
       - name: Compare with the x86-64 reference outputs
-        run: sh compare_outputs.sh outputs out_arm64 out_arm64/ARM64_COMPARISON.txt
+        run: |
+          for r in 1 2 3; do
+            sh compare_outputs.sh outputs out_arm64_$r ARM64_COMPARISON_$r.txt | tail -n 1
+          done
+          grep -c "^identical" ARM64_COMPARISON_1.txt ARM64_COMPARISON_2.txt ARM64_COMPARISON_3.txt
+          ! grep -E "^(DIFFERENT|MISSING)" ARM64_COMPARISON_1.txt ARM64_COMPARISON_2.txt ARM64_COMPARISON_3.txt
       - name: Vector build and fallback build on this machine
         run: |
-          grep -E "sqadd|ymm|fallback library|fallback comparison|rowmacc_scaling" out_arm64/MANIFEST.txt
-          cat out_arm64/FALLBACK_COMPARISON.txt
-          echo "---- vector build, timing table ----"
-          sed -n '/^TIME/,$p' out_arm64/rowmacc_scaling.txt
-          echo "---- fallback build, timing table ----"
-          sed -n '/^TIME/,$p' out_arm64/fallback/rowmacc_scaling.txt
+          for r in 1 2 3; do
+            echo "======== run $r ========"
+            grep -E "sqadd|fallback library|fallback comparison" out_arm64_$r/MANIFEST.txt
+            echo "---- vector build, timing table ----"
+            sed -n '/^TIME/,$p' out_arm64_$r/rowmacc_scaling.txt
+            echo "---- fallback build, timing table ----"
+            sed -n '/^TIME/,$p' out_arm64_$r/fallback/rowmacc_scaling.txt
+          done
+      - name: Collect the outputs
+        run: |
+          mkdir -p outputs/arm64 outputs/scaling_runs
+          for r in 1 2 3; do
+            cp out_arm64_$r/rowmacc_scaling.txt outputs/scaling_runs/arm64_run${r}_neon.txt
+            cp out_arm64_$r/fallback/rowmacc_scaling.txt outputs/scaling_runs/arm64_run${r}_scalar.txt
+            cp ARM64_COMPARISON_$r.txt outputs/arm64/ARM64_COMPARISON_run$r.txt
+            cp out_arm64_$r/FALLBACK_COMPARISON.txt outputs/arm64/FALLBACK_COMPARISON_run$r.txt
+            cp out_arm64_$r/MANIFEST.txt outputs/arm64/MANIFEST_run$r.txt
+          done
+          { uname -m; lscpu; } > outputs/arm64/MACHINE.txt
+          ls -la outputs/arm64 outputs/scaling_runs
+      - name: Commit the outputs (only when started by hand)
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add outputs/arm64 outputs/scaling_runs
+          git commit -m "Outputs of three runs on the 64-bit ARM runner (NEON build and scalar fallback build), written by the arm64-equivalence workflow"
+          git push
       - name: Upload the outputs
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: out_arm64
-          path: out_arm64
+          path: |
+            outputs/arm64
+            outputs/scaling_runs
