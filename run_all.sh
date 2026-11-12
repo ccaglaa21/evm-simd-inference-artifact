@@ -180,11 +180,12 @@ if [ "${RUN_FALLBACK:-0}" = "1" ]; then
     FB_NOTE="no -mavx2, no SIMDPP_ARCH_X86_AVX2"; VPAT="ymm"; VNOTE="ymm (256-bit AVX) instructions: "; VLIB="AVX2 library"
     CMP_HDR="Scalar-fallback run (build_noavx2: -O3 only, no AVX2) compared with the AVX2 run, file by file (cmp):"
   else
-    # 64-bit ARM: the vector build is plain -O3 (NEON path of the row-level instructions); the fallback build
-    # switches that path off with EVMONE_NO_NEON and disables auto-vectorization.
-    AVX2_FLAGS="-O3"
+    # 64-bit ARM: the vector build is -O3 with the NEON backend of libsimdpp and the NEON path of the row-level
+    # instructions; the fallback build drops the backend, switches that path off with EVMONE_NO_NEON and
+    # disables auto-vectorization.
+    AVX2_FLAGS="-O3 -DSIMDPP_ARCH_ARM_NEON"
     NOAVX2_FLAGS="-O3 -fno-tree-vectorize -fno-tree-slp-vectorize -DEVMONE_NO_NEON"
-    FB_NOTE="no auto-vectorization, NEON path switched off with EVMONE_NO_NEON"; VPAT="sqadd"; VNOTE="sqadd (NEON saturating add) instructions: "; VLIB="NEON library"
+    FB_NOTE="no SIMDPP_ARCH_ARM_NEON, no auto-vectorization, NEON path switched off with EVMONE_NO_NEON"; VPAT="sqadd"; VNOTE="sqadd (NEON saturating add) instructions: "; VLIB="NEON library"
     CMP_HDR="Scalar-fallback run (build_noavx2: no NEON path, no auto-vectorization) compared with the NEON run, file by file (cmp):"
   fi
   sed -i "s/add_compile_options($AVX2_FLAGS)/add_compile_options($NOAVX2_FLAGS)/" CMakeLists.txt
