@@ -71,4 +71,28 @@ LAYER-1 SHAPE (128 neurons x 784 inputs), the figures quoted in the paper
   AArch64, scalar fallback build : S/N = 2.45 [2.44, 2.45] | S/N16 = 2.56 [2.56, 2.56] | ns per MAC of N = 1.25 [1.25, 1.26]
   compute gas, every build and machine: S = 261457, N = 141056, S/N = 1.85
 
+LAYER-1 SHAPE, MEDIAN TIMES AND TIME-NEUTRAL PRICES (derivation of training/price_neutral.py, applied to each run)
+  pure computation gas (total - memory expansion - copy cost): S 261428 | B 290456 | N 141080 | groups 12544
+  median [min, max] of three runs
+  x86-64, AVX2 build
+    time per execution in ms: S 0.263 [0.262, 0.268] | B 0.158 [0.157, 0.160] | N 0.050 [0.050, 0.051] | N16 0.037 [0.037, 0.038]
+    time ratio B/N = 3.17 [3.14, 3.18]
+    time-neutral price of XMACC_N = 3.71 [3.68, 3.72] gas per group (provisional 11)
+    time-neutral price of XMACC   = 0.28 [0.27, 0.41] gas per instruction (provisional 11)
+  x86-64, scalar fallback build
+    time per execution in ms: S 0.278 [0.277, 0.287] | B 0.309 [0.308, 0.319] | N 0.121 [0.119, 0.125] | N16 0.122 [0.120, 0.125]
+    time ratio B/N = 2.56 [2.56, 2.58]
+    time-neutral price of XMACC_N = 8.81 [8.71, 8.83] gas per group (provisional 11)
+    time-neutral price of XMACC   = 11.02 [10.99, 11.06] gas per instruction (provisional 11)
+  AArch64, NEON build
+    time per execution in ms: S 0.307 [0.307, 0.309] | B 0.427 [0.427, 0.428] | N 0.050 [0.050, 0.051] | N16 0.037 [0.037, 0.037]
+    time ratio B/N = 8.50 [8.33, 8.50]
+    time-neutral price of XMACC_N = 3.17 [3.17, 3.21] gas per group (provisional 11)
+    time-neutral price of XMACC   = 16.88 [16.66, 16.88] gas per instruction (provisional 11)
+  AArch64, scalar fallback build
+    time per execution in ms: S 0.307 [0.306, 0.308] | B 0.381 [0.380, 0.383] | N 0.126 [0.125, 0.126] | N16 0.120 [0.119, 0.120]
+    time ratio B/N = 3.04 [3.02, 3.05]
+    time-neutral price of XMACC_N = 8.27 [8.27, 8.30] gas per group (provisional 11)
+    time-neutral price of XMACC   = 13.77 [13.62, 13.79] gas per instruction (provisional 11)
+
 *** ALL CHECKS PASSED ***

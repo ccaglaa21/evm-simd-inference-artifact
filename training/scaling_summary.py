@@ -125,6 +125,40 @@ for p, b, name in PLATFORMS:
 c784 = [r for r in crow if r[0] == 784][0]
 out.append(f"  compute gas, every build and machine: S = {c784[1]}, N = {c784[3]}, S/N = {c784[5]}")
 out.append("")
+
+# Median times and time-neutral prices at the layer-1 shape. The derivation is the one of training/price_neutral.py,
+# applied to each of the three runs: pure computation = total gas - memory expansion - CALLDATACOPY copy cost, and the
+# time-neutral price p* solves pure_S / (other + p* x groups) = time_S / time_X for X = N (XMACC_N) and X = B (XMACC).
+def memgas(nbytes):
+    w = (nbytes + 31) // 32
+    return 3 * w + (w * w) // 512
+
+t1 = texts[("x86", "avx2", 1)]
+gas = {n: int(re.search(r"---- I = 784 ----.*?\[" + n + r"\] bit-exact[^\n]*?gas (\d+)", t1, re.S).group(1)) for n in ("S", "B", "N")}
+NEU, G = 128, 784 // 8
+groups = NEU * G
+MEND = G * 32 + NEU * G * 32 + NEU * 32
+copy = (3 + 3 * G) + (3 + 3 * NEU * G)
+pureS = gas["S"] - memgas(MEND + 32) - copy
+pureB = gas["B"] - memgas(MEND) - copy
+pureN = gas["N"] - memgas(MEND) - copy
+otherN = pureN - 11 * groups
+otherB = pureB - 11 * groups
+out.append("LAYER-1 SHAPE, MEDIAN TIMES AND TIME-NEUTRAL PRICES (derivation of training/price_neutral.py, applied to each run)")
+out.append(f"  pure computation gas (total - memory expansion - copy cost): S {pureS} | B {pureB} | N {pureN} | groups {groups}")
+out.append("  median [min, max] of three runs")
+for p, b, name in PLATFORMS:
+    runs = tabs[(p, b)]
+    ms = {k: mmm([rows[784][k] for rows in runs]) for k in ("S", "B", "N", "N16")}
+    pN = mmm([(pureS / (rows[784]["S"] / rows[784]["N"]) - otherN) / groups for rows in runs])
+    pB = mmm([(pureS / (rows[784]["S"] / rows[784]["B"]) - otherB) / groups for rows in runs])
+    bn = mmm([rows[784]["B_N"] for rows in runs])
+    out.append(f"  {name}")
+    out.append("    time per execution in ms: " + " | ".join(f"{k} {ms[k][0]:.3f} [{ms[k][1]:.3f}, {ms[k][2]:.3f}]" for k in ("S", "B", "N", "N16")))
+    out.append(f"    time ratio B/N = {bn[0]:.2f} [{bn[1]:.2f}, {bn[2]:.2f}]")
+    out.append(f"    time-neutral price of XMACC_N = {pN[0]:.2f} [{pN[1]:.2f}, {pN[2]:.2f}] gas per group (provisional 11)")
+    out.append(f"    time-neutral price of XMACC   = {pB[0]:.2f} [{pB[1]:.2f}, {pB[2]:.2f}] gas per instruction (provisional 11)")
+out.append("")
 out.append("*** ALL CHECKS PASSED ***" if same else "*** A CHECK FAILED -> the numbers are not valid ***")
 
 open("outputs/scaling_summary.txt", "w").write("\n".join(out) + "\n")
