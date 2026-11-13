@@ -1,5 +1,5 @@
 artifact run_all.sh
-date (UTC): 2026-11-12T06:24:54Z
+date (UTC): 2026-11-13T11:36:56Z
 evmone commit: 4938c0a379da908ff07658a4b970d15fd0a3abb5
 evmc commit:   496ce0f81058378b72d0b592d1c49b935bce3302
 compiler:      g++ (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0
@@ -7,10 +7,10 @@ cpu:
 avx2:          no
 
 atv_closed_form              rc=0  time=5s
-atv_cost_split               rc=0  time=21s
+atv_cost_split               rc=0  time=19s
 atv_three_paths              rc=0  time=9s
-atv_price_sweep              rc=0  time=21s
-atv_int8                     rc=0  time=4s
+atv_price_sweep              rc=0  time=19s
+atv_int8                     rc=0  time=3s
 atv_solidity_scope           rc=0  time=0s
 mnist_sload                  rc=0  time=0s
 mnist_layers                 rc=0  time=1s
@@ -18,15 +18,15 @@ mnist_e2e_cb                 rc=0  time=1s
 mnist_loader_loop            rc=0  time=0s
 mnist_unrolled_simd          rc=0  time=0s
 mnist_batch_marginal         rc=0  time=1s
-mnist_deploy_cb              rc=0  time=2s
+mnist_deploy_cb              rc=0  time=1s
 mnist_swar_baseline          rc=0  time=0s
-mnist_rowmacc                rc=0  time=0s
+mnist_rowmacc                rc=0  time=1s
 mnist_codecopy               rc=0  time=0s
 mnist_codecopy16             rc=0  time=0s
-mnist_loops                  rc=0  time=0s
+mnist_loops                  rc=0  time=1s
 test_fullnet_500_acc         rc=0  time=1s
 fashion_onchain_acc          rc=0  time=1s
-seedchk_evm                  rc=0  time=0s
+seedchk_evm                  rc=0  time=1s
 fashion_codecopy16           rc=0  time=0s  (mnist_codecopy16 fashion)
 test_security_opcodes        rc=0  time=0s
 test_security_matrix         rc=0  time=0s
@@ -42,32 +42,32 @@ sec_saturate                 rc=0  time=0s
 int8_accuracy.py             rc=0  time=1s
 int8_accuracy_fashion.py     rc=0  time=0s
 fashion_diag.py              rc=0  time=1s
-overflow_bound.py            rc=0  time=32s
+overflow_bound.py            rc=0  time=31s
 bias_scale.py                rc=0  time=11s
 output_bias.py               rc=0  time=7s
 rowmacc_scaling              rc=0  time=11s
 fallback library:            build_noavx2/lib/libevmone.so (compiled with -O3 -fno-tree-vectorize -fno-tree-slp-vectorize -DEVMONE_NO_NEON: no SIMDPP_ARCH_ARM_NEON, no auto-vectorization, NEON path switched off with EVMONE_NO_NEON)
-sqadd (NEON saturating add) instructions:  fallback library 0, NEON library 6 (objdump -d | grep -c sqadd)
+sqadd (NEON saturating add) instructions:  fallback library 0, NEON library 12 (objdump -d | grep -c sqadd)
 atv_closed_form              rc=0  time=5s
-atv_cost_split               rc=0  time=21s
-atv_three_paths              rc=0  time=9s
-atv_price_sweep              rc=0  time=21s
-atv_int8                     rc=0  time=3s
+atv_cost_split               rc=0  time=20s
+atv_three_paths              rc=0  time=8s
+atv_price_sweep              rc=0  time=20s
+atv_int8                     rc=0  time=4s
 atv_solidity_scope           rc=0  time=0s
 mnist_sload                  rc=0  time=0s
 mnist_layers                 rc=0  time=1s
-mnist_e2e_cb                 rc=0  time=1s
+mnist_e2e_cb                 rc=0  time=0s
 mnist_loader_loop            rc=0  time=0s
-mnist_unrolled_simd          rc=0  time=0s
-mnist_batch_marginal         rc=0  time=2s
+mnist_unrolled_simd          rc=0  time=1s
+mnist_batch_marginal         rc=0  time=1s
 mnist_deploy_cb              rc=0  time=1s
 mnist_swar_baseline          rc=0  time=0s
 mnist_rowmacc                rc=0  time=0s
 mnist_codecopy               rc=0  time=0s
-mnist_codecopy16             rc=0  time=0s
-mnist_loops                  rc=0  time=1s
-test_fullnet_500_acc         rc=0  time=0s
-fashion_onchain_acc          rc=0  time=1s
+mnist_codecopy16             rc=0  time=1s
+mnist_loops                  rc=0  time=0s
+test_fullnet_500_acc         rc=0  time=1s
+fashion_onchain_acc          rc=0  time=0s
 seedchk_evm                  rc=0  time=1s
 test_security_opcodes        rc=0  time=0s
 test_security_matrix         rc=0  time=0s
@@ -118,7 +118,7 @@ cbfb7bee0f9118ce40a96a528ebae40a2b52c5524379ac5f28f27650babeaf73  mnist_unrolled
 28e8abb03efe6c9f5df7a8f9c95c8e164f17af6db88fd43845ddcc47107b3527  overflow_bound.txt
 33a5813317a340a1d2203e74983fe2cc073d64139e70d669896646b5585a8e72  precompile_bound.txt
 48c12ffd63805ecda2716633465021436d34c56c3a6799410536e047f874d000  price_neutral.txt
-d1be59659c40c2568731f849259eefffdbd106ec687e4873fac2dac95b0ca7b0  rowmacc_scaling.txt
+ac5781da4024307f4479a2dbed34c6abe7f8d8f78d1715a2b0bdf49e6b24fa85  rowmacc_scaling.txt
 f1ce599f6e3300e280bbf63760e3dbcf1eb59ab113a3bc9ed120e3746142fdb6  sec_fuzz.txt
 bdd85484da72e339ebd0e0210b528b98e2bd0f73b4895afbe90cef40ec7f97bc  sec_fuzz_lanes.txt
 e4da80523465da3f7b41ecdfcb2679b3b25091b4cae83f38d73d27405d2f4d7a  sec_jumpdest.txt
@@ -152,7 +152,7 @@ c7a3e800490e65ff0a904c4413438dd7d24212e5fcf8903f61498a386fa2ea83  fallback/mnist
 1e97ac96311b24b2d37bd8cb15c52af5ac86fa645f5a7d624d90229d983efed3  fallback/mnist_sload.txt
 1a2abb8ea5740dac883c0a3c6b9c35b01ad8beb34e4b7b9a90436f93ef52892f  fallback/mnist_swar_baseline.txt
 cbfb7bee0f9118ce40a96a528ebae40a2b52c5524379ac5f28f27650babeaf73  fallback/mnist_unrolled_simd.txt
-87304aa328a96da3169fe9c20818dfd123d89544fae4ab0089f4f992c88fa4af  fallback/rowmacc_scaling.txt
+b4dbb9d970d75583159e21f082f7d99363fbab66199ba6f3eb8036e677f93c0c  fallback/rowmacc_scaling.txt
 f1ce599f6e3300e280bbf63760e3dbcf1eb59ab113a3bc9ed120e3746142fdb6  fallback/sec_fuzz.txt
 bdd85484da72e339ebd0e0210b528b98e2bd0f73b4895afbe90cef40ec7f97bc  fallback/sec_fuzz_lanes.txt
 e4da80523465da3f7b41ecdfcb2679b3b25091b4cae83f38d73d27405d2f4d7a  fallback/sec_jumpdest.txt
