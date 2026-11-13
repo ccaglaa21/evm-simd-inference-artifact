@@ -32,21 +32,31 @@ assert [int(r[0]) for r in rows] == list(I)
 T = np.array([[float(x) for x in r[1:]] for r in rows]).reshape(len(rows), 4, 3)   # [length, series, (median, min, max)]
 print("row lengths =", list(I)); print("gas ratio =", list(G)); print("time ratio medians at the last length =", list(T[-1, :, 0]))
 
-series = [("x86-64, AVX2", "#0072B2", "o", "-"), ("x86-64, scalar", "#0072B2", "o", (0, (3, 2))),
-          ("AArch64, NEON", "#D55E00", "s", "-"), ("AArch64, scalar", "#D55E00", "s", (0, (3, 2)))]
+DASH = (0, (4.5, 3.0))                   # scalar builds: long dashes with wide gaps
+series = [("x86-64, AVX2", "#0072B2", "o", "-"), ("x86-64, scalar", "#0072B2", "o", DASH),
+          ("AArch64, NEON", "#D55E00", "s", "-"), ("AArch64, scalar", "#D55E00", "s", DASH)]
 
 plt.rcParams.update({"font.size": 8, "font.family": "sans-serif", "axes.linewidth": 0.5})
-fig, ax = plt.subplots(figsize=(3.35, 2.35))
+fig, ax = plt.subplots(figsize=(3.35, 2.75))
+handles = []
 for k, (name, color, marker, style) in enumerate(series):
     med, lo, hi = T[:, k, 0], T[:, k, 1], T[:, k, 2]
-    ax.errorbar(I, med, yerr=[med - lo, hi - med], color=color, linestyle=style, linewidth=1.1, marker=marker,
-                markersize=3.0, markerfacecolor="white", markeredgewidth=0.9, elinewidth=0.7, capsize=1.5, label=name)
-ax.plot(I, G, color="#333333", linestyle=(0, (1, 1.5)), linewidth=1.1, marker="^", markersize=3.0,
-        markerfacecolor="white", markeredgewidth=0.9, label="computational gas")
+    # range bar (smallest to largest run) behind the marker, without caps, so every marker keeps its shape
+    ax.errorbar(I, med, yerr=[med - lo, hi - med], fmt="none", ecolor=color, elinewidth=0.8, capsize=0, zorder=2)
+    h, = ax.plot(I, med, color=color, linestyle=style, linewidth=1.1, marker=marker, markersize=3.4,
+                 markerfacecolor="white", markeredgewidth=0.9, label=name, zorder=3)
+    handles.append(h)
+h, = ax.plot(I, G, color="#333333", linestyle=(0, (1, 1.8)), linewidth=1.1, marker="^", markersize=3.4,
+             markerfacecolor="white", markeredgewidth=0.9, label="computational gas", zorder=3)
+handles.append(h)
 ax.set_xscale("log", base=2); ax.set_xticks(I[::2]); ax.set_xticklabels([str(v) for v in I[::2]])
-ax.set_ylim(0, max(T[:, :, 2].max(), G.max()) * 1.08)
-ax.set_xlabel("row length (elements per neuron)"); ax.set_ylabel("ratio Path S / Path N")
-ax.legend(loc="upper left", fontsize=6.5, frameon=False, handlelength=2.6, borderaxespad=0.2, labelspacing=0.25)
+ax.set_ylim(0, max(T[:, :, 2].max(), G.max()) * 1.06)
+ax.set_xlabel("row length (elements per neuron)"); ax.set_ylabel("gain of the proposed Path N\n(Path S / Path N)")
+# legend above the axes, in two columns, so that it does not touch the curves
+order = [2, 3, 4, 0, 1]
+ax.legend([handles[i] for i in order], [handles[i].get_label() for i in order], loc="lower center",
+          bbox_to_anchor=(0.5, 1.02), ncol=2, fontsize=6.0, frameon=False, handlelength=4.2, labelspacing=0.7,
+          columnspacing=1.8, handletextpad=0.7, borderaxespad=0.0)
 for side in ("top", "right"):
     ax.spines[side].set_visible(False)
 ax.grid(color="#dddddd", linewidth=0.4); ax.set_axisbelow(True)
