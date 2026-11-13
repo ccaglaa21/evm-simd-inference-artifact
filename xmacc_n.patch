@@ -12,7 +12,7 @@ index 2a6bb248..e9b516b9 100644
                      t.fn = op_undefined;
                      t.gas_cost = 0;
 diff --git a/lib/evmone/instructions.hpp b/lib/evmone/instructions.hpp
-index c93f8a29..b4fdbfff 100644
+index c93f8a29..9d52c18b 100644
 --- a/lib/evmone/instructions.hpp
 +++ b/lib/evmone/instructions.hpp
 @@ -10,6 +10,8 @@
@@ -20,11 +20,28 @@ index c93f8a29..b4fdbfff 100644
  #if defined(__AVX2__)
  #include <immintrin.h>  // AVX2 gather (XMACC_S); the scalar fallback is used when AVX2 is unavailable
 +#elif defined(__ARM_NEON) && !defined(EVMONE_NO_NEON)
-+#include <arm_neon.h>   // NEON path of the row-level instructions (XMACC_N, XMACC_N16); EVMONE_NO_NEON selects the scalar path
++#include <arm_neon.h>   // NEON path of XMACC and of the row-level instructions (XMACC_N, XMACC_N16); EVMONE_NO_NEON selects the scalar path
  #endif
  #include <evmone_precompiles/keccak.hpp>
  
-@@ -406,6 +408,233 @@ inline void noop(StackTop /*stack*/) noexcept {}
+@@ -386,6 +388,16 @@ inline void noop(StackTop /*stack*/) noexcept {}
+         const __m256i acc = _mm256_loadu_si256(reinterpret_cast<const __m256i*>(cb));
+         const __m256i res = sat_add32_v(acc, _mm256_mullo_epi32(a32, b32));
+         _mm256_storeu_si256(reinterpret_cast<__m256i*>(cb), res);
++#elif defined(__ARM_NEON) && !defined(EVMONE_NO_NEON)
++        // NEON path: the eight int16 lanes of each operand are the first sixteen bytes of its buffer.
++        // vmull_s16 gives the exact 32-bit products of four lanes and vqaddq_s32 is the saturating
++        // 32-bit addition, the same clamp as sat_add32. Bit-identical to the scalar path below.
++        const int16x8_t a16 = vreinterpretq_s16_u8(vld1q_u8(ab));
++        const int16x8_t b16 = vreinterpretq_s16_u8(vld1q_u8(bb));
++        const int32x4_t lo = vqaddq_s32(vreinterpretq_s32_u8(vld1q_u8(cb)), vmull_s16(vget_low_s16(a16), vget_low_s16(b16)));
++        const int32x4_t hi = vqaddq_s32(vreinterpretq_s32_u8(vld1q_u8(cb + 16)), vmull_s16(vget_high_s16(a16), vget_high_s16(b16)));
++        vst1q_u8(cb, vreinterpretq_u8_s32(lo));
++        vst1q_u8(cb + 16, vreinterpretq_u8_s32(hi));
+ #else
+         for (int j = 0; j < 8; ++j)
+         {
+@@ -406,6 +418,233 @@ inline void noop(StackTop /*stack*/) noexcept {}
          return pos + 1;
      }
  
