@@ -95,4 +95,12 @@ LAYER-1 SHAPE, MEDIAN TIMES AND TIME-NEUTRAL PRICES (derivation of training/pric
     time-neutral price of XMACC_N = 8.31 [8.28, 8.31] gas per group (provisional 11)
     time-neutral price of XMACC   = 13.85 [13.81, 13.86] gas per instruction (provisional 11)
 
+NANOSECONDS PER GAS of the pure computation, layer-1 shape: median [min, max] of three runs
+(time per execution divided by the pure computation gas: S 261428 | B 290456 | N 141080)
+  build                          |          S (standard) |       B (fixed-width) |         N (row-level) |  B/S |  N/S
+  x86-64, AVX2 build             |  1.006 [1.002, 1.026] |  0.544 [0.540, 0.551] |  0.354 [0.352, 0.358] | 0.54 | 0.35
+  x86-64, scalar fallback build  |  1.061 [1.060, 1.098] |  1.062 [1.061, 1.099] |  0.855 [0.846, 0.884] | 1.00 | 0.81
+  AArch64, NEON build            |  1.171 [1.170, 1.175] |  0.734 [0.732, 0.734] |  0.362 [0.361, 0.366] | 0.63 | 0.31
+  AArch64, scalar fallback build |  1.170 [1.169, 1.174] |  1.314 [1.313, 1.317] |  0.890 [0.889, 0.890] | 1.12 | 0.76
+
 *** ALL CHECKS PASSED ***

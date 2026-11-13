@@ -159,6 +159,20 @@ for p, b, name in PLATFORMS:
     out.append(f"    time-neutral price of XMACC_N = {pN[0]:.2f} [{pN[1]:.2f}, {pN[2]:.2f}] gas per group (provisional 11)")
     out.append(f"    time-neutral price of XMACC   = {pB[0]:.2f} [{pB[1]:.2f}, {pB[2]:.2f}] gas per instruction (provisional 11)")
 out.append("")
+
+# Absolute calibration at the layer-1 shape: nanoseconds per gas of the pure computation of each program. Program S
+# uses standard instructions only, so its value is the reference of the gas schedule on this workload. A program
+# whose value lies above that of S on some build is charged less gas per unit of time than S on that build.
+out.append("NANOSECONDS PER GAS of the pure computation, layer-1 shape: median [min, max] of three runs")
+out.append("(time per execution divided by the pure computation gas: S %d | B %d | N %d)" % (pureS, pureB, pureN))
+out.append("  build                          |          S (standard) |       B (fixed-width) |         N (row-level) |  B/S |  N/S")
+for p_, b_, name in PLATFORMS:
+    runs = tabs[(p_, b_)]
+    v = {}
+    for k, g in (("S", pureS), ("B", pureB), ("N", pureN)):
+        v[k] = mmm([rows[784][k] * 1e6 / g for rows in runs])
+    out.append(f"  {name:31s}| " + " | ".join(f"{v[k][0]:6.3f} [{v[k][1]:5.3f}, {v[k][2]:5.3f}]" for k in ("S", "B", "N")) + f" | {v['B'][0] / v['S'][0]:4.2f} | {v['N'][0] / v['S'][0]:4.2f}")
+out.append("")
 out.append("*** ALL CHECKS PASSED ***" if same else "*** A CHECK FAILED -> the numbers are not valid ***")
 
 open("outputs/scaling_summary.txt", "w").write("\n".join(out) + "\n")

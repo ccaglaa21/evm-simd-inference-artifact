@@ -1,0 +1,20 @@
+Bytecode: Path S contract with EXTCODECOPY loader 4465 B | 19 data contracts of at most 24576 bytes (449664 data bytes, 14052 words)
+
+[CHECK 1] 20 images, C++ == contract (Path S, code-as-storage, EXTCODECOPY loader): 20/20 PASSED
+[CHECK 5] EIP-170 (<24,576): contract 4465 B, largest data contract 24576 B PASSED
+[N= 1] cold/warm = 955787/908287 | cold-warm 47500 (expected 19 x 2,500 = 47500) OK | MSIZE 454368 (expected 454368) OK | repeat identical
+[N= 2] cold/warm = 1383399/1335899 | cold-warm 47500 (expected 19 x 2,500 = 47500) OK | MSIZE 454400 (expected 454400) OK | repeat identical
+[N= 4] cold/warm = 2238622/2191122 | cold-warm 47500 (expected 19 x 2,500 = 47500) OK | MSIZE 454464 (expected 454464) OK | repeat identical
+[N= 8] cold/warm = 3949068/3901568 | cold-warm 47500 (expected 19 x 2,500 = 47500) OK | MSIZE 454592 (expected 454592) OK | repeat identical
+[N=16] cold/warm = 7369960/7322460 | cold-warm 47500 (expected 19 x 2,500 = 47500) OK | MSIZE 454848 (expected 454848) OK | repeat identical
+[CHECK 6] marginal per image (memory-stripped): 427553 427553 427553 427553 -> EXACTLY CONSTANT | equals the S2 marginal of mnist_loops (427,553): yes
+
+================ PATH S WITH THE WEIGHTS AS CONTRACT CODE (EXTCODECOPY loader, S2 body) ================
+  single image, cold: total 955787 = weight read 91559 (19 cold account accesses x 2,600 + 14053 copied words x 3) + memory 436369 (MSIZE 454368) + the rest 427859
+  single image, warm: 908287 | batch of 16, cold: 7369960 | marginal per image 427553 | code 4465 B
+  share of the EIP-7825 per-transaction cap (16,777,216): 5.7%
+  anchors, Path N cold single image: weights in storage 32,185,375 | weights as code, 8 lanes 715,664 | weights as code, 16 lanes 368,032
+  RATIOS (cold single image, weights as code): Path S / Path N (8 lanes) = 1.34x | Path S / Path N (16 lanes) = 2.60x
+  RATIOS (storage pattern alone): Path N in storage / Path S as code = 33.67x | Path N in storage / Path N as code (8 lanes) = 44.97x
+
+*** ALL CHECKS PASSED -> numbers are valid ***
