@@ -9,6 +9,6 @@
 [PASS] G6  off_a = 2^200: status=3 (OUT_OF_GAS=3 expected)
 [PASS] G7  cols = 2^31-1 with 1e9 gas: status=3 (OUT_OF_GAS=3 expected from the group charge)
 [PASS] G8  cols = 0: status=0 accumulator unchanged, gas 165 == static count with 3 for the empty row 165: yes
-[PASS] G9  20 elements: gas measured 204, static count 204 (14 gas x 3 groups, the last one partial): equal
+[PASS] G9  20 elements, unit stride: gas 195, static count 195 (11 x 3 groups) | one strided row: gas 204, static count 204 (14 x 3 groups): equal
 
 --- SUMMARY --- 11/11 passed  *** ALL CHECKS PASSED ***

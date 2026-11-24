@@ -15,7 +15,8 @@
 //   G6  off_a = 2^200                  -> clean OUT_OF_GAS
 //   G7  gas below the group charge     -> clean OUT_OF_GAS
 //   G8  cols = 0                       -> SUCCESS, accumulator unchanged, 3 gas charged
-//   G9  gas accounting                 -> measured gas equals the static count (14 per group of eight, partial group included)
+//   G9  gas accounting                 -> measured gas equals the static count: 11 per group of eight for two unit-stride rows,
+//                                         14 per group when a row is strided (partial group included)
 // The output is deterministic and is compared between the builds.
 #include <evmc/evmc.h>
 #include <evmc/mocked_host.hpp>
@@ -127,9 +128,11 @@ int main() {
       uint8_t aw[32]; accword(aw, z); long long mw = (long long)(mem.size() + 32) / 32; long long pred = k.sgas + 3 * mw + mw * mw / 512;
       bool ok = r.st == EVMC_SUCCESS && r.out.size() == 32 && std::memcmp(r.out.data(), aw, 32) == 0 && r.gas == pred;
       std::snprintf(d, sizeof d, "cols = 0: status=%d accumulator unchanged, gas %lld == static count with 3 for the empty row %lld: %s", (int)r.st, r.gas, pred, r.gas == pred ? "yes" : "no"); report("G8", ok, d); }
-    { std::vector<uint8_t> mem; size_t oa = place(mem, A), ob = place(mem, B); Code k; Res r = exec(mem, z, oa, 2, ob, 3, nullptr, nullptr, 14 * 3, GAS_BIG, &k);
+    { std::vector<uint8_t> mem; size_t oa = place(mem, A), ob = place(mem, B); Code k; Res r = exec(mem, z, oa, 2, ob, 3, nullptr, nullptr, 11 * 3, GAS_BIG, &k);
       long long mw = (long long)(mem.size() + 32) / 32; long long pred = k.sgas + 3 * mw + mw * mw / 512;
-      std::snprintf(d, sizeof d, "20 elements: gas measured %lld, static count %lld (14 gas x 3 groups, the last one partial): %s", r.gas, pred, r.gas == pred ? "equal" : "DIFFERENT"); report("G9", r.st == EVMC_SUCCESS && r.gas == pred, d); }
+      Mat T = mk(20, 3, true); std::vector<uint8_t> mem2; size_t ot = place(mem2, T), ob2 = place(mem2, B); Code k2; Res r2 = exec(mem2, z, ot, 2, ob2, 3, nullptr, nullptr, 14 * 3, GAS_BIG, &k2);
+      long long mw2 = (long long)(mem2.size() + 32) / 32; long long pred2 = k2.sgas + 3 * mw2 + mw2 * mw2 / 512;
+      std::snprintf(d, sizeof d, "20 elements, unit stride: gas %lld, static count %lld (11 x 3 groups) | one strided row: gas %lld, static count %lld (14 x 3 groups): %s", r.gas, pred, r2.gas, pred2, (r.gas == pred && r2.gas == pred2) ? "equal" : "DIFFERENT"); report("G9", r.st == EVMC_SUCCESS && r2.st == EVMC_SUCCESS && r.gas == pred && r2.gas == pred2, d); }
     std::printf("\n--- SUMMARY --- %d/%d passed%s\n", pass, total, pass == total ? "  *** ALL CHECKS PASSED ***" : "  *** INSPECT ***");
     VM->destroy(VM); dlclose(h);
     return pass == total ? 0 : 1;
