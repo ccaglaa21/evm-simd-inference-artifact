@@ -1,0 +1,196 @@
+diff --git a/lib/evmone/advanced_instructions.cpp b/lib/evmone/advanced_instructions.cpp
+index e9b516b9..eb307a99 100644
+--- a/lib/evmone/advanced_instructions.cpp
++++ b/lib/evmone/advanced_instructions.cpp
+@@ -302,7 +302,7 @@ EVMC_EXPORT const OpTable& get_op_table(evmc_revision rev) noexcept
+                 if (i == OP_XADD_IMM || i == OP_XMUL_IMM || i == OP_XSUB_IMM ||
+                     i == OP_XGT_IMM  || i == OP_XMACC    || i == OP_XRELU    ||
+                     i == OP_XSUM32   || i == OP_XTRANSPOSE || i == OP_XPACK ||
+-                    i == OP_XGATHER || i == OP_XBCAST || i == OP_XMACC_S || i == OP_XMACC_N || i == OP_XMACC_N16)
++                    i == OP_XGATHER || i == OP_XBCAST || i == OP_XMACC_S || i == OP_XMACC_N || i == OP_XMACC_N16 || i == OP_XMACC_V)
+                 {
+                     t.fn = op_undefined;
+                     t.gas_cost = 0;
+diff --git a/lib/evmone/instructions.hpp b/lib/evmone/instructions.hpp
+index 9d52c18b..693e37cf 100644
+--- a/lib/evmone/instructions.hpp
++++ b/lib/evmone/instructions.hpp
+@@ -645,6 +645,132 @@ inline void noop(StackTop /*stack*/) noexcept {}
+         return {EVMC_SUCCESS, gas_left};
+     }
+ 
++    // --- XMACC_V: row-level multiply-accumulate over two matrix views ---
++    // Stack (pop order): off_a, row_a, off_b, row_b. The accumulator word (8 x int32 lanes) stays on
++    // the stack and is updated in place, as for XMACC_N.
++    // Both operands are matrices with a 32-byte MatrixHeader followed by int16 elements. Row r of a
++    // view is the element sequence data[r*stride_row + t*stride_col], t = 0..cols-1, so a transposed
++    // view (XTRANSPOSE swaps the shape and the strides) yields a column of the stored matrix without
++    // a copy. The instruction multiplies row_a of view A with row_b of view B element by element:
++    //     acc[t mod 8] = sat(acc[t mod 8] + a[t] * b[t])      (t = 0..cols-1)
++    // with the lane arithmetic of the other accumulation instructions (16->32 widening, saturating
++    // 32-bit addition). Without saturation the lane sum (XSUM32) is the dot product of the two rows.
++    // The element count is not an operand. It is the column count of the views, and the two views
++    // must agree on it, otherwise the instruction halts (a shape error).
++    // Gas: XMACC_V_GROUP_GAS per group of eight elements (the last group may be partial), G_verylow
++    // for an empty row, charged before any element access; memory expansion is charged by check_memory.
++    // SECURITY: the row indices are checked against the row counts, the column count must fit in 31
++    // bits, and the highest element of each row is bounds-checked in uint256 before any read.
++    // The instruction writes no memory.
++    static inline Result xmacc_v(StackTop stack, int64_t gas_left, ExecutionState& state) noexcept
++    {
++        const auto off_a = stack.pop();
++        const auto row_a = stack.pop();
++        const auto off_b = stack.pop();
++        const auto row_b = stack.pop();
++        auto& vacc = stack[0];
++        if (!check_memory(gas_left, state.memory, off_a, 32))
++            return {EVMC_OUT_OF_GAS, gas_left};
++        if (!check_memory(gas_left, state.memory, off_b, 32))
++            return {EVMC_OUT_OF_GAS, gas_left};
++        evmone::numpy::MatrixHeader ha, hb;
++        std::memcpy(&ha, &state.memory[static_cast<size_t>(off_a)], sizeof(ha));
++        std::memcpy(&hb, &state.memory[static_cast<size_t>(off_b)], sizeof(hb));
++        if (ha.cols != hb.cols || ha.cols > 0x7fffffffULL)
++            return {EVMC_OUT_OF_GAS, gas_left};
++        if (!(row_a < uint256(ha.rows)) || !(row_b < uint256(hb.rows)))
++            return {EVMC_OUT_OF_GAS, gas_left};
++        const uint64_t n = ha.cols;
++        constexpr int64_t XMACC_V_GROUP_GAS = 14;
++        const int64_t charge = n == 0 ? 3 : static_cast<int64_t>((n + 7) / 8) * XMACC_V_GROUP_GAS;
++        if ((gas_left -= charge) < 0)
++            return {EVMC_OUT_OF_GAS, gas_left};
++        if (n == 0)
++            return {EVMC_SUCCESS, gas_left};
++        // Highest element index of each row, in uint256 (no overflow), then the byte bound.
++        const uint256 base_a = row_a * uint256(ha.stride_row);
++        const uint256 base_b = row_b * uint256(hb.stride_row);
++        const uint256 top_a = off_a + uint256(32) + (base_a + uint256(n - 1) * uint256(ha.stride_col)) * uint256(2);
++        const uint256 top_b = off_b + uint256(32) + (base_b + uint256(n - 1) * uint256(hb.stride_col)) * uint256(2);
++        if (!check_memory(gas_left, state.memory, top_a, 2))
++            return {EVMC_OUT_OF_GAS, gas_left};
++        if (!check_memory(gas_left, state.memory, top_b, 2))
++            return {EVMC_OUT_OF_GAS, gas_left};
++        // After the two checks every element offset is below the memory size, so it fits in size_t.
++        const uint8_t* da = &state.memory[static_cast<size_t>(off_a)] + 32 + 2 * static_cast<size_t>(base_a);
++        const uint8_t* db = &state.memory[static_cast<size_t>(off_b)] + 32 + 2 * static_cast<size_t>(base_b);
++        const size_t sa = 2 * static_cast<size_t>(ha.stride_col);
++        const size_t sb = 2 * static_cast<size_t>(hb.stride_col);
++        uint8_t ab[32];
++        std::memcpy(ab, &vacc, 32);
++        // A group of eight elements is read either in place (unit stride, full group) or through a
++        // 16-byte buffer filled element by element (strided row or partial last group, the unused
++        // lanes are zero and add nothing). The lane arithmetic then is the same for both cases.
++        uint8_t ta[16], tb[16];
++#if defined(__AVX2__)
++        __m256i acc = _mm256_loadu_si256(reinterpret_cast<const __m256i*>(ab));
++#elif defined(__ARM_NEON) && !defined(EVMONE_NO_NEON)
++        int32x4_t acc_lo = vreinterpretq_s32_u8(vld1q_u8(ab));
++        int32x4_t acc_hi = vreinterpretq_s32_u8(vld1q_u8(ab + 16));
++#else
++        int32_t acc[8];
++        std::memcpy(acc, ab, 32);
++#endif
++        for (uint64_t t0 = 0; t0 < n; t0 += 8)
++        {
++            const uint64_t cnt = (n - t0 < 8) ? (n - t0) : 8;
++            const uint8_t* qa;
++            const uint8_t* qb;
++            if (sa == 2 && cnt == 8)
++                qa = da + 2 * t0;
++            else
++            {
++                std::memset(ta, 0, 16);
++                for (uint64_t j = 0; j < cnt; ++j)
++                    std::memcpy(ta + 2 * j, da + (t0 + j) * sa, 2);
++                qa = ta;
++            }
++            if (sb == 2 && cnt == 8)
++                qb = db + 2 * t0;
++            else
++            {
++                std::memset(tb, 0, 16);
++                for (uint64_t j = 0; j < cnt; ++j)
++                    std::memcpy(tb + 2 * j, db + (t0 + j) * sb, 2);
++                qb = tb;
++            }
++#if defined(__AVX2__)
++            const __m256i a32 = _mm256_cvtepi16_epi32(_mm_loadu_si128(reinterpret_cast<const __m128i*>(qa)));
++            const __m256i b32 = _mm256_cvtepi16_epi32(_mm_loadu_si128(reinterpret_cast<const __m128i*>(qb)));
++            acc = sat_add32_v(acc, _mm256_mullo_epi32(a32, b32));
++#elif defined(__ARM_NEON) && !defined(EVMONE_NO_NEON)
++            const int16x8_t a16 = vreinterpretq_s16_u8(vld1q_u8(qa));
++            const int16x8_t b16 = vreinterpretq_s16_u8(vld1q_u8(qb));
++            acc_lo = vqaddq_s32(acc_lo, vmull_s16(vget_low_s16(a16), vget_low_s16(b16)));
++            acc_hi = vqaddq_s32(acc_hi, vmull_s16(vget_high_s16(a16), vget_high_s16(b16)));
++#else
++            for (int j = 0; j < 8; ++j)
++            {
++                int16_t a, b;
++                std::memcpy(&a, qa + 2 * j, 2);
++                std::memcpy(&b, qb + 2 * j, 2);
++                acc[j] = sat_add32(acc[j], static_cast<int32_t>(a) * static_cast<int32_t>(b));
++            }
++#endif
++        }
++#if defined(__AVX2__)
++        _mm256_storeu_si256(reinterpret_cast<__m256i*>(ab), acc);
++#elif defined(__ARM_NEON) && !defined(EVMONE_NO_NEON)
++        vst1q_u8(ab, vreinterpretq_u8_s32(acc_lo));
++        vst1q_u8(ab + 16, vreinterpretq_u8_s32(acc_hi));
++#else
++        std::memcpy(ab, acc, 32);
++#endif
++        std::memcpy(&vacc, ab, 32);
++        return {EVMC_SUCCESS, gas_left};
++    }
++
++
+     // --- XMACC_S: STRIDE-AWARE MACC (uses the zero-copy transpose without copying) ---
+     // Stack: [Mat_Offset, Inp_Offset, Acc_Offset]. config byte (pos[1]) = row index r.
+     // Reads row r of the transposed matrix (an original column, strided) WITHOUT COPYING.
+diff --git a/lib/evmone/instructions_opcodes.hpp b/lib/evmone/instructions_opcodes.hpp
+index 0e1f2739..3549f101 100644
+--- a/lib/evmone/instructions_opcodes.hpp
++++ b/lib/evmone/instructions_opcodes.hpp
+@@ -187,6 +187,7 @@ enum Opcode : uint8_t  // NOLINT(*-use-enum-class)
+     OP_XBCAST = 0xe4,
+     OP_XMACC_S = 0xe5,
+     OP_XMACC_N = 0xe6,
+-    OP_XMACC_N16 = 0xe7
++    OP_XMACC_N16 = 0xe7,
++    OP_XMACC_V = 0xe8
+ };
+ }  // namespace evmone
+diff --git a/lib/evmone/instructions_traits.hpp b/lib/evmone/instructions_traits.hpp
+index e2cbe1d6..a3a6392a 100644
+--- a/lib/evmone/instructions_traits.hpp
++++ b/lib/evmone/instructions_traits.hpp
+@@ -55,6 +55,7 @@ constexpr inline GasCostTable gas_costs = []() noexcept {
+     table[EVMC_FRONTIER][OP_XMACC_S] = 14;
+     table[EVMC_FRONTIER][OP_XMACC_N] = 0;   // dynamic: 11 gas per group, charged in the handler
+     table[EVMC_FRONTIER][OP_XMACC_N16] = 0; // dynamic: 22 gas per 16-element group, charged in the handler
++    table[EVMC_FRONTIER][OP_XMACC_V] = 0;   // dynamic: 14 gas per group of eight elements, charged in the handler
+     table[EVMC_FRONTIER][OP_MUL] = 5;
+     table[EVMC_FRONTIER][OP_SUB] = 3;
+     table[EVMC_FRONTIER][OP_DIV] = 5;
+@@ -261,6 +262,7 @@ constexpr inline std::array<Traits, 256> traits = []() noexcept {
+     table[OP_XMACC_S] = {"XMACC_S", 0, false, 5, -5, EVMC_FRONTIER};
+     table[OP_XMACC_N] = {"XMACC_N", 0, false, 4, -3, EVMC_FRONTIER};
+     table[OP_XMACC_N16] = {"XMACC_N16", 0, false, 4, -3, EVMC_FRONTIER};
++    table[OP_XMACC_V] = {"XMACC_V", 0, false, 5, -4, EVMC_FRONTIER};
+     table[OP_MUL] = {"MUL", 0, false, 2, -1, EVMC_FRONTIER};
+     table[OP_SUB] = {"SUB", 0, false, 2, -1, EVMC_FRONTIER};
+     table[OP_DIV] = {"DIV", 0, false, 2, -1, EVMC_FRONTIER};
+diff --git a/lib/evmone/instructions_xmacro.hpp b/lib/evmone/instructions_xmacro.hpp
+index e640c510..9fd21598 100644
+--- a/lib/evmone/instructions_xmacro.hpp
++++ b/lib/evmone/instructions_xmacro.hpp
+@@ -278,7 +278,7 @@
+     ON_OPCODE_IDENTIFIER(OP_XMACC_S, xmacc_strided)                               \
+     ON_OPCODE_IDENTIFIER(OP_XMACC_N, xmacc_n)                                     \
+     ON_OPCODE_IDENTIFIER(OP_XMACC_N16, xmacc_n16)                                 \
+-    ON_OPCODE_UNDEFINED(0xe8)                               \
++    ON_OPCODE_IDENTIFIER(OP_XMACC_V, xmacc_v)                                     \
+     ON_OPCODE_UNDEFINED(0xe9)                               \
+     ON_OPCODE_UNDEFINED(0xea)                               \
+     ON_OPCODE_UNDEFINED(0xeb)                               \
