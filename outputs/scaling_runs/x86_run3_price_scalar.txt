@@ -1,618 +1,618 @@
 hostile view: 28672 elements, one per cache line, 1835008 bytes of memory, memory expansion gas 6594560 (39.3% of the per-transaction cap of 2^24 gas)
 ---- reference: standard instructions ----
 [REF_STEP, PUSH MLOAD PUSH MLOAD MUL ADD, n=512] repetitions 512 | per repetition: 1 groups of eight, 0 entries, 0 strided elements, instruction gas 20 | gas 70459 | static count + memory 70459: equal | copy-and-return gas 60210 | fingerprint dfd0fed073d930d3 | PASSED
-  [REF_STEP, PUSH MLOAD PUSH MLOAD MUL ADD, n=512 total] med=0.000014448 s  min=0.000014305  max=0.000017734  CV=5.6%  (samples=31, inner-reps=692)
-  [REF_STEP, PUSH MLOAD PUSH MLOAD MUL ADD, n=512 analysis] med=0.000002360 s  min=0.000002326  max=0.000003363  CV=7.5%  (samples=31, inner-reps=890)
-  [copy-and-return total] med=0.000003741 s  min=0.000003689  max=0.000005444  CV=8.5%  (samples=31, inner-reps=720)
-  [copy-and-return analysis] med=0.000000037 s  min=0.000000036  max=0.000000040  CV=2.9%  (samples=31, inner-reps=20000)
+  [REF_STEP, PUSH MLOAD PUSH MLOAD MUL ADD, n=512 total] med=0.000013845 s  min=0.000013264  max=0.000014085  CV=1.9%  (samples=31, inner-reps=688)
+  [REF_STEP, PUSH MLOAD PUSH MLOAD MUL ADD, n=512 analysis] med=0.000002120 s  min=0.000002108  max=0.000002214  CV=1.3%  (samples=31, inner-reps=2188)
+  [copy-and-return total] med=0.000003953 s  min=0.000003867  max=0.000004001  CV=0.9%  (samples=31, inner-reps=2028)
+  [copy-and-return analysis] med=0.000000036 s  min=0.000000033  max=0.000000039  CV=3.8%  (samples=31, inner-reps=20000)
 [REF_STEP, PUSH MLOAD PUSH MLOAD MUL ADD, n=4096] repetitions 4096 | per repetition: 1 groups of eight, 0 entries, 0 strided elements, instruction gas 20 | gas 142139 | static count + memory 142139: equal | copy-and-return gas 60210 | fingerprint 31afc628c09d6f3a | PASSED
-  [REF_STEP, PUSH MLOAD PUSH MLOAD MUL ADD, n=4096 total] med=0.000088572 s  min=0.000087180  max=0.000145666  CV=12.8%  (samples=31, inner-reps=97)
-  [REF_STEP, PUSH MLOAD PUSH MLOAD MUL ADD, n=4096 analysis] med=0.000018826 s  min=0.000018531  max=0.000025600  CV=7.7%  (samples=31, inner-reps=201)
-  [copy-and-return total] med=0.000003736 s  min=0.000003678  max=0.000004423  CV=3.9%  (samples=31, inner-reps=445)
-  [copy-and-return analysis] med=0.000000037 s  min=0.000000035  max=0.000000044  CV=5.3%  (samples=31, inner-reps=20000)
+  [REF_STEP, PUSH MLOAD PUSH MLOAD MUL ADD, n=4096 total] med=0.000085818 s  min=0.000084884  max=0.000089583  CV=0.9%  (samples=31, inner-reps=110)
+  [REF_STEP, PUSH MLOAD PUSH MLOAD MUL ADD, n=4096 analysis] med=0.000016966 s  min=0.000016827  max=0.000018120  CV=1.5%  (samples=31, inner-reps=304)
+  [copy-and-return total] med=0.000003954 s  min=0.000003867  max=0.000003988  CV=0.9%  (samples=31, inner-reps=2516)
+  [copy-and-return analysis] med=0.000000036 s  min=0.000000034  max=0.000000038  CV=3.0%  (samples=31, inner-reps=20000)
 [REF_STEP, PUSH MLOAD PUSH MLOAD MUL ADD, n=32768] repetitions 32768 | per repetition: 1 groups of eight, 0 entries, 0 strided elements, instruction gas 20 | gas 715579 | static count + memory 715579: equal | copy-and-return gas 60210 | fingerprint fd5c585d53e34795 | PASSED
-  [REF_STEP, PUSH MLOAD PUSH MLOAD MUL ADD, n=32768 total] med=0.000696534 s  min=0.000681902  max=0.000811717  CV=4.2%  (samples=31, inner-reps=14)
-  [REF_STEP, PUSH MLOAD PUSH MLOAD MUL ADD, n=32768 analysis] med=0.000149626 s  min=0.000148283  max=0.000158191  CV=1.5%  (samples=31, inner-reps=38)
-  [copy-and-return total] med=0.000003736 s  min=0.000003669  max=0.000014361  CV=45.5%  (samples=31, inner-reps=441)
-  [copy-and-return analysis] med=0.000000038 s  min=0.000000036  max=0.000000059  CV=15.4%  (samples=31, inner-reps=20000)
+  [REF_STEP, PUSH MLOAD PUSH MLOAD MUL ADD, n=32768 total] med=0.000657908 s  min=0.000652611  max=0.000687731  CV=0.9%  (samples=31, inner-reps=15)
+  [REF_STEP, PUSH MLOAD PUSH MLOAD MUL ADD, n=32768 analysis] med=0.000136413 s  min=0.000135401  max=0.000144890  CV=1.3%  (samples=31, inner-reps=42)
+  [copy-and-return total] med=0.000003955 s  min=0.000003868  max=0.000004004  CV=1.0%  (samples=31, inner-reps=1400)
+  [copy-and-return analysis] med=0.000000037 s  min=0.000000033  max=0.000000038  CV=3.3%  (samples=31, inner-reps=20000)
 [REF_OP, DUP, ADD, n=0] repetitions 16384 | per repetition: 0 groups of eight, 0 entries, 0 strided elements, instruction gas 6 | gas 98343 | static count + memory 98343: equal | copy-and-return gas 24 | fingerprint 0718e0124974bb3c | PASSED
-  [REF_OP, DUP, ADD, n=0 total] med=0.000060065 s  min=0.000059261  max=0.000065867  CV=2.7%  (samples=31, inner-reps=174)
-  [REF_OP, DUP, ADD, n=0 analysis] med=0.000024189 s  min=0.000023834  max=0.000026248  CV=1.9%  (samples=31, inner-reps=427)
-  [copy-and-return total] med=0.000000063 s  min=0.000000061  max=0.000000068  CV=2.7%  (samples=31, inner-reps=5023)
-  [copy-and-return analysis] med=0.000000038 s  min=0.000000036  max=0.000000043  CV=4.4%  (samples=31, inner-reps=20000)
+  [REF_OP, DUP, ADD, n=0 total] med=0.000055765 s  min=0.000055348  max=0.000058650  CV=1.3%  (samples=31, inner-reps=171)
+  [REF_OP, DUP, ADD, n=0 analysis] med=0.000018996 s  min=0.000018865  max=0.000019671  CV=0.8%  (samples=31, inner-reps=502)
+  [copy-and-return total] med=0.000000062 s  min=0.000000057  max=0.000000065  CV=3.0%  (samples=31, inner-reps=20000)
+  [copy-and-return analysis] med=0.000000036 s  min=0.000000035  max=0.000000037  CV=1.5%  (samples=31, inner-reps=20000)
 [REF_OP, DUP, MUL, n=0] repetitions 16384 | per repetition: 0 groups of eight, 0 entries, 0 strided elements, instruction gas 8 | gas 131111 | static count + memory 131111: equal | copy-and-return gas 24 | fingerprint f36316f72d1429bf | PASSED
-  [REF_OP, DUP, MUL, n=0 total] med=0.000231253 s  min=0.000229500  max=0.000246382  CV=1.9%  (samples=31, inner-reps=43)
-  [REF_OP, DUP, MUL, n=0 analysis] med=0.000024555 s  min=0.000023580  max=0.000027313  CV=4.1%  (samples=31, inner-reps=460)
-  [copy-and-return total] med=0.000000065 s  min=0.000000062  max=0.000000108  CV=15.1%  (samples=31, inner-reps=3578)
-  [copy-and-return analysis] med=0.000000037 s  min=0.000000036  max=0.000000039  CV=2.6%  (samples=31, inner-reps=20000)
+  [REF_OP, DUP, MUL, n=0 total] med=0.000204281 s  min=0.000203251  max=0.000210295  CV=0.6%  (samples=31, inner-reps=46)
+  [REF_OP, DUP, MUL, n=0 analysis] med=0.000019037 s  min=0.000018869  max=0.000019416  CV=0.6%  (samples=31, inner-reps=472)
+  [copy-and-return total] med=0.000000063 s  min=0.000000057  max=0.000000065  CV=3.4%  (samples=31, inner-reps=20000)
+  [copy-and-return analysis] med=0.000000036 s  min=0.000000035  max=0.000000037  CV=1.5%  (samples=31, inner-reps=20000)
 [REF_OP, DUP, DUP, DUP, MULMOD, POP, n=0] repetitions 16384 | per repetition: 0 groups of eight, 0 entries, 0 strided elements, instruction gas 19 | gas 311335 | static count + memory 311335: equal | copy-and-return gas 24 | fingerprint 5dd42cf79d36d1a1 | PASSED
-  [REF_OP, DUP, DUP, DUP, MULMOD, POP, n=0 total] med=0.001087110 s  min=0.001067260  max=0.001334016  CV=5.5%  (samples=31, inner-reps=10)
-  [REF_OP, DUP, DUP, DUP, MULMOD, POP, n=0 analysis] med=0.000051568 s  min=0.000051164  max=0.000090437  CV=16.3%  (samples=31, inner-reps=176)
-  [copy-and-return total] med=0.000000063 s  min=0.000000060  max=0.000000067  CV=3.0%  (samples=31, inner-reps=3508)
-  [copy-and-return analysis] med=0.000000037 s  min=0.000000036  max=0.000000040  CV=2.5%  (samples=31, inner-reps=20000)
+  [REF_OP, DUP, DUP, DUP, MULMOD, POP, n=0 total] med=0.001068466 s  min=0.001049886  max=0.001089449  CV=1.0%  (samples=31, inner-reps=10)
+  [REF_OP, DUP, DUP, DUP, MULMOD, POP, n=0 analysis] med=0.000047819 s  min=0.000047473  max=0.000049718  CV=0.9%  (samples=31, inner-reps=182)
+  [copy-and-return total] med=0.000000063 s  min=0.000000058  max=0.000000067  CV=3.0%  (samples=31, inner-reps=20000)
+  [copy-and-return analysis] med=0.000000036 s  min=0.000000034  max=0.000000037  CV=2.0%  (samples=31, inner-reps=20000)
 [REF_OP, PUSH, PUSH, KECCAK256 of one word, POP, n=0] repetitions 16384 | per repetition: 0 groups of eight, 0 entries, 0 strided elements, instruction gas 44 | gas 720935 | static count + memory 720935: equal | copy-and-return gas 24 | fingerprint ee04a51cca7eab2e | PASSED
-  [REF_OP, PUSH, PUSH, KECCAK256 of one word, POP, n=0 total] med=0.004493662 s  min=0.004454024  max=0.005402689  CV=4.4%  (samples=31, inner-reps=3)
-  [REF_OP, PUSH, PUSH, KECCAK256 of one word, POP, n=0 analysis] med=0.000066073 s  min=0.000064989  max=0.000079998  CV=4.0%  (samples=31, inner-reps=139)
-  [copy-and-return total] med=0.000000063 s  min=0.000000060  max=0.000000072  CV=3.8%  (samples=31, inner-reps=3535)
-  [copy-and-return analysis] med=0.000000040 s  min=0.000000037  max=0.000000060  CV=15.9%  (samples=31, inner-reps=20000)
+  [REF_OP, PUSH, PUSH, KECCAK256 of one word, POP, n=0 total] med=0.004463723 s  min=0.004426781  max=0.004512818  CV=0.4%  (samples=31, inner-reps=3)
+  [REF_OP, PUSH, PUSH, KECCAK256 of one word, POP, n=0 analysis] med=0.000058932 s  min=0.000058930  max=0.000062686  CV=1.1%  (samples=31, inner-reps=153)
+  [copy-and-return total] med=0.000000061 s  min=0.000000055  max=0.000000065  CV=4.2%  (samples=31, inner-reps=20000)
+  [copy-and-return analysis] med=0.000000036 s  min=0.000000035  max=0.000000037  CV=1.5%  (samples=31, inner-reps=20000)
 [REF_WALK, PUSH MLOAD POP, sequential words, n=448] repetitions 28672 | per repetition: 0 groups of eight, 0 entries, 0 strided elements, instruction gas 8 | gas 2007176 | static count + memory 2007176: equal | copy-and-return gas 1777800 | fingerprint 9853c20581033e15 | PASSED
-  [REF_WALK, PUSH MLOAD POP, sequential words, n=448 total] med=0.000227994 s  min=0.000206627  max=0.000295009  CV=9.5%  (samples=31, inner-reps=38)
-  [REF_WALK, PUSH MLOAD POP, sequential words, n=448 analysis] med=0.000071298 s  min=0.000066407  max=0.000179268  CV=25.9%  (samples=31, inner-reps=142)
-  [copy-and-return total] med=0.000046379 s  min=0.000043431  max=0.000063395  CV=9.8%  (samples=31, inner-reps=74)
-  [copy-and-return analysis] med=0.000000040 s  min=0.000000036  max=0.000000073  CV=21.3%  (samples=31, inner-reps=18451)
+  [REF_WALK, PUSH MLOAD POP, sequential words, n=448 total] med=0.000193187 s  min=0.000190931  max=0.000196921  CV=0.5%  (samples=31, inner-reps=48)
+  [REF_WALK, PUSH MLOAD POP, sequential words, n=448 analysis] med=0.000059810 s  min=0.000059292  max=0.000062412  CV=1.0%  (samples=31, inner-reps=155)
+  [copy-and-return total] med=0.000041306 s  min=0.000040228  max=0.000041569  CV=1.0%  (samples=31, inner-reps=220)
+  [copy-and-return analysis] med=0.000000037 s  min=0.000000033  max=0.000000039  CV=4.0%  (samples=31, inner-reps=20000)
 [REF_WALK, PUSH MLOAD POP, all addresses of the hostile view, n=448] repetitions 28672 | per repetition: 0 groups of eight, 0 entries, 0 strided elements, instruction gas 8 | gas 6995986 | static count + memory 6995986: equal | copy-and-return gas 6766610 | fingerprint e7ac51d6751bbd70 | PASSED
-  [REF_WALK, PUSH MLOAD POP, all addresses of the hostile view, n=448 total] med=0.000344820 s  min=0.000317805  max=0.000459347  CV=8.7%  (samples=31, inner-reps=18)
-  [REF_WALK, PUSH MLOAD POP, all addresses of the hostile view, n=448 analysis] med=0.000066466 s  min=0.000065374  max=0.000087679  CV=8.2%  (samples=31, inner-reps=137)
-  [copy-and-return total] med=0.000110855 s  min=0.000108454  max=0.000119944  CV=1.7%  (samples=31, inner-reps=26)
-  [copy-and-return analysis] med=0.000000038 s  min=0.000000036  max=0.000000090  CV=29.8%  (samples=31, inner-reps=20000)
+  [REF_WALK, PUSH MLOAD POP, all addresses of the hostile view, n=448 total] med=0.000310403 s  min=0.000304598  max=0.000352380  CV=2.7%  (samples=31, inner-reps=24)
+  [REF_WALK, PUSH MLOAD POP, all addresses of the hostile view, n=448 analysis] med=0.000060062 s  min=0.000059645  max=0.000062012  CV=0.9%  (samples=31, inner-reps=158)
+  [copy-and-return total] med=0.000103072 s  min=0.000101309  max=0.000103579  CV=0.7%  (samples=31, inner-reps=99)
+  [copy-and-return analysis] med=0.000000036 s  min=0.000000033  max=0.000000039  CV=4.7%  (samples=31, inner-reps=20000)
 ---- fixed-price instructions ----
 [XMACC, fixed price, n=0] repetitions 16384 | per repetition: 1 groups of eight, 0 entries, 0 strided elements, instruction gas 11 | gas 278567 | static count + memory 278567: equal | copy-and-return gas 24 | fingerprint 0de51c9a8f796fc7 | PASSED
-  [XMACC, fixed price, n=0 total] med=0.000273305 s  min=0.000267085  max=0.000296457  CV=3.1%  (samples=31, inner-reps=33)
-  [XMACC, fixed price, n=0 analysis] med=0.000031078 s  min=0.000030733  max=0.000057856  CV=18.9%  (samples=31, inner-reps=288)
-  [copy-and-return total] med=0.000000063 s  min=0.000000061  max=0.000000068  CV=2.7%  (samples=31, inner-reps=2923)
-  [copy-and-return analysis] med=0.000000037 s  min=0.000000036  max=0.000000059  CV=10.6%  (samples=31, inner-reps=20000)
+  [XMACC, fixed price, n=0 total] med=0.000271994 s  min=0.000269277  max=0.000280912  CV=1.0%  (samples=31, inner-reps=36)
+  [XMACC, fixed price, n=0 analysis] med=0.000028718 s  min=0.000028531  max=0.000030237  CV=1.0%  (samples=31, inner-reps=312)
+  [copy-and-return total] med=0.000000062 s  min=0.000000058  max=0.000000064  CV=2.9%  (samples=31, inner-reps=20000)
+  [copy-and-return analysis] med=0.000000036 s  min=0.000000036  max=0.000000037  CV=0.9%  (samples=31, inner-reps=20000)
 [XMACC_S, fixed price, n=0] repetitions 8192 | per repetition: 1 groups of eight, 0 entries, 8 strided elements, instruction gas 14 | gas 254649 | static count + memory 254649: equal | copy-and-return gas 17081 | fingerprint 2f6dbfa70724571a | PASSED
-  [XMACC_S, fixed price, n=0 total] med=0.000335660 s  min=0.000328951  max=0.000435168  CV=8.8%  (samples=31, inner-reps=31)
-  [XMACC_S, fixed price, n=0 analysis] med=0.000073923 s  min=0.000073387  max=0.000089254  CV=3.8%  (samples=31, inner-reps=124)
-  [copy-and-return total] med=0.000001789 s  min=0.000001774  max=0.000001831  CV=0.8%  (samples=31, inner-reps=879)
-  [copy-and-return analysis] med=0.000000037 s  min=0.000000036  max=0.000000038  CV=1.4%  (samples=31, inner-reps=20000)
+  [XMACC_S, fixed price, n=0 total] med=0.000309929 s  min=0.000307505  max=0.000316205  CV=0.4%  (samples=31, inner-reps=31)
+  [XMACC_S, fixed price, n=0 analysis] med=0.000066459 s  min=0.000066455  max=0.000069004  CV=0.7%  (samples=31, inner-reps=136)
+  [copy-and-return total] med=0.000001747 s  min=0.000001689  max=0.000001767  CV=1.6%  (samples=31, inner-reps=3481)
+  [copy-and-return analysis] med=0.000000037 s  min=0.000000033  max=0.000000039  CV=4.4%  (samples=31, inner-reps=20000)
 [XMACC_S, fixed price, hostile view, n=0] repetitions 8192 | per repetition: 1 groups of eight, 0 entries, 8 strided elements, instruction gas 14 | gas 7004638 | static count + memory 7004638: equal | copy-and-return gas 6767070 | fingerprint 8d26b02eed303b56 | PASSED
-  [XMACC_S, fixed price, hostile view, n=0 total] med=0.000520964 s  min=0.000505224  max=0.000588614  CV=4.2%  (samples=31, inner-reps=21)
-  [XMACC_S, fixed price, hostile view, n=0 analysis] med=0.000074648 s  min=0.000073873  max=0.000081595  CV=2.4%  (samples=31, inner-reps=135)
-  [copy-and-return total] med=0.000099888 s  min=0.000097127  max=0.000112211  CV=3.3%  (samples=31, inner-reps=28)
-  [copy-and-return analysis] med=0.000000037 s  min=0.000000036  max=0.000000040  CV=2.5%  (samples=31, inner-reps=20000)
+  [XMACC_S, fixed price, hostile view, n=0 total] med=0.000512310 s  min=0.000506933  max=0.000550315  CV=1.5%  (samples=31, inner-reps=17)
+  [XMACC_S, fixed price, hostile view, n=0 analysis] med=0.000066664 s  min=0.000066658  max=0.000067833  CV=0.3%  (samples=31, inner-reps=141)
+  [copy-and-return total] med=0.000100648 s  min=0.000100230  max=0.000101577  CV=0.4%  (samples=31, inner-reps=102)
+  [copy-and-return analysis] med=0.000000036 s  min=0.000000033  max=0.000000038  CV=3.7%  (samples=31, inner-reps=20000)
 [XRELU, fixed price, n=0] repetitions 16384 | per repetition: 0 groups of eight, 0 entries, 0 strided elements, instruction gas 6 | gas 98337 | static count + memory 98337: equal | copy-and-return gas 24 | fingerprint 2788ae87a787b0c5 | PASSED
-  [XRELU, fixed price, n=0 total] med=0.000172659 s  min=0.000171597  max=0.000177449  CV=0.9%  (samples=31, inner-reps=58)
-  [XRELU, fixed price, n=0 analysis] med=0.000012536 s  min=0.000012176  max=0.000015435  CV=6.0%  (samples=31, inner-reps=735)
-  [copy-and-return total] med=0.000000063 s  min=0.000000061  max=0.000000071  CV=3.2%  (samples=31, inner-reps=2949)
-  [copy-and-return analysis] med=0.000000038 s  min=0.000000036  max=0.000000064  CV=16.4%  (samples=31, inner-reps=20000)
+  [XRELU, fixed price, n=0 total] med=0.000160768 s  min=0.000159526  max=0.000173116  CV=1.5%  (samples=31, inner-reps=58)
+  [XRELU, fixed price, n=0 analysis] med=0.000009885 s  min=0.000009818  max=0.000009980  CV=0.3%  (samples=31, inner-reps=921)
+  [copy-and-return total] med=0.000000063 s  min=0.000000057  max=0.000000065  CV=3.0%  (samples=31, inner-reps=20000)
+  [copy-and-return analysis] med=0.000000036 s  min=0.000000035  max=0.000000037  CV=1.3%  (samples=31, inner-reps=20000)
 [XSUM32, fixed price, n=0] repetitions 16384 | per repetition: 0 groups of eight, 0 entries, 0 strided elements, instruction gas 6 | gas 180257 | static count + memory 180257: equal | copy-and-return gas 24 | fingerprint 46f84708b11a6795 | PASSED
-  [XSUM32, fixed price, n=0 total] med=0.000088707 s  min=0.000087981  max=0.000090987  CV=0.8%  (samples=31, inner-reps=93)
-  [XSUM32, fixed price, n=0 analysis] med=0.000034253 s  min=0.000031320  max=0.000038676  CV=4.9%  (samples=31, inner-reps=295)
-  [copy-and-return total] med=0.000000063 s  min=0.000000060  max=0.000000070  CV=3.6%  (samples=31, inner-reps=3314)
-  [copy-and-return analysis] med=0.000000037 s  min=0.000000036  max=0.000000045  CV=4.5%  (samples=31, inner-reps=20000)
+  [XSUM32, fixed price, n=0 total] med=0.000085517 s  min=0.000084743  max=0.000087110  CV=0.5%  (samples=31, inner-reps=113)
+  [XSUM32, fixed price, n=0 analysis] med=0.000028643 s  min=0.000028447  max=0.000030070  CV=0.9%  (samples=31, inner-reps=327)
+  [copy-and-return total] med=0.000000062 s  min=0.000000058  max=0.000000064  CV=2.7%  (samples=31, inner-reps=20000)
+  [copy-and-return analysis] med=0.000000036 s  min=0.000000035  max=0.000000038  CV=2.2%  (samples=31, inner-reps=20000)
 [XPACK, fixed price, n=0] repetitions 16384 | per repetition: 0 groups of eight, 0 entries, 0 strided elements, instruction gas 6 | gas 98337 | static count + memory 98337: equal | copy-and-return gas 24 | fingerprint 16cdd49dc89f94f9 | PASSED
-  [XPACK, fixed price, n=0 total] med=0.000170776 s  min=0.000169883  max=0.000182695  CV=1.5%  (samples=31, inner-reps=58)
-  [XPACK, fixed price, n=0 analysis] med=0.000012309 s  min=0.000012028  max=0.000017593  CV=8.7%  (samples=31, inner-reps=833)
-  [copy-and-return total] med=0.000000065 s  min=0.000000061  max=0.000000087  CV=9.6%  (samples=31, inner-reps=3425)
-  [copy-and-return analysis] med=0.000000044 s  min=0.000000037  max=0.000000052  CV=9.9%  (samples=31, inner-reps=20000)
+  [XPACK, fixed price, n=0 total] med=0.000157880 s  min=0.000156999  max=0.000163840  CV=0.7%  (samples=31, inner-reps=58)
+  [XPACK, fixed price, n=0 analysis] med=0.000009464 s  min=0.000009374  max=0.000009606  CV=0.5%  (samples=31, inner-reps=968)
+  [copy-and-return total] med=0.000000062 s  min=0.000000059  max=0.000000064  CV=2.7%  (samples=31, inner-reps=20000)
+  [copy-and-return analysis] med=0.000000036 s  min=0.000000035  max=0.000000037  CV=1.5%  (samples=31, inner-reps=20000)
 [XGT_IMM, fixed price, n=0] repetitions 16384 | per repetition: 0 groups of eight, 0 entries, 0 strided elements, instruction gas 6 | gas 147492 | static count + memory 147492: equal | copy-and-return gas 24 | fingerprint be3979b42f3b263b | PASSED
-  [XGT_IMM, fixed price, n=0 total] med=0.000216485 s  min=0.000200836  max=0.000361868  CV=12.2%  (samples=31, inner-reps=43)
-  [XGT_IMM, fixed price, n=0 analysis] med=0.000021103 s  min=0.000020611  max=0.000024617  CV=4.4%  (samples=31, inner-reps=306)
-  [copy-and-return total] med=0.000000063 s  min=0.000000060  max=0.000000071  CV=3.8%  (samples=31, inner-reps=5914)
-  [copy-and-return analysis] med=0.000000039 s  min=0.000000036  max=0.000000046  CV=5.8%  (samples=31, inner-reps=20000)
+  [XGT_IMM, fixed price, n=0 total] med=0.000184499 s  min=0.000182089  max=0.000186641  CV=0.5%  (samples=31, inner-reps=53)
+  [XGT_IMM, fixed price, n=0 analysis] med=0.000018518 s  min=0.000017908  max=0.000018970  CV=1.6%  (samples=31, inner-reps=493)
+  [copy-and-return total] med=0.000000062 s  min=0.000000058  max=0.000000065  CV=3.2%  (samples=31, inner-reps=20000)
+  [copy-and-return analysis] med=0.000000036 s  min=0.000000035  max=0.000000038  CV=2.3%  (samples=31, inner-reps=20000)
 [XADD_IMM, fixed price, n=0] repetitions 16384 | per repetition: 0 groups of eight, 0 entries, 0 strided elements, instruction gas 6 | gas 147492 | static count + memory 147492: equal | copy-and-return gas 24 | fingerprint 22b8d08df474722d | PASSED
-  [XADD_IMM, fixed price, n=0 total] med=0.000169858 s  min=0.000167650  max=0.000352009  CV=21.0%  (samples=31, inner-reps=55)
-  [XADD_IMM, fixed price, n=0 analysis] med=0.000019679 s  min=0.000019429  max=0.000027551  CV=7.6%  (samples=31, inner-reps=433)
-  [copy-and-return total] med=0.000000106 s  min=0.000000090  max=0.000000196  CV=18.4%  (samples=31, inner-reps=2597)
-  [copy-and-return analysis] med=0.000000037 s  min=0.000000036  max=0.000000054  CV=11.5%  (samples=31, inner-reps=20000)
+  [XADD_IMM, fixed price, n=0 total] med=0.000164905 s  min=0.000163635  max=0.000166372  CV=0.3%  (samples=31, inner-reps=60)
+  [XADD_IMM, fixed price, n=0 analysis] med=0.000018426 s  min=0.000017807  max=0.000019268  CV=1.9%  (samples=31, inner-reps=484)
+  [copy-and-return total] med=0.000000062 s  min=0.000000056  max=0.000000065  CV=3.2%  (samples=31, inner-reps=19494)
+  [copy-and-return analysis] med=0.000000036 s  min=0.000000035  max=0.000000037  CV=1.3%  (samples=31, inner-reps=20000)
 [XSUB_IMM, fixed price, n=0] repetitions 16384 | per repetition: 0 groups of eight, 0 entries, 0 strided elements, instruction gas 6 | gas 147492 | static count + memory 147492: equal | copy-and-return gas 24 | fingerprint 526a28be6f6658ce | PASSED
-  [XSUB_IMM, fixed price, n=0 total] med=0.000165409 s  min=0.000163917  max=0.000211754  CV=7.7%  (samples=31, inner-reps=63)
-  [XSUB_IMM, fixed price, n=0 analysis] med=0.000019809 s  min=0.000019431  max=0.000028732  CV=8.3%  (samples=31, inner-reps=455)
-  [copy-and-return total] med=0.000000063 s  min=0.000000060  max=0.000000068  CV=2.9%  (samples=31, inner-reps=2921)
-  [copy-and-return analysis] med=0.000000037 s  min=0.000000036  max=0.000000045  CV=5.6%  (samples=31, inner-reps=20000)
+  [XSUB_IMM, fixed price, n=0 total] med=0.000160315 s  min=0.000159252  max=0.000162129  CV=0.4%  (samples=31, inner-reps=63)
+  [XSUB_IMM, fixed price, n=0 analysis] med=0.000018422 s  min=0.000017605  max=0.000019043  CV=1.8%  (samples=31, inner-reps=483)
+  [copy-and-return total] med=0.000000061 s  min=0.000000058  max=0.000000064  CV=3.0%  (samples=31, inner-reps=20000)
+  [copy-and-return analysis] med=0.000000036 s  min=0.000000035  max=0.000000038  CV=1.7%  (samples=31, inner-reps=20000)
 [XMUL_IMM, fixed price, n=0] repetitions 16384 | per repetition: 0 groups of eight, 0 entries, 0 strided elements, instruction gas 8 | gas 180260 | static count + memory 180260: equal | copy-and-return gas 24 | fingerprint f4eb763f41cb0578 | PASSED
-  [XMUL_IMM, fixed price, n=0 total] med=0.000178989 s  min=0.000177098  max=0.000284224  CV=11.5%  (samples=31, inner-reps=53)
-  [XMUL_IMM, fixed price, n=0 analysis] med=0.000020926 s  min=0.000020505  max=0.000021651  CV=1.0%  (samples=31, inner-reps=393)
-  [copy-and-return total] med=0.000000063 s  min=0.000000061  max=0.000000068  CV=2.6%  (samples=31, inner-reps=5825)
-  [copy-and-return analysis] med=0.000000037 s  min=0.000000036  max=0.000000039  CV=1.7%  (samples=31, inner-reps=20000)
+  [XMUL_IMM, fixed price, n=0 total] med=0.000170704 s  min=0.000170006  max=0.000174273  CV=0.5%  (samples=31, inner-reps=58)
+  [XMUL_IMM, fixed price, n=0 analysis] med=0.000018567 s  min=0.000017763  max=0.000019179  CV=1.7%  (samples=31, inner-reps=545)
+  [copy-and-return total] med=0.000000062 s  min=0.000000058  max=0.000000064  CV=2.8%  (samples=31, inner-reps=20000)
+  [copy-and-return analysis] med=0.000000036 s  min=0.000000035  max=0.000000037  CV=1.7%  (samples=31, inner-reps=20000)
 [XTRANSPOSE, fixed price, n=0] repetitions 16384 | per repetition: 0 groups of eight, 0 entries, 0 strided elements, instruction gas 10 | gas 245802 | static count + memory 245802: equal | copy-and-return gas 42 | fingerprint 6c2a09fdf31e8566 | PASSED
-  [XTRANSPOSE, fixed price, n=0 total] med=0.000342574 s  min=0.000340001  max=0.000356676  CV=0.9%  (samples=31, inner-reps=29)
-  [XTRANSPOSE, fixed price, n=0 analysis] med=0.000036922 s  min=0.000036795  max=0.000037622  CV=0.5%  (samples=31, inner-reps=241)
-  [copy-and-return total] med=0.000000063 s  min=0.000000061  max=0.000000071  CV=3.4%  (samples=31, inner-reps=3259)
-  [copy-and-return analysis] med=0.000000037 s  min=0.000000036  max=0.000000039  CV=2.1%  (samples=31, inner-reps=20000)
+  [XTRANSPOSE, fixed price, n=0 total] med=0.000308488 s  min=0.000308205  max=0.000326436  CV=1.0%  (samples=31, inner-reps=30)
+  [XTRANSPOSE, fixed price, n=0 analysis] med=0.000033255 s  min=0.000033251  max=0.000033480  CV=0.1%  (samples=31, inner-reps=290)
+  [copy-and-return total] med=0.000000063 s  min=0.000000057  max=0.000000066  CV=3.7%  (samples=31, inner-reps=20000)
+  [copy-and-return analysis] med=0.000000036 s  min=0.000000035  max=0.000000037  CV=1.5%  (samples=31, inner-reps=20000)
 [XBCAST, fixed price, n=0] repetitions 16384 | per repetition: 0 groups of eight, 0 entries, 0 strided elements, instruction gas 8 | gas 376862 | static count + memory 376862: equal | copy-and-return gas 30 | fingerprint 3789eb2e2d408862 | PASSED
-  [XBCAST, fixed price, n=0 total] med=0.000336304 s  min=0.000334728  max=0.000345487  CV=0.6%  (samples=31, inner-reps=30)
-  [XBCAST, fixed price, n=0 analysis] med=0.000102453 s  min=0.000101899  max=0.000107042  CV=1.1%  (samples=31, inner-reps=94)
-  [copy-and-return total] med=0.000000063 s  min=0.000000061  max=0.000000069  CV=3.1%  (samples=31, inner-reps=3892)
-  [copy-and-return analysis] med=0.000000037 s  min=0.000000036  max=0.000000038  CV=1.4%  (samples=31, inner-reps=20000)
+  [XBCAST, fixed price, n=0 total] med=0.000308228 s  min=0.000307611  max=0.000323359  CV=0.9%  (samples=31, inner-reps=30)
+  [XBCAST, fixed price, n=0 analysis] med=0.000092252 s  min=0.000092235  max=0.000094083  CV=0.4%  (samples=31, inner-reps=105)
+  [copy-and-return total] med=0.000000061 s  min=0.000000055  max=0.000000064  CV=4.3%  (samples=31, inner-reps=20000)
+  [copy-and-return analysis] med=0.000000036 s  min=0.000000035  max=0.000000037  CV=1.3%  (samples=31, inner-reps=20000)
 ---- XGATHER ----
 [XGATHER, pseudo-random indices into 65536 elements, n=8] repetitions 8192 | per repetition: 0 groups of eight, 0 entries, 0 strided elements, instruction gas 20 | gas 344186 | static count + memory 344186: equal | copy-and-return gas 57466 | fingerprint 90f90d629ec3d187 | PASSED
-  [XGATHER, pseudo-random indices into 65536 elements, n=8 total] med=0.000263292 s  min=0.000261291  max=0.000269753  CV=0.6%  (samples=31, inner-reps=38)
-  [XGATHER, pseudo-random indices into 65536 elements, n=8 analysis] med=0.000051832 s  min=0.000051549  max=0.000052531  CV=0.4%  (samples=31, inner-reps=167)
-  [copy-and-return total] med=0.000003920 s  min=0.000003861  max=0.000004036  CV=1.0%  (samples=31, inner-reps=444)
-  [copy-and-return analysis] med=0.000000037 s  min=0.000000036  max=0.000000039  CV=1.6%  (samples=31, inner-reps=20000)
+  [XGATHER, pseudo-random indices into 65536 elements, n=8 total] med=0.000237152 s  min=0.000236028  max=0.000240797  CV=0.4%  (samples=31, inner-reps=41)
+  [XGATHER, pseudo-random indices into 65536 elements, n=8 analysis] med=0.000046720 s  min=0.000046717  max=0.000048653  CV=0.7%  (samples=31, inner-reps=197)
+  [copy-and-return total] med=0.000003864 s  min=0.000003719  max=0.000003890  CV=1.4%  (samples=31, inner-reps=2362)
+  [copy-and-return analysis] med=0.000000037 s  min=0.000000034  max=0.000000038  CV=3.5%  (samples=31, inner-reps=20000)
 [XGATHER, pseudo-random indices into 65536 elements, n=64] repetitions 2586 | per repetition: 0 groups of eight, 0 entries, 0 strided elements, instruction gas 20 | gas 148099 | static count + memory 148099: equal | copy-and-return gas 57589 | fingerprint ce2fbe54052e3020 | PASSED
-  [XGATHER, pseudo-random indices into 65536 elements, n=64 total] med=0.000152424 s  min=0.000151504  max=0.000155824  CV=0.7%  (samples=31, inner-reps=66)
-  [XGATHER, pseudo-random indices into 65536 elements, n=64 analysis] med=0.000016366 s  min=0.000016300  max=0.000016602  CV=0.4%  (samples=31, inner-reps=522)
-  [copy-and-return total] med=0.000003925 s  min=0.000003886  max=0.000003960  CV=0.5%  (samples=31, inner-reps=579)
-  [copy-and-return analysis] med=0.000000037 s  min=0.000000036  max=0.000000038  CV=1.7%  (samples=31, inner-reps=20000)
+  [XGATHER, pseudo-random indices into 65536 elements, n=64 total] med=0.000141924 s  min=0.000140207  max=0.000152691  CV=1.5%  (samples=31, inner-reps=65)
+  [XGATHER, pseudo-random indices into 65536 elements, n=64 analysis] med=0.000014755 s  min=0.000014753  max=0.000015558  CV=1.0%  (samples=31, inner-reps=613)
+  [copy-and-return total] med=0.000003873 s  min=0.000003730  max=0.000003901  CV=1.3%  (samples=31, inner-reps=2298)
+  [copy-and-return analysis] med=0.000000037 s  min=0.000000033  max=0.000000039  CV=3.7%  (samples=31, inner-reps=20000)
 [XGATHER, pseudo-random indices into 65536 elements, n=512] repetitions 380 | per repetition: 0 groups of eight, 0 entries, 0 strided elements, instruction gas 20 | gas 72045 | static count + memory 72045: equal | copy-and-return gas 58745 | fingerprint 0b7da8a7bb7126ec | PASSED
-  [XGATHER, pseudo-random indices into 65536 elements, n=512 total] med=0.000083684 s  min=0.000083043  max=0.000087740  CV=1.2%  (samples=31, inner-reps=125)
-  [XGATHER, pseudo-random indices into 65536 elements, n=512 analysis] med=0.000002422 s  min=0.000002411  max=0.000002492  CV=0.6%  (samples=31, inner-reps=3040)
-  [copy-and-return total] med=0.000004001 s  min=0.000003948  max=0.000004131  CV=1.0%  (samples=31, inner-reps=580)
-  [copy-and-return analysis] med=0.000000037 s  min=0.000000036  max=0.000000044  CV=3.7%  (samples=31, inner-reps=20000)
+  [XGATHER, pseudo-random indices into 65536 elements, n=512 total] med=0.000080257 s  min=0.000079582  max=0.000086030  CV=1.4%  (samples=31, inner-reps=115)
+  [XGATHER, pseudo-random indices into 65536 elements, n=512 analysis] med=0.000002176 s  min=0.000002176  max=0.000002304  CV=1.1%  (samples=31, inner-reps=3881)
+  [copy-and-return total] med=0.000003951 s  min=0.000003805  max=0.000003978  CV=1.5%  (samples=31, inner-reps=1645)
+  [copy-and-return analysis] med=0.000000036 s  min=0.000000034  max=0.000000039  CV=3.5%  (samples=31, inner-reps=20000)
 [XGATHER, pseudo-random indices into 65536 elements, n=4096] repetitions 64 | per repetition: 0 groups of eight, 0 entries, 0 strided elements, instruction gas 20 | gas 70679 | static count + memory 70679: equal | copy-and-return gas 68439 | fingerprint cd6cfdb491039119 | PASSED
-  [XGATHER, pseudo-random indices into 65536 elements, n=4096 total] med=0.000137030 s  min=0.000136467  max=0.000150306  CV=1.8%  (samples=31, inner-reps=71)
-  [XGATHER, pseudo-random indices into 65536 elements, n=4096 analysis] med=0.000000469 s  min=0.000000464  max=0.000000484  CV=0.8%  (samples=31, inner-reps=9843)
-  [copy-and-return total] med=0.000004420 s  min=0.000004379  max=0.000004570  CV=1.4%  (samples=31, inner-reps=255)
-  [copy-and-return analysis] med=0.000000037 s  min=0.000000036  max=0.000000042  CV=3.2%  (samples=31, inner-reps=20000)
+  [XGATHER, pseudo-random indices into 65536 elements, n=4096 total] med=0.000133670 s  min=0.000132901  max=0.000141866  CV=1.1%  (samples=31, inner-reps=69)
+  [XGATHER, pseudo-random indices into 65536 elements, n=4096 analysis] med=0.000000424 s  min=0.000000420  max=0.000000447  CV=1.2%  (samples=31, inner-reps=15749)
+  [copy-and-return total] med=0.000004384 s  min=0.000004197  max=0.000004388  CV=1.2%  (samples=31, inner-reps=2278)
+  [copy-and-return analysis] med=0.000000037 s  min=0.000000034  max=0.000000039  CV=3.2%  (samples=31, inner-reps=20000)
 ---- XMACC_N and XMACC_N16 ----
 [XMACC_N, groups of eight elements, n=1] repetitions 8192 | per repetition: 1 groups of eight, 0 entries, 0 strided elements, instruction gas 11 | gas 164067 | static count + memory 164067: equal | copy-and-return gas 218 | fingerprint 8deaf714f49e3125 | PASSED
-  [XMACC_N, groups of eight elements, n=1 total] med=0.000281863 s  min=0.000280315  max=0.000283978  CV=0.3%  (samples=31, inner-reps=36)
-  [XMACC_N, groups of eight elements, n=1 analysis] med=0.000044992 s  min=0.000044710  max=0.000046746  CV=0.8%  (samples=31, inner-reps=203)
-  [copy-and-return total] med=0.000000074 s  min=0.000000071  max=0.000000091  CV=6.3%  (samples=31, inner-reps=4322)
-  [copy-and-return analysis] med=0.000000037 s  min=0.000000036  max=0.000000038  CV=1.5%  (samples=31, inner-reps=20000)
+  [XMACC_N, groups of eight elements, n=1 total] med=0.000266138 s  min=0.000263673  max=0.000283739  CV=1.3%  (samples=31, inner-reps=35)
+  [XMACC_N, groups of eight elements, n=1 analysis] med=0.000040558 s  min=0.000040556  max=0.000041806  CV=0.6%  (samples=31, inner-reps=230)
+  [copy-and-return total] med=0.000000072 s  min=0.000000066  max=0.000000076  CV=3.8%  (samples=31, inner-reps=20000)
+  [copy-and-return analysis] med=0.000000036 s  min=0.000000035  max=0.000000037  CV=1.5%  (samples=31, inner-reps=20000)
 [XMACC_N, groups of eight elements, n=2] repetitions 8192 | per repetition: 2 groups of eight, 0 entries, 0 strided elements, instruction gas 22 | gas 254383 | static count + memory 254383: equal | copy-and-return gas 422 | fingerprint a3c6db2f67602438 | PASSED
-  [XMACC_N, groups of eight elements, n=2 total] med=0.000351736 s  min=0.000349862  max=0.000370084  CV=1.1%  (samples=31, inner-reps=30)
-  [XMACC_N, groups of eight elements, n=2 analysis] med=0.000045065 s  min=0.000044848  max=0.000046233  CV=0.7%  (samples=31, inner-reps=188)
-  [copy-and-return total] med=0.000000084 s  min=0.000000082  max=0.000000097  CV=3.6%  (samples=31, inner-reps=3073)
-  [copy-and-return analysis] med=0.000000037 s  min=0.000000037  max=0.000000039  CV=1.4%  (samples=31, inner-reps=20000)
+  [XMACC_N, groups of eight elements, n=2 total] med=0.000327374 s  min=0.000325345  max=0.000331094  CV=0.4%  (samples=31, inner-reps=30)
+  [XMACC_N, groups of eight elements, n=2 analysis] med=0.000040620 s  min=0.000040615  max=0.000041887  CV=0.6%  (samples=31, inner-reps=230)
+  [copy-and-return total] med=0.000000087 s  min=0.000000079  max=0.000000090  CV=3.6%  (samples=31, inner-reps=20000)
+  [copy-and-return analysis] med=0.000000035 s  min=0.000000035  max=0.000000037  CV=1.7%  (samples=31, inner-reps=20000)
 [XMACC_N, groups of eight elements, n=4] repetitions 8192 | per repetition: 4 groups of eight, 0 entries, 0 strided elements, instruction gas 44 | gas 435029 | static count + memory 435029: equal | copy-and-return gas 844 | fingerprint be4ece4708bcdad8 | PASSED
-  [XMACC_N, groups of eight elements, n=4 total] med=0.000486909 s  min=0.000484719  max=0.000497708  CV=0.6%  (samples=31, inner-reps=20)
-  [XMACC_N, groups of eight elements, n=4 analysis] med=0.000045025 s  min=0.000044830  max=0.000060791  CV=6.1%  (samples=31, inner-reps=194)
-  [copy-and-return total] med=0.000000113 s  min=0.000000106  max=0.000000128  CV=4.4%  (samples=31, inner-reps=2907)
-  [copy-and-return analysis] med=0.000000037 s  min=0.000000036  max=0.000000038  CV=1.6%  (samples=31, inner-reps=20000)
+  [XMACC_N, groups of eight elements, n=4 total] med=0.000453792 s  min=0.000450271  max=0.000459728  CV=0.3%  (samples=31, inner-reps=21)
+  [XMACC_N, groups of eight elements, n=4 analysis] med=0.000040593 s  min=0.000040588  max=0.000042262  CV=0.7%  (samples=31, inner-reps=230)
+  [copy-and-return total] med=0.000000110 s  min=0.000000103  max=0.000000112  CV=2.7%  (samples=31, inner-reps=20000)
+  [copy-and-return analysis] med=0.000000036 s  min=0.000000035  max=0.000000037  CV=1.4%  (samples=31, inner-reps=20000)
 [XMACC_N, groups of eight elements, n=8] repetitions 8192 | per repetition: 8 groups of eight, 0 entries, 0 strided elements, instruction gas 88 | gas 796371 | static count + memory 796371: equal | copy-and-return gas 1738 | fingerprint 5993f26a47a168f9 | PASSED
-  [XMACC_N, groups of eight elements, n=8 total] med=0.000753995 s  min=0.000749597  max=0.000833745  CV=2.9%  (samples=31, inner-reps=13)
-  [XMACC_N, groups of eight elements, n=8 analysis] med=0.000047059 s  min=0.000046782  max=0.000058420  CV=5.0%  (samples=31, inner-reps=195)
-  [copy-and-return total] med=0.000000165 s  min=0.000000161  max=0.000000254  CV=9.7%  (samples=31, inner-reps=3180)
-  [copy-and-return analysis] med=0.000000037 s  min=0.000000036  max=0.000000051  CV=7.6%  (samples=31, inner-reps=20000)
+  [XMACC_N, groups of eight elements, n=8 total] med=0.000705647 s  min=0.000701206  max=0.000716693  CV=0.4%  (samples=31, inner-reps=14)
+  [XMACC_N, groups of eight elements, n=8 analysis] med=0.000042447 s  min=0.000042445  max=0.000044471  CV=0.8%  (samples=31, inner-reps=212)
+  [copy-and-return total] med=0.000000142 s  min=0.000000133  max=0.000000144  CV=2.4%  (samples=31, inner-reps=20000)
+  [copy-and-return analysis] med=0.000000036 s  min=0.000000034  max=0.000000038  CV=2.0%  (samples=31, inner-reps=20000)
 [XMACC_N, groups of eight elements, n=16] repetitions 5769 | per repetition: 16 groups of eight, 0 entries, 0 strided elements, instruction gas 176 | gas 1071004 | static count + memory 1071004: equal | copy-and-return gas 3730 | fingerprint 07ad17cabb35f519 | PASSED
-  [XMACC_N, groups of eight elements, n=16 total] med=0.000908758 s  min=0.000905736  max=0.001182455  CV=7.2%  (samples=31, inner-reps=12)
-  [XMACC_N, groups of eight elements, n=16 analysis] med=0.000033251 s  min=0.000033049  max=0.000037970  CV=2.8%  (samples=31, inner-reps=279)
-  [copy-and-return total] med=0.000000265 s  min=0.000000260  max=0.000000299  CV=3.5%  (samples=31, inner-reps=2279)
-  [copy-and-return analysis] med=0.000000037 s  min=0.000000036  max=0.000000039  CV=1.9%  (samples=31, inner-reps=20000)
+  [XMACC_N, groups of eight elements, n=16 total] med=0.000849957 s  min=0.000843752  max=0.000859733  CV=0.4%  (samples=31, inner-reps=12)
+  [XMACC_N, groups of eight elements, n=16 analysis] med=0.000029879 s  min=0.000029878  max=0.000031332  CV=0.9%  (samples=31, inner-reps=301)
+  [copy-and-return total] med=0.000000209 s  min=0.000000198  max=0.000000216  CV=2.4%  (samples=31, inner-reps=15480)
+  [copy-and-return analysis] med=0.000000035 s  min=0.000000033  max=0.000000037  CV=2.3%  (samples=31, inner-reps=20000)
 [XMACC_N, groups of eight elements, n=32] repetitions 3571 | per repetition: 32 groups of eight, 0 entries, 0 strided elements, instruction gas 352 | gas 1297672 | static count + memory 1297672: equal | copy-and-return gas 8532 | fingerprint da03dd18f6873555 | PASSED
-  [XMACC_N, groups of eight elements, n=32 total] med=0.001036864 s  min=0.001031262  max=0.001202210  CV=3.1%  (samples=31, inner-reps=10)
-  [XMACC_N, groups of eight elements, n=32 analysis] med=0.000019994 s  min=0.000019752  max=0.000024656  CV=6.2%  (samples=31, inner-reps=392)
-  [copy-and-return total] med=0.000000888 s  min=0.000000875  max=0.000006336  CV=88.0%  (samples=31, inner-reps=1172)
-  [copy-and-return analysis] med=0.000000037 s  min=0.000000036  max=0.000000045  CV=5.6%  (samples=31, inner-reps=20000)
+  [XMACC_N, groups of eight elements, n=32 total] med=0.000965804 s  min=0.000959385  max=0.000977225  CV=0.4%  (samples=31, inner-reps=11)
+  [XMACC_N, groups of eight elements, n=32 analysis] med=0.000017913 s  min=0.000017901  max=0.000018633  CV=0.7%  (samples=31, inner-reps=514)
+  [copy-and-return total] med=0.000000816 s  min=0.000000786  max=0.000000821  CV=1.5%  (samples=31, inner-reps=10605)
+  [copy-and-return analysis] med=0.000000036 s  min=0.000000034  max=0.000000040  CV=3.5%  (samples=31, inner-reps=20000)
 [XMACC_N, groups of eight elements, n=64] repetitions 2027 | per repetition: 64 groups of eight, 0 entries, 0 strided elements, instruction gas 704 | gas 1466662 | static count + memory 1466662: equal | copy-and-return gas 21402 | fingerprint 71e8478107d16378 | PASSED
-  [XMACC_N, groups of eight elements, n=64 total] med=0.001123393 s  min=0.001115394  max=0.001511000  CV=6.7%  (samples=31, inner-reps=9)
-  [XMACC_N, groups of eight elements, n=64 analysis] med=0.000011000 s  min=0.000010963  max=0.000011663  CV=1.2%  (samples=31, inner-reps=808)
-  [copy-and-return total] med=0.000002093 s  min=0.000002068  max=0.000002347  CV=2.3%  (samples=31, inner-reps=703)
-  [copy-and-return analysis] med=0.000000037 s  min=0.000000036  max=0.000000071  CV=21.1%  (samples=31, inner-reps=20000)
+  [XMACC_N, groups of eight elements, n=64 total] med=0.001055295 s  min=0.001042204  max=0.001096593  CV=0.9%  (samples=31, inner-reps=9)
+  [XMACC_N, groups of eight elements, n=64 analysis] med=0.000009867 s  min=0.000009865  max=0.000010342  CV=0.9%  (samples=31, inner-reps=909)
+  [copy-and-return total] med=0.000002018 s  min=0.000001969  max=0.000002047  CV=1.3%  (samples=31, inner-reps=4057)
+  [copy-and-return analysis] med=0.000000036 s  min=0.000000034  max=0.000000038  CV=2.9%  (samples=31, inner-reps=20000)
 [XMACC_N, groups of eight elements, n=98] repetitions 1388 | per repetition: 98 groups of eight, 0 entries, 0 strided elements, instruction gas 1078 | gas 1548614 | static count + memory 1548614: equal | copy-and-return gas 39849 | fingerprint 9adf1d3021b547cf | PASSED
-  [XMACC_N, groups of eight elements, n=98 total] med=0.001163275 s  min=0.001155647  max=0.002294359  CV=18.1%  (samples=31, inner-reps=9)
-  [XMACC_N, groups of eight elements, n=98 analysis] med=0.000007587 s  min=0.000007541  max=0.000010837  CV=7.5%  (samples=31, inner-reps=1171)
-  [copy-and-return total] med=0.000003115 s  min=0.000003080  max=0.000003316  CV=1.6%  (samples=31, inner-reps=474)
-  [copy-and-return analysis] med=0.000000037 s  min=0.000000036  max=0.000000056  CV=13.4%  (samples=31, inner-reps=20000)
+  [XMACC_N, groups of eight elements, n=98 total] med=0.001091947 s  min=0.001079674  max=0.001142294  CV=1.0%  (samples=31, inner-reps=9)
+  [XMACC_N, groups of eight elements, n=98 analysis] med=0.000006787 s  min=0.000006785  max=0.000007161  CV=1.0%  (samples=31, inner-reps=1315)
+  [copy-and-return total] med=0.000003023 s  min=0.000002957  max=0.000003073  CV=1.2%  (samples=31, inner-reps=3173)
+  [copy-and-return analysis] med=0.000000036 s  min=0.000000033  max=0.000000039  CV=3.8%  (samples=31, inner-reps=20000)
 [XMACC_N, groups of eight elements, n=128] repetitions 1086 | per repetition: 128 groups of eight, 0 entries, 0 strided elements, instruction gas 1408 | gas 1599081 | static count + memory 1599081: equal | copy-and-return gas 60210 | fingerprint 86db601e10c7897c | PASSED
-  [XMACC_N, groups of eight elements, n=128 total] med=0.001180399 s  min=0.001172778  max=0.001648584  CV=6.9%  (samples=31, inner-reps=9)
-  [XMACC_N, groups of eight elements, n=128 analysis] med=0.000005997 s  min=0.000005932  max=0.000010079  CV=13.1%  (samples=31, inner-reps=1487)
-  [copy-and-return total] med=0.000004008 s  min=0.000003977  max=0.000004201  CV=1.4%  (samples=31, inner-reps=294)
-  [copy-and-return analysis] med=0.000000037 s  min=0.000000036  max=0.000000039  CV=2.3%  (samples=31, inner-reps=20000)
+  [XMACC_N, groups of eight elements, n=128 total] med=0.001108023 s  min=0.001095920  max=0.001166501  CV=1.1%  (samples=31, inner-reps=9)
+  [XMACC_N, groups of eight elements, n=128 analysis] med=0.000005348 s  min=0.000005347  max=0.000005636  CV=1.0%  (samples=31, inner-reps=1647)
+  [copy-and-return total] med=0.000003918 s  min=0.000003833  max=0.000003966  CV=1.2%  (samples=31, inner-reps=2528)
+  [copy-and-return analysis] med=0.000000037 s  min=0.000000033  max=0.000000037  CV=3.3%  (samples=31, inner-reps=20000)
 [XMACC_N, groups of eight elements, n=256] repetitions 563 | per repetition: 256 groups of eight, 0 entries, 0 strided elements, instruction gas 2816 | gas 1780582 | static count + memory 1780582: equal | copy-and-return gas 190098 | fingerprint 11a714a79f5eeb64 | PASSED
-  [XMACC_N, groups of eight elements, n=256 total] med=0.001222146 s  min=0.001204797  max=0.002189900  CV=19.6%  (samples=31, inner-reps=9)
-  [XMACC_N, groups of eight elements, n=256 analysis] med=0.000003124 s  min=0.000003110  max=0.000003244  CV=0.7%  (samples=31, inner-reps=2897)
-  [copy-and-return total] med=0.000007880 s  min=0.000007788  max=0.000007987  CV=0.6%  (samples=31, inner-reps=262)
-  [copy-and-return analysis] med=0.000000037 s  min=0.000000036  max=0.000000038  CV=2.0%  (samples=31, inner-reps=20000)
+  [XMACC_N, groups of eight elements, n=256 total] med=0.001138460 s  min=0.001128148  max=0.001197838  CV=1.1%  (samples=31, inner-reps=9)
+  [XMACC_N, groups of eight elements, n=256 analysis] med=0.000002805 s  min=0.000002804  max=0.000002951  CV=0.9%  (samples=31, inner-reps=3073)
+  [copy-and-return total] med=0.000007722 s  min=0.000007554  max=0.000007831  CV=1.2%  (samples=31, inner-reps=1159)
+  [copy-and-return analysis] med=0.000000037 s  min=0.000000033  max=0.000000038  CV=3.4%  (samples=31, inner-reps=20000)
 [XMACC_N, groups of eight elements, n=16384] repetitions 12 | per repetition: 16384 groups of eight, 0 entries, 0 strided elements, instruction gas 180224 | gas 7176327 | static count + memory 7176327: equal | copy-and-return gas 5013522 | fingerprint 8ceedb9100a1f303 | PASSED
-  [XMACC_N, groups of eight elements, n=16384 total] med=0.001791963 s  min=0.001784086  max=0.001858598  CV=1.1%  (samples=31, inner-reps=6)
-  [XMACC_N, groups of eight elements, n=16384 analysis] med=0.000000117 s  min=0.000000115  max=0.000000135  CV=3.0%  (samples=31, inner-reps=20000)
-  [copy-and-return total] med=0.000093978 s  min=0.000091256  max=0.000099632  CV=1.7%  (samples=31, inner-reps=34)
-  [copy-and-return analysis] med=0.000000037 s  min=0.000000036  max=0.000000040  CV=2.2%  (samples=31, inner-reps=20000)
+  [XMACC_N, groups of eight elements, n=16384 total] med=0.001662124 s  min=0.001639718  max=0.001724053  CV=0.9%  (samples=31, inner-reps=6)
+  [XMACC_N, groups of eight elements, n=16384 analysis] med=0.000000107 s  min=0.000000102  max=0.000000110  CV=1.5%  (samples=31, inner-reps=20000)
+  [copy-and-return total] med=0.000091828 s  min=0.000085855  max=0.000092314  CV=1.3%  (samples=31, inner-reps=123)
+  [copy-and-return analysis] med=0.000000037 s  min=0.000000033  max=0.000000038  CV=4.2%  (samples=31, inner-reps=20000)
 [XMACC_N16, words of sixteen elements, n=1] repetitions 8192 | per repetition: 2 groups of eight, 0 entries, 0 strided elements, instruction gas 22 | gas 254179 | static count + memory 254179: equal | copy-and-return gas 218 | fingerprint f66e1c20f8a0ff33 | PASSED
-  [XMACC_N16, words of sixteen elements, n=1 total] med=0.000389394 s  min=0.000388159  max=0.000401357  CV=0.7%  (samples=31, inner-reps=27)
-  [XMACC_N16, words of sixteen elements, n=1 analysis] med=0.000045051 s  min=0.000044805  max=0.000046549  CV=0.8%  (samples=31, inner-reps=208)
-  [copy-and-return total] med=0.000000074 s  min=0.000000072  max=0.000000083  CV=3.9%  (samples=31, inner-reps=3496)
-  [copy-and-return analysis] med=0.000000037 s  min=0.000000036  max=0.000000063  CV=13.5%  (samples=31, inner-reps=20000)
+  [XMACC_N16, words of sixteen elements, n=1 total] med=0.000361931 s  min=0.000359022  max=0.000391825  CV=1.6%  (samples=31, inner-reps=25)
+  [XMACC_N16, words of sixteen elements, n=1 analysis] med=0.000040570 s  min=0.000040567  max=0.000041957  CV=0.7%  (samples=31, inner-reps=225)
+  [copy-and-return total] med=0.000000073 s  min=0.000000065  max=0.000000078  CV=4.4%  (samples=31, inner-reps=20000)
+  [copy-and-return analysis] med=0.000000036 s  min=0.000000035  max=0.000000037  CV=1.2%  (samples=31, inner-reps=20000)
 [XMACC_N16, words of sixteen elements, n=2] repetitions 8192 | per repetition: 4 groups of eight, 0 entries, 0 strided elements, instruction gas 44 | gas 434607 | static count + memory 434607: equal | copy-and-return gas 422 | fingerprint 8609599b01cdf4af | PASSED
-  [XMACC_N16, words of sixteen elements, n=2 total] med=0.000550660 s  min=0.000546868  max=0.001098831  CV=17.0%  (samples=31, inner-reps=19)
-  [XMACC_N16, words of sixteen elements, n=2 analysis] med=0.000045247 s  min=0.000044755  max=0.000048970  CV=1.9%  (samples=31, inner-reps=207)
-  [copy-and-return total] med=0.000000089 s  min=0.000000081  max=0.000000902  CV=113.9%  (samples=31, inner-reps=2660)
-  [copy-and-return analysis] med=0.000000037 s  min=0.000000036  max=0.000000062  CV=11.9%  (samples=31, inner-reps=20000)
+  [XMACC_N16, words of sixteen elements, n=2 total] med=0.000509965 s  min=0.000506932  max=0.000517396  CV=0.4%  (samples=31, inner-reps=20)
+  [XMACC_N16, words of sixteen elements, n=2 analysis] med=0.000040605 s  min=0.000040601  max=0.000042178  CV=0.7%  (samples=31, inner-reps=230)
+  [copy-and-return total] med=0.000000087 s  min=0.000000079  max=0.000000090  CV=3.8%  (samples=31, inner-reps=20000)
+  [copy-and-return analysis] med=0.000000036 s  min=0.000000035  max=0.000000038  CV=1.5%  (samples=31, inner-reps=20000)
 [XMACC_N16, words of sixteen elements, n=4] repetitions 8192 | per repetition: 8 groups of eight, 0 entries, 0 strided elements, instruction gas 88 | gas 795477 | static count + memory 795477: equal | copy-and-return gas 844 | fingerprint db76419a427a4bb2 | PASSED
-  [XMACC_N16, words of sixteen elements, n=4 total] med=0.000863129 s  min=0.000845934  max=0.001387759  CV=10.9%  (samples=31, inner-reps=12)
-  [XMACC_N16, words of sixteen elements, n=4 analysis] med=0.000044990 s  min=0.000044848  max=0.000045702  CV=0.4%  (samples=31, inner-reps=208)
-  [copy-and-return total] med=0.000000115 s  min=0.000000107  max=0.000000129  CV=4.3%  (samples=31, inner-reps=3084)
-  [copy-and-return analysis] med=0.000000037 s  min=0.000000036  max=0.000000038  CV=1.6%  (samples=31, inner-reps=20000)
+  [XMACC_N16, words of sixteen elements, n=4 total] med=0.000795871 s  min=0.000789174  max=0.000803914  CV=0.3%  (samples=31, inner-reps=13)
+  [XMACC_N16, words of sixteen elements, n=4 analysis] med=0.000040568 s  min=0.000040564  max=0.000041898  CV=0.6%  (samples=31, inner-reps=230)
+  [copy-and-return total] med=0.000000110 s  min=0.000000102  max=0.000000113  CV=2.9%  (samples=31, inner-reps=20000)
+  [copy-and-return analysis] med=0.000000036 s  min=0.000000035  max=0.000000037  CV=1.3%  (samples=31, inner-reps=20000)
 [XMACC_N16, words of sixteen elements, n=8] repetitions 5769 | per repetition: 16 groups of eight, 0 entries, 0 strided elements, instruction gas 176 | gas 1069012 | static count + memory 1069012: equal | copy-and-return gas 1738 | fingerprint a4fd9acdfccb5eae | PASSED
-  [XMACC_N16, words of sixteen elements, n=8 total] med=0.001014440 s  min=0.001010807  max=0.001038242  CV=0.5%  (samples=31, inner-reps=10)
-  [XMACC_N16, words of sixteen elements, n=8 analysis] med=0.000033206 s  min=0.000033064  max=0.000033997  CV=0.7%  (samples=31, inner-reps=276)
-  [copy-and-return total] med=0.000000164 s  min=0.000000159  max=0.000000179  CV=2.7%  (samples=31, inner-reps=2385)
-  [copy-and-return analysis] med=0.000000037 s  min=0.000000036  max=0.000000039  CV=1.9%  (samples=31, inner-reps=20000)
+  [XMACC_N16, words of sixteen elements, n=8 total] med=0.000954042 s  min=0.000946705  max=0.000969424  CV=0.4%  (samples=31, inner-reps=11)
+  [XMACC_N16, words of sixteen elements, n=8 analysis] med=0.000029890 s  min=0.000029887  max=0.000031056  CV=0.7%  (samples=31, inner-reps=311)
+  [copy-and-return total] med=0.000000143 s  min=0.000000133  max=0.000000146  CV=2.5%  (samples=31, inner-reps=20000)
+  [copy-and-return analysis] med=0.000000036 s  min=0.000000035  max=0.000000038  CV=2.0%  (samples=31, inner-reps=20000)
 [XMACC_N16, words of sixteen elements, n=16] repetitions 3571 | per repetition: 32 groups of eight, 0 entries, 0 strided elements, instruction gas 352 | gas 1292870 | static count + memory 1292870: equal | copy-and-return gas 3730 | fingerprint b838c17e957be061 | PASSED
-  [XMACC_N16, words of sixteen elements, n=16 total] med=0.001140365 s  min=0.001136285  max=0.001147713  CV=0.3%  (samples=31, inner-reps=9)
-  [XMACC_N16, words of sixteen elements, n=16 analysis] med=0.000019913 s  min=0.000019853  max=0.000020239  CV=0.4%  (samples=31, inner-reps=468)
-  [copy-and-return total] med=0.000000267 s  min=0.000000260  max=0.000000441  CV=15.2%  (samples=31, inner-reps=2620)
-  [copy-and-return analysis] med=0.000000037 s  min=0.000000036  max=0.000000038  CV=1.8%  (samples=31, inner-reps=20000)
+  [XMACC_N16, words of sixteen elements, n=16 total] med=0.001079750 s  min=0.001074445  max=0.001089247  CV=0.3%  (samples=31, inner-reps=10)
+  [XMACC_N16, words of sixteen elements, n=16 analysis] med=0.000017672 s  min=0.000017663  max=0.000018625  CV=1.0%  (samples=31, inner-reps=500)
+  [copy-and-return total] med=0.000000213 s  min=0.000000197  max=0.000000216  CV=2.7%  (samples=31, inner-reps=14815)
+  [copy-and-return analysis] med=0.000000036 s  min=0.000000034  max=0.000000037  CV=1.8%  (samples=31, inner-reps=20000)
 [XMACC_N16, words of sixteen elements, n=32] repetitions 2027 | per repetition: 64 groups of eight, 0 entries, 0 strided elements, instruction gas 704 | gas 1453792 | static count + memory 1453792: equal | copy-and-return gas 8532 | fingerprint 5eedf56391665927 | PASSED
-  [XMACC_N16, words of sixteen elements, n=32 total] med=0.001234352 s  min=0.001229297  max=0.001264794  CV=0.6%  (samples=31, inner-reps=9)
-  [XMACC_N16, words of sixteen elements, n=32 analysis] med=0.000011035 s  min=0.000010995  max=0.000011306  CV=0.6%  (samples=31, inner-reps=816)
-  [copy-and-return total] med=0.000000891 s  min=0.000000879  max=0.000000934  CV=1.5%  (samples=31, inner-reps=1198)
-  [copy-and-return analysis] med=0.000000037 s  min=0.000000036  max=0.000000041  CV=2.7%  (samples=31, inner-reps=20000)
+  [XMACC_N16, words of sixteen elements, n=32 total] med=0.001170625 s  min=0.001158655  max=0.001184963  CV=0.5%  (samples=31, inner-reps=9)
+  [XMACC_N16, words of sixteen elements, n=32 analysis] med=0.000009866 s  min=0.000009865  max=0.000010330  CV=0.8%  (samples=31, inner-reps=905)
+  [copy-and-return total] med=0.000000821 s  min=0.000000785  max=0.000000833  CV=1.8%  (samples=31, inner-reps=10289)
+  [copy-and-return analysis] med=0.000000037 s  min=0.000000033  max=0.000000038  CV=3.0%  (samples=31, inner-reps=20000)
 [XMACC_N16, words of sixteen elements, n=49] repetitions 1388 | per repetition: 98 groups of eight, 0 entries, 0 strided elements, instruction gas 1078 | gas 1523591 | static count + memory 1523591: equal | copy-and-return gas 14826 | fingerprint fef669b508e929f0 | PASSED
-  [XMACC_N16, words of sixteen elements, n=49 total] med=0.001280958 s  min=0.001273558  max=0.001328426  CV=0.8%  (samples=31, inner-reps=8)
-  [XMACC_N16, words of sixteen elements, n=49 analysis] med=0.000007567 s  min=0.000007546  max=0.000008047  CV=1.2%  (samples=31, inner-reps=1212)
-  [copy-and-return total] med=0.000001637 s  min=0.000001616  max=0.000001667  CV=0.8%  (samples=31, inner-reps=909)
-  [copy-and-return analysis] med=0.000000037 s  min=0.000000035  max=0.000000038  CV=1.6%  (samples=31, inner-reps=20000)
+  [XMACC_N16, words of sixteen elements, n=49 total] med=0.001223405 s  min=0.001213518  max=0.001295502  CV=1.2%  (samples=31, inner-reps=8)
+  [XMACC_N16, words of sixteen elements, n=49 analysis] med=0.000006776 s  min=0.000006776  max=0.000007097  CV=0.8%  (samples=31, inner-reps=1350)
+  [copy-and-return total] med=0.000001589 s  min=0.000001521  max=0.000001606  CV=1.6%  (samples=31, inner-reps=6091)
+  [copy-and-return analysis] med=0.000000037 s  min=0.000000033  max=0.000000038  CV=3.1%  (samples=31, inner-reps=20000)
 [XMACC_N16, words of sixteen elements, n=64] repetitions 1086 | per repetition: 128 groups of eight, 0 entries, 0 strided elements, instruction gas 1408 | gas 1560273 | static count + memory 1560273: equal | copy-and-return gas 21402 | fingerprint 42d299e19562ff17 | PASSED
-  [XMACC_N16, words of sixteen elements, n=64 total] med=0.001301871 s  min=0.001295977  max=0.001517313  CV=3.2%  (samples=31, inner-reps=8)
-  [XMACC_N16, words of sixteen elements, n=64 analysis] med=0.000006044 s  min=0.000005946  max=0.000011492  CV=17.0%  (samples=31, inner-reps=1462)
-  [copy-and-return total] med=0.000002120 s  min=0.000002064  max=0.000009435  CV=53.4%  (samples=31, inner-reps=700)
-  [copy-and-return analysis] med=0.000000037 s  min=0.000000036  max=0.000000046  CV=6.3%  (samples=31, inner-reps=20000)
+  [XMACC_N16, words of sixteen elements, n=64 total] med=0.001246817 s  min=0.001235947  max=0.001306948  CV=1.1%  (samples=31, inner-reps=8)
+  [XMACC_N16, words of sixteen elements, n=64 analysis] med=0.000005362 s  min=0.000005361  max=0.000005639  CV=0.9%  (samples=31, inner-reps=1657)
+  [copy-and-return total] med=0.000002048 s  min=0.000001968  max=0.000002059  CV=1.5%  (samples=31, inner-reps=4702)
+  [copy-and-return analysis] med=0.000000037 s  min=0.000000034  max=0.000000038  CV=2.8%  (samples=31, inner-reps=20000)
 [XMACC_N16, words of sixteen elements, n=128] repetitions 563 | per repetition: 256 groups of eight, 0 entries, 0 strided elements, instruction gas 2816 | gas 1650694 | static count + memory 1650694: equal | copy-and-return gas 60210 | fingerprint adc3cc0f31f521fb | PASSED
-  [XMACC_N16, words of sixteen elements, n=128 total] med=0.001361184 s  min=0.001333257  max=0.001645523  CV=4.5%  (samples=31, inner-reps=8)
-  [XMACC_N16, words of sixteen elements, n=128 analysis] med=0.000003184 s  min=0.000003125  max=0.000004009  CV=6.2%  (samples=31, inner-reps=2527)
-  [copy-and-return total] med=0.000004144 s  min=0.000003973  max=0.000007780  CV=20.5%  (samples=31, inner-reps=393)
-  [copy-and-return analysis] med=0.000000037 s  min=0.000000036  max=0.000000063  CV=16.2%  (samples=31, inner-reps=20000)
+  [XMACC_N16, words of sixteen elements, n=128 total] med=0.001275776 s  min=0.001265646  max=0.001346923  CV=1.1%  (samples=31, inner-reps=8)
+  [XMACC_N16, words of sixteen elements, n=128 analysis] med=0.000002799 s  min=0.000002799  max=0.000002940  CV=0.9%  (samples=31, inner-reps=3079)
+  [copy-and-return total] med=0.000003966 s  min=0.000003833  max=0.000003993  CV=1.4%  (samples=31, inner-reps=2529)
+  [copy-and-return analysis] med=0.000000036 s  min=0.000000034  max=0.000000039  CV=3.3%  (samples=31, inner-reps=20000)
 [XMACC_N16, words of sixteen elements, n=16384] repetitions 12 | per repetition: 32768 groups of eight, 0 entries, 0 strided elements, instruction gas 360448 | gas 9339015 | static count + memory 9339015: equal | copy-and-return gas 5013522 | fingerprint 309a7eb7445404e3 | PASSED
-  [XMACC_N16, words of sixteen elements, n=16384 total] med=0.003740623 s  min=0.003691983  max=0.004795278  CV=6.5%  (samples=31, inner-reps=3)
-  [XMACC_N16, words of sixteen elements, n=16384 analysis] med=0.000000118 s  min=0.000000114  max=0.000000189  CV=19.1%  (samples=31, inner-reps=5625)
-  [copy-and-return total] med=0.000094557 s  min=0.000092315  max=0.000196475  CV=22.0%  (samples=31, inner-reps=45)
-  [copy-and-return analysis] med=0.000000037 s  min=0.000000036  max=0.000000039  CV=1.9%  (samples=31, inner-reps=20000)
+  [XMACC_N16, words of sixteen elements, n=16384 total] med=0.003498313 s  min=0.003463479  max=0.003571724  CV=0.6%  (samples=31, inner-reps=3)
+  [XMACC_N16, words of sixteen elements, n=16384 analysis] med=0.000000106 s  min=0.000000098  max=0.000000112  CV=3.8%  (samples=31, inner-reps=20000)
+  [copy-and-return total] med=0.000089827 s  min=0.000086637  max=0.000090643  CV=1.3%  (samples=31, inner-reps=125)
+  [copy-and-return analysis] med=0.000000037 s  min=0.000000033  max=0.000000039  CV=4.2%  (samples=31, inner-reps=20000)
 ---- XMACC_V ----
 [XMACC_V, two unit-stride rows, n=8] repetitions 8192 | per repetition: 1 groups of eight, 0 entries, 0 strided elements, instruction gas 51 | gas 516323 | static count + memory 516323: equal | copy-and-return gas 218 | fingerprint e8af80baac520799 | PASSED
-  [XMACC_V, two unit-stride rows, n=8 total] med=0.000449770 s  min=0.000440084  max=0.000555507  CV=6.4%  (samples=31, inner-reps=23)
-  [XMACC_V, two unit-stride rows, n=8 analysis] med=0.000060021 s  min=0.000059294  max=0.000084235  CV=8.1%  (samples=31, inner-reps=147)
-  [copy-and-return total] med=0.000000074 s  min=0.000000072  max=0.000000088  CV=4.9%  (samples=31, inner-reps=3194)
-  [copy-and-return analysis] med=0.000000037 s  min=0.000000036  max=0.000000041  CV=3.9%  (samples=31, inner-reps=20000)
+  [XMACC_V, two unit-stride rows, n=8 total] med=0.000428999 s  min=0.000423549  max=0.000462045  CV=1.6%  (samples=31, inner-reps=22)
+  [XMACC_V, two unit-stride rows, n=8 analysis] med=0.000053186 s  min=0.000053181  max=0.000056011  CV=0.9%  (samples=31, inner-reps=169)
+  [copy-and-return total] med=0.000000072 s  min=0.000000065  max=0.000000075  CV=4.0%  (samples=31, inner-reps=20000)
+  [copy-and-return analysis] med=0.000000035 s  min=0.000000035  max=0.000000037  CV=1.4%  (samples=31, inner-reps=20000)
 [XMACC_V, two unit-stride rows, n=16] repetitions 8192 | per repetition: 2 groups of eight, 0 entries, 0 strided elements, instruction gas 59 | gas 582057 | static count + memory 582057: equal | copy-and-return gas 416 | fingerprint a7776803452a43c1 | PASSED
-  [XMACC_V, two unit-stride rows, n=16 total] med=0.000519589 s  min=0.000511119  max=0.000667024  CV=7.9%  (samples=31, inner-reps=19)
-  [XMACC_V, two unit-stride rows, n=16 analysis] med=0.000059579 s  min=0.000059004  max=0.000070786  CV=4.7%  (samples=31, inner-reps=156)
-  [copy-and-return total] med=0.000000085 s  min=0.000000082  max=0.000000098  CV=4.8%  (samples=31, inner-reps=3083)
-  [copy-and-return analysis] med=0.000000037 s  min=0.000000036  max=0.000000040  CV=2.6%  (samples=31, inner-reps=20000)
+  [XMACC_V, two unit-stride rows, n=16 total] med=0.000485782 s  min=0.000478985  max=0.000492324  CV=0.6%  (samples=31, inner-reps=21)
+  [XMACC_V, two unit-stride rows, n=16 analysis] med=0.000053184 s  min=0.000053180  max=0.000055580  CV=0.8%  (samples=31, inner-reps=176)
+  [copy-and-return total] med=0.000000087 s  min=0.000000080  max=0.000000090  CV=3.5%  (samples=31, inner-reps=20000)
+  [copy-and-return analysis] med=0.000000035 s  min=0.000000035  max=0.000000036  CV=1.1%  (samples=31, inner-reps=20000)
 [XMACC_V, two unit-stride rows, n=32] repetitions 8192 | per repetition: 4 groups of eight, 0 entries, 0 strided elements, instruction gas 75 | gas 713537 | static count + memory 713537: equal | copy-and-return gas 824 | fingerprint 41bc3e47e6d71668 | PASSED
-  [XMACC_V, two unit-stride rows, n=32 total] med=0.000649354 s  min=0.000642490  max=0.001246353  CV=16.0%  (samples=31, inner-reps=16)
-  [XMACC_V, two unit-stride rows, n=32 analysis] med=0.000059632 s  min=0.000058953  max=0.000075552  CV=7.2%  (samples=31, inner-reps=158)
-  [copy-and-return total] med=0.000000120 s  min=0.000000109  max=0.000000258  CV=28.7%  (samples=31, inner-reps=2757)
-  [copy-and-return analysis] med=0.000000037 s  min=0.000000036  max=0.000000079  CV=19.8%  (samples=31, inner-reps=20000)
+  [XMACC_V, two unit-stride rows, n=32 total] med=0.000608220 s  min=0.000603555  max=0.000613771  CV=0.4%  (samples=31, inner-reps=17)
+  [XMACC_V, two unit-stride rows, n=32 analysis] med=0.000053184 s  min=0.000053179  max=0.000055610  CV=0.8%  (samples=31, inner-reps=174)
+  [copy-and-return total] med=0.000000107 s  min=0.000000106  max=0.000000112  CV=1.7%  (samples=31, inner-reps=6507)
+  [copy-and-return analysis] med=0.000000036 s  min=0.000000034  max=0.000000038  CV=2.0%  (samples=31, inner-reps=20000)
 [XMACC_V, two unit-stride rows, n=64] repetitions 7317 | per repetition: 8 groups of eight, 0 entries, 0 strided elements, instruction gas 107 | gas 872421 | static count + memory 872421: equal | copy-and-return gas 1689 | fingerprint 3e88a681d3a94fb4 | PASSED
-  [XMACC_V, two unit-stride rows, n=64 total] med=0.000823416 s  min=0.000807754  max=0.001147618  CV=10.1%  (samples=31, inner-reps=13)
-  [XMACC_V, two unit-stride rows, n=64 analysis] med=0.000053462 s  min=0.000052994  max=0.000067456  CV=5.6%  (samples=31, inner-reps=172)
-  [copy-and-return total] med=0.000000167 s  min=0.000000163  max=0.000000201  CV=4.4%  (samples=31, inner-reps=2567)
-  [copy-and-return analysis] med=0.000000037 s  min=0.000000036  max=0.000000158  CV=51.2%  (samples=31, inner-reps=20000)
+  [XMACC_V, two unit-stride rows, n=64 total] med=0.000761038 s  min=0.000752454  max=0.000766934  CV=0.4%  (samples=31, inner-reps=14)
+  [XMACC_V, two unit-stride rows, n=64 analysis] med=0.000047580 s  min=0.000047574  max=0.000049626  CV=0.8%  (samples=31, inner-reps=196)
+  [copy-and-return total] med=0.000000143 s  min=0.000000134  max=0.000000147  CV=2.6%  (samples=31, inner-reps=20000)
+  [copy-and-return analysis] med=0.000000036 s  min=0.000000035  max=0.000000036  CV=1.2%  (samples=31, inner-reps=20000)
 [XMACC_V, two unit-stride rows, n=128] repetitions 5263 | per repetition: 16 groups of eight, 0 entries, 0 strided elements, instruction gas 171 | gas 966748 | static count + memory 966748: equal | copy-and-return gas 3610 | fingerprint 15cbe3388a5f434a | PASSED
-  [XMACC_V, two unit-stride rows, n=128 total] med=0.000922752 s  min=0.000903276  max=0.001207319  CV=7.4%  (samples=31, inner-reps=11)
-  [XMACC_V, two unit-stride rows, n=128 analysis] med=0.000038162 s  min=0.000037880  max=0.000048681  CV=4.8%  (samples=31, inner-reps=242)
-  [copy-and-return total] med=0.000000267 s  min=0.000000256  max=0.000000302  CV=4.2%  (samples=31, inner-reps=1618)
-  [copy-and-return analysis] med=0.000000037 s  min=0.000000036  max=0.000000046  CV=5.6%  (samples=31, inner-reps=20000)
+  [XMACC_V, two unit-stride rows, n=128 total] med=0.000863015 s  min=0.000855319  max=0.000874137  CV=0.4%  (samples=31, inner-reps=12)
+  [XMACC_V, two unit-stride rows, n=128 analysis] med=0.000034220 s  min=0.000034215  max=0.000036256  CV=1.0%  (samples=31, inner-reps=260)
+  [copy-and-return total] med=0.000000199 s  min=0.000000190  max=0.000000204  CV=2.5%  (samples=31, inner-reps=9133)
+  [copy-and-return analysis] med=0.000000035 s  min=0.000000033  max=0.000000036  CV=1.8%  (samples=31, inner-reps=20000)
 [XMACC_V, two unit-stride rows, n=256] repetitions 3370 | per repetition: 32 groups of eight, 0 entries, 0 strided elements, instruction gas 299 | gas 1056299 | static count + memory 1056299: equal | copy-and-return gas 8220 | fingerprint 0ec222be3490a463 | PASSED
-  [XMACC_V, two unit-stride rows, n=256 total] med=0.001032396 s  min=0.001013057  max=0.001468085  CV=10.3%  (samples=31, inner-reps=10)
-  [XMACC_V, two unit-stride rows, n=256 analysis] med=0.000024720 s  min=0.000024346  max=0.000036661  CV=11.0%  (samples=31, inner-reps=374)
-  [copy-and-return total] med=0.000000894 s  min=0.000000856  max=0.000001884  CV=19.9%  (samples=31, inner-reps=1178)
-  [copy-and-return analysis] med=0.000000037 s  min=0.000000036  max=0.000000042  CV=4.2%  (samples=31, inner-reps=20000)
+  [XMACC_V, two unit-stride rows, n=256 total] med=0.000955537 s  min=0.000949688  max=0.000967548  CV=0.5%  (samples=31, inner-reps=11)
+  [XMACC_V, two unit-stride rows, n=256 analysis] med=0.000021864 s  min=0.000021862  max=0.000023109  CV=1.0%  (samples=31, inner-reps=411)
+  [copy-and-return total] med=0.000000772 s  min=0.000000739  max=0.000000784  CV=1.7%  (samples=31, inner-reps=10965)
+  [copy-and-return analysis] med=0.000000036 s  min=0.000000034  max=0.000000038  CV=2.5%  (samples=31, inner-reps=20000)
 [XMACC_V, two unit-stride rows, n=512] repetitions 1960 | per repetition: 64 groups of eight, 0 entries, 0 strided elements, instruction gas 555 | gas 1131841 | static count + memory 1131841: equal | copy-and-return gas 20512 | fingerprint bb66f30c706865eb | PASSED
-  [XMACC_V, two unit-stride rows, n=512 total] med=0.001107080 s  min=0.001083873  max=0.001906642  CV=15.6%  (samples=31, inner-reps=10)
-  [XMACC_V, two unit-stride rows, n=512 analysis] med=0.000014217 s  min=0.000014061  max=0.000016644  CV=4.1%  (samples=31, inner-reps=630)
-  [copy-and-return total] med=0.000002063 s  min=0.000002011  max=0.000003045  CV=13.3%  (samples=31, inner-reps=693)
-  [copy-and-return analysis] med=0.000000037 s  min=0.000000035  max=0.000000045  CV=4.5%  (samples=31, inner-reps=20000)
+  [XMACC_V, two unit-stride rows, n=512 total] med=0.001035503 s  min=0.001022483  max=0.001072872  CV=0.8%  (samples=31, inner-reps=10)
+  [XMACC_V, two unit-stride rows, n=512 analysis] med=0.000012604 s  min=0.000012564  max=0.000013353  CV=1.1%  (samples=31, inner-reps=714)
+  [copy-and-return total] med=0.000001993 s  min=0.000001917  max=0.000002005  CV=1.6%  (samples=31, inner-reps=4204)
+  [copy-and-return analysis] med=0.000000037 s  min=0.000000034  max=0.000000039  CV=3.2%  (samples=31, inner-reps=20000)
 [XMACC_V, two unit-stride rows, n=784] repetitions 1357 | per repetition: 98 groups of eight, 0 entries, 0 strided elements, instruction gas 827 | gas 1176592 | static count + memory 1176592: equal | copy-and-return gas 38060 | fingerprint e18683d71ff3081b | PASSED
-  [XMACC_V, two unit-stride rows, n=784 total] med=0.001134531 s  min=0.001116585  max=0.001780505  CV=13.9%  (samples=31, inner-reps=10)
-  [XMACC_V, two unit-stride rows, n=784 analysis] med=0.000009853 s  min=0.000009717  max=0.000020534  CV=19.7%  (samples=31, inner-reps=477)
-  [copy-and-return total] med=0.000003085 s  min=0.000002995  max=0.000003275  CV=2.3%  (samples=31, inner-reps=360)
-  [copy-and-return analysis] med=0.000000037 s  min=0.000000036  max=0.000000069  CV=15.0%  (samples=31, inner-reps=20000)
+  [XMACC_V, two unit-stride rows, n=784 total] med=0.001070003 s  min=0.001055444  max=0.001122977  CV=1.2%  (samples=31, inner-reps=9)
+  [XMACC_V, two unit-stride rows, n=784 analysis] med=0.000008724 s  min=0.000008723  max=0.000009240  CV=1.0%  (samples=31, inner-reps=1026)
+  [copy-and-return total] med=0.000002978 s  min=0.000002873  max=0.000003005  CV=1.5%  (samples=31, inner-reps=3245)
+  [copy-and-return analysis] med=0.000000037 s  min=0.000000033  max=0.000000038  CV=3.1%  (samples=31, inner-reps=20000)
 [XMACC_V, two unit-stride rows, n=1024] repetitions 1067 | per repetition: 128 groups of eight, 0 entries, 0 strided elements, instruction gas 1067 | gas 1208686 | static count + memory 1208686: equal | copy-and-return gas 57384 | fingerprint 913e7934ce58f17b | PASSED
-  [XMACC_V, two unit-stride rows, n=1024 total] med=0.001146989 s  min=0.001127640  max=0.001894265  CV=11.7%  (samples=31, inner-reps=9)
-  [XMACC_V, two unit-stride rows, n=1024 analysis] med=0.000007743 s  min=0.000007700  max=0.000011203  CV=8.9%  (samples=31, inner-reps=1180)
-  [copy-and-return total] med=0.000003982 s  min=0.000003858  max=0.000006696  CV=13.4%  (samples=31, inner-reps=336)
-  [copy-and-return analysis] med=0.000000037 s  min=0.000000036  max=0.000000046  CV=5.5%  (samples=31, inner-reps=20000)
+  [XMACC_V, two unit-stride rows, n=1024 total] med=0.001085980 s  min=0.001073302  max=0.001138191  CV=1.2%  (samples=31, inner-reps=9)
+  [XMACC_V, two unit-stride rows, n=1024 analysis] med=0.000006885 s  min=0.000006884  max=0.000007335  CV=1.2%  (samples=31, inner-reps=1273)
+  [copy-and-return total] med=0.000003848 s  min=0.000003721  max=0.000003892  CV=1.5%  (samples=31, inner-reps=2571)
+  [copy-and-return analysis] med=0.000000037 s  min=0.000000033  max=0.000000039  CV=3.8%  (samples=31, inner-reps=20000)
 [XMACC_V, two unit-stride rows, n=2048] repetitions 558 | per repetition: 256 groups of eight, 0 entries, 0 strided elements, instruction gas 2091 | gas 1353763 | static count + memory 1353763: equal | copy-and-return gas 180280 | fingerprint 603b5bfeb13aad71 | PASSED
-  [XMACC_V, two unit-stride rows, n=2048 total] med=0.001172029 s  min=0.001151087  max=0.001400061  CV=3.9%  (samples=31, inner-reps=9)
-  [XMACC_V, two unit-stride rows, n=2048 analysis] med=0.000004086 s  min=0.000004055  max=0.000005060  CV=5.4%  (samples=31, inner-reps=2328)
-  [copy-and-return total] med=0.000007674 s  min=0.000007536  max=0.000011449  CV=10.9%  (samples=31, inner-reps=203)
-  [copy-and-return analysis] med=0.000000037 s  min=0.000000036  max=0.000000039  CV=2.2%  (samples=31, inner-reps=20000)
+  [XMACC_V, two unit-stride rows, n=2048 total] med=0.001116016 s  min=0.001102411  max=0.001162751  CV=1.0%  (samples=31, inner-reps=9)
+  [XMACC_V, two unit-stride rows, n=2048 analysis] med=0.000003628 s  min=0.000003627  max=0.000003880  CV=1.2%  (samples=31, inner-reps=2301)
+  [copy-and-return total] med=0.000007553 s  min=0.000007328  max=0.000007633  CV=1.4%  (samples=31, inner-reps=1204)
+  [copy-and-return analysis] med=0.000000037 s  min=0.000000033  max=0.000000038  CV=3.8%  (samples=31, inner-reps=20000)
 [XMACC_V, two unit-stride rows of a 1.5 MB matrix, n=262144] repetitions 12 | per repetition: 32768 groups of eight, 0 entries, 0 strided elements, instruction gas 262187 | gas 8160117 | static count + memory 8160117: equal | copy-and-return gas 5013720 | fingerprint 309a7eb7445404e3 | PASSED
-  [XMACC_V, two unit-stride rows of a 1.5 MB matrix, n=262144 total] med=0.003247976 s  min=0.003217198  max=0.004139968  CV=5.9%  (samples=31, inner-reps=4)
-  [XMACC_V, two unit-stride rows of a 1.5 MB matrix, n=262144 analysis] med=0.000000138 s  min=0.000000132  max=0.000000219  CV=10.8%  (samples=31, inner-reps=18051)
-  [copy-and-return total] med=0.000094540 s  min=0.000092742  max=0.000101642  CV=2.0%  (samples=31, inner-reps=32)
-  [copy-and-return analysis] med=0.000000037 s  min=0.000000036  max=0.000000046  CV=6.8%  (samples=31, inner-reps=20000)
+  [XMACC_V, two unit-stride rows of a 1.5 MB matrix, n=262144 total] med=0.003051605 s  min=0.003017880  max=0.003117425  CV=0.6%  (samples=31, inner-reps=4)
+  [XMACC_V, two unit-stride rows of a 1.5 MB matrix, n=262144 analysis] med=0.000000123 s  min=0.000000113  max=0.000000133  CV=3.6%  (samples=31, inner-reps=20000)
+  [copy-and-return total] med=0.000087967 s  min=0.000085670  max=0.000089353  CV=1.0%  (samples=31, inner-reps=128)
+  [copy-and-return analysis] med=0.000000037 s  min=0.000000033  max=0.000000039  CV=4.0%  (samples=31, inner-reps=20000)
 [XMACC_V, two rows of a transposed view (stride 128 bytes), n=8] repetitions 8108 | per repetition: 1 groups of eight, 0 entries, 16 strided elements, instruction gas 99 | gas 900230 | static count + memory 900230: equal | copy-and-return gas 218 | fingerprint 209f59ab6aeccd29 | PASSED
-  [XMACC_V, two rows of a transposed view (stride 128 bytes), n=8 total] med=0.000523960 s  min=0.000513847  max=0.000637042  CV=4.7%  (samples=31, inner-reps=20)
-  [XMACC_V, two rows of a transposed view (stride 128 bytes), n=8 analysis] med=0.000059423 s  min=0.000058722  max=0.000119631  CV=23.2%  (samples=31, inner-reps=161)
-  [copy-and-return total] med=0.000000077 s  min=0.000000076  max=0.000000086  CV=2.9%  (samples=31, inner-reps=3149)
-  [copy-and-return analysis] med=0.000000037 s  min=0.000000036  max=0.000000064  CV=16.7%  (samples=31, inner-reps=20000)
+  [XMACC_V, two rows of a transposed view (stride 128 bytes), n=8 total] med=0.000485099 s  min=0.000478752  max=0.000521583  CV=1.6%  (samples=31, inner-reps=19)
+  [XMACC_V, two rows of a transposed view (stride 128 bytes), n=8 analysis] med=0.000052641 s  min=0.000052638  max=0.000055131  CV=0.8%  (samples=31, inner-reps=171)
+  [copy-and-return total] med=0.000000076 s  min=0.000000069  max=0.000000079  CV=3.7%  (samples=31, inner-reps=20000)
+  [copy-and-return analysis] med=0.000000036 s  min=0.000000035  max=0.000000037  CV=1.7%  (samples=31, inner-reps=20000)
 [XMACC_V, two rows of a transposed view (stride 128 bytes), n=16] repetitions 6122 | per repetition: 2 groups of eight, 0 entries, 32 strided elements, instruction gas 155 | gas 1022814 | static count + memory 1022814: equal | copy-and-return gas 416 | fingerprint 4d10f187f850b3ba | PASSED
-  [XMACC_V, two rows of a transposed view (stride 128 bytes), n=16 total] med=0.000501724 s  min=0.000496164  max=0.000598399  CV=4.4%  (samples=31, inner-reps=21)
-  [XMACC_V, two rows of a transposed view (stride 128 bytes), n=16 analysis] med=0.000044580 s  min=0.000044177  max=0.000051381  CV=2.9%  (samples=31, inner-reps=214)
-  [copy-and-return total] med=0.000000098 s  min=0.000000096  max=0.000000145  CV=8.5%  (samples=31, inner-reps=3268)
-  [copy-and-return analysis] med=0.000000037 s  min=0.000000036  max=0.000000051  CV=6.8%  (samples=31, inner-reps=20000)
+  [XMACC_V, two rows of a transposed view (stride 128 bytes), n=16 total] med=0.000453800 s  min=0.000451054  max=0.000459395  CV=0.4%  (samples=31, inner-reps=22)
+  [XMACC_V, two rows of a transposed view (stride 128 bytes), n=16 analysis] med=0.000039707 s  min=0.000039704  max=0.000041716  CV=0.9%  (samples=31, inner-reps=235)
+  [copy-and-return total] med=0.000000099 s  min=0.000000091  max=0.000000102  CV=3.4%  (samples=31, inner-reps=20000)
+  [copy-and-return analysis] med=0.000000035 s  min=0.000000035  max=0.000000037  CV=1.4%  (samples=31, inner-reps=20000)
 [XMACC_V, two rows of a transposed view (stride 128 bytes), n=32] repetitions 4109 | per repetition: 4 groups of eight, 0 entries, 64 strided elements, instruction gas 267 | gas 1147259 | static count + memory 1147259: equal | copy-and-return gas 824 | fingerprint ea56b4b88584e673 | PASSED
-  [XMACC_V, two rows of a transposed view (stride 128 bytes), n=32 total] med=0.000473323 s  min=0.000467671  max=0.000647661  CV=9.9%  (samples=31, inner-reps=21)
-  [XMACC_V, two rows of a transposed view (stride 128 bytes), n=32 analysis] med=0.000029996 s  min=0.000029807  max=0.000039208  CV=7.4%  (samples=31, inner-reps=311)
-  [copy-and-return total] med=0.000000112 s  min=0.000000103  max=0.000000483  CV=53.1%  (samples=31, inner-reps=3174)
-  [copy-and-return analysis] med=0.000000037 s  min=0.000000036  max=0.000000055  CV=10.2%  (samples=31, inner-reps=20000)
+  [XMACC_V, two rows of a transposed view (stride 128 bytes), n=32 total] med=0.000427165 s  min=0.000424108  max=0.000432316  CV=0.4%  (samples=31, inner-reps=24)
+  [XMACC_V, two rows of a transposed view (stride 128 bytes), n=32 analysis] med=0.000026640 s  min=0.000026638  max=0.000027982  CV=0.9%  (samples=31, inner-reps=341)
+  [copy-and-return total] med=0.000000099 s  min=0.000000091  max=0.000000101  CV=3.3%  (samples=31, inner-reps=20000)
+  [copy-and-return analysis] med=0.000000035 s  min=0.000000034  max=0.000000037  CV=1.8%  (samples=31, inner-reps=20000)
 [XMACC_V, two rows of a transposed view (stride 128 bytes), n=64] repetitions 2479 | per repetition: 8 groups of eight, 0 entries, 128 strided elements, instruction gas 491 | gas 1248650 | static count + memory 1248650: equal | copy-and-return gas 1689 | fingerprint 8ca1db440ea56e99 | PASSED
-  [XMACC_V, two rows of a transposed view (stride 128 bytes), n=64 total] med=0.000455317 s  min=0.000447360  max=0.000726606  CV=14.8%  (samples=31, inner-reps=23)
-  [XMACC_V, two rows of a transposed view (stride 128 bytes), n=64 analysis] med=0.000018127 s  min=0.000017866  max=0.000021012  CV=4.5%  (samples=31, inner-reps=532)
-  [copy-and-return total] med=0.000000167 s  min=0.000000164  max=0.000000272  CV=12.9%  (samples=31, inner-reps=2120)
-  [copy-and-return analysis] med=0.000000037 s  min=0.000000036  max=0.000000040  CV=2.6%  (samples=31, inner-reps=20000)
+  [XMACC_V, two rows of a transposed view (stride 128 bytes), n=64 total] med=0.000402971 s  min=0.000401337  max=0.000407509  CV=0.4%  (samples=31, inner-reps=25)
+  [XMACC_V, two rows of a transposed view (stride 128 bytes), n=64 analysis] med=0.000015964 s  min=0.000015962  max=0.000016914  CV=1.0%  (samples=31, inner-reps=569)
+  [copy-and-return total] med=0.000000143 s  min=0.000000134  max=0.000000145  CV=2.5%  (samples=31, inner-reps=20000)
+  [copy-and-return analysis] med=0.000000035 s  min=0.000000035  max=0.000000036  CV=1.2%  (samples=31, inner-reps=20000)
 [XMACC_V, two rows of a transposed view (stride 128 bytes), n=128] repetitions 1382 | per repetition: 16 groups of eight, 0 entries, 256 strided elements, instruction gas 939 | gas 1317916 | static count + memory 1317916: equal | copy-and-return gas 3610 | fingerprint 7c24765a91cece72 | PASSED
-  [XMACC_V, two rows of a transposed view (stride 128 bytes), n=128 total] med=0.000444639 s  min=0.000436759  max=0.000808949  CV=14.2%  (samples=31, inner-reps=24)
-  [XMACC_V, two rows of a transposed view (stride 128 bytes), n=128 analysis] med=0.000010004 s  min=0.000009849  max=0.000012794  CV=6.2%  (samples=31, inner-reps=576)
-  [copy-and-return total] med=0.000000263 s  min=0.000000260  max=0.000000310  CV=3.6%  (samples=31, inner-reps=1687)
-  [copy-and-return analysis] med=0.000000037 s  min=0.000000036  max=0.000000044  CV=5.5%  (samples=31, inner-reps=20000)
+  [XMACC_V, two rows of a transposed view (stride 128 bytes), n=128 total] med=0.000388341 s  min=0.000385851  max=0.000390390  CV=0.3%  (samples=31, inner-reps=26)
+  [XMACC_V, two rows of a transposed view (stride 128 bytes), n=128 analysis] med=0.000008875 s  min=0.000008875  max=0.000009299  CV=0.8%  (samples=31, inner-reps=1012)
+  [copy-and-return total] med=0.000000203 s  min=0.000000192  max=0.000000209  CV=2.0%  (samples=31, inner-reps=19686)
+  [copy-and-return analysis] med=0.000000036 s  min=0.000000034  max=0.000000037  CV=1.8%  (samples=31, inner-reps=20000)
 [XMACC_V, two rows of a transposed view (stride 128 bytes), n=256] repetitions 733 | per repetition: 32 groups of eight, 0 entries, 512 strided elements, instruction gas 1835 | gas 1362095 | static count + memory 1362095: equal | copy-and-return gas 8220 | fingerprint 7d62c28b79114fbd | PASSED
-  [XMACC_V, two rows of a transposed view (stride 128 bytes), n=256 total] med=0.000437133 s  min=0.000432183  max=0.000538990  CV=5.7%  (samples=31, inner-reps=21)
-  [XMACC_V, two rows of a transposed view (stride 128 bytes), n=256 analysis] med=0.000005383 s  min=0.000005305  max=0.000008423  CV=13.0%  (samples=31, inner-reps=1573)
-  [copy-and-return total] med=0.000000863 s  min=0.000000842  max=0.000000920  CV=2.3%  (samples=31, inner-reps=1168)
-  [copy-and-return analysis] med=0.000000037 s  min=0.000000036  max=0.000000043  CV=3.9%  (samples=31, inner-reps=20000)
+  [XMACC_V, two rows of a transposed view (stride 128 bytes), n=256 total] med=0.000383244 s  min=0.000380590  max=0.000387308  CV=0.4%  (samples=31, inner-reps=26)
+  [XMACC_V, two rows of a transposed view (stride 128 bytes), n=256 analysis] med=0.000004743 s  min=0.000004743  max=0.000005016  CV=1.0%  (samples=31, inner-reps=1879)
+  [copy-and-return total] med=0.000000776 s  min=0.000000742  max=0.000000785  CV=1.8%  (samples=31, inner-reps=10549)
+  [copy-and-return analysis] med=0.000000036 s  min=0.000000033  max=0.000000038  CV=2.9%  (samples=31, inner-reps=20000)
 [XMACC_V, two rows of a transposed view (stride 128 bytes), n=448] repetitions 430 | per repetition: 56 groups of eight, 0 entries, 896 strided elements, instruction gas 3179 | gas 1389209 | static count + memory 1389209: equal | copy-and-return gas 17055 | fingerprint 26643aead2eae643 | PASSED
-  [XMACC_V, two rows of a transposed view (stride 128 bytes), n=448 total] med=0.000458408 s  min=0.000450144  max=0.000563966  CV=6.2%  (samples=31, inner-reps=23)
-  [XMACC_V, two rows of a transposed view (stride 128 bytes), n=448 analysis] med=0.000003179 s  min=0.000003138  max=0.000003973  CV=6.7%  (samples=31, inner-reps=2829)
-  [copy-and-return total] med=0.000001820 s  min=0.000001783  max=0.000001972  CV=2.6%  (samples=31, inner-reps=831)
-  [copy-and-return analysis] med=0.000000037 s  min=0.000000036  max=0.000000043  CV=3.8%  (samples=31, inner-reps=20000)
+  [XMACC_V, two rows of a transposed view (stride 128 bytes), n=448 total] med=0.000405362 s  min=0.000403033  max=0.000421376  CV=0.9%  (samples=31, inner-reps=24)
+  [XMACC_V, two rows of a transposed view (stride 128 bytes), n=448 analysis] med=0.000002828 s  min=0.000002826  max=0.000002984  CV=1.0%  (samples=31, inner-reps=3125)
+  [copy-and-return total] med=0.000001763 s  min=0.000001691  max=0.000001786  CV=1.7%  (samples=31, inner-reps=5418)
+  [copy-and-return analysis] med=0.000000037 s  min=0.000000034  max=0.000000038  CV=3.2%  (samples=31, inner-reps=20000)
 [XMACC_V, two rows of a transposed view (stride 128 bytes), n=1024] repetitions 256 | per repetition: 128 groups of eight, 0 entries, 2048 strided elements, instruction gas 7211 | gas 1906496 | static count + memory 1906496: equal | copy-and-return gas 57384 | fingerprint 9e57c45386af4acb | PASSED
-  [XMACC_V, two rows of a transposed view (stride 128 bytes), n=1024 total] med=0.000608207 s  min=0.000592845  max=0.000946049  CV=10.7%  (samples=31, inner-reps=17)
-  [XMACC_V, two rows of a transposed view (stride 128 bytes), n=1024 analysis] med=0.000001919 s  min=0.000001897  max=0.000003919  CV=19.2%  (samples=31, inner-reps=3892)
-  [copy-and-return total] med=0.000003974 s  min=0.000003873  max=0.000004168  CV=2.1%  (samples=31, inner-reps=483)
-  [copy-and-return analysis] med=0.000000038 s  min=0.000000036  max=0.000000092  CV=24.5%  (samples=31, inner-reps=20000)
+  [XMACC_V, two rows of a transposed view (stride 128 bytes), n=1024 total] med=0.000538395 s  min=0.000533202  max=0.000557658  CV=0.9%  (samples=31, inner-reps=18)
+  [XMACC_V, two rows of a transposed view (stride 128 bytes), n=1024 analysis] med=0.000001702 s  min=0.000001701  max=0.000001821  CV=1.2%  (samples=31, inner-reps=4907)
+  [copy-and-return total] med=0.000003865 s  min=0.000003720  max=0.000003891  CV=1.5%  (samples=31, inner-reps=2530)
+  [copy-and-return analysis] med=0.000000037 s  min=0.000000033  max=0.000000040  CV=3.9%  (samples=31, inner-reps=20000)
 [XMACC_V, two rows of the hostile view, n=56] repetitions 2048 | per repetition: 7 groups of eight, 0 entries, 112 strided elements, instruction gas 435 | gas 7682075 | static count + memory 7682075: equal | copy-and-return gas 6766610 | fingerprint bc4a86df11d2920d | PASSED
-  [XMACC_V, two rows of the hostile view, n=56 total] med=0.000605959 s  min=0.000598687  max=0.000990376  CV=16.4%  (samples=31, inner-reps=14)
-  [XMACC_V, two rows of the hostile view, n=56 analysis] med=0.000014874 s  min=0.000014710  max=0.000021623  CV=10.4%  (samples=31, inner-reps=628)
-  [copy-and-return total] med=0.000116224 s  min=0.000110801  max=0.000423763  CV=43.2%  (samples=31, inner-reps=28)
-  [copy-and-return analysis] med=0.000000038 s  min=0.000000036  max=0.000000254  CV=84.6%  (samples=31, inner-reps=20000)
+  [XMACC_V, two rows of the hostile view, n=56 total] med=0.000615379 s  min=0.000612780  max=0.000661654  CV=1.4%  (samples=31, inner-reps=14)
+  [XMACC_V, two rows of the hostile view, n=56 analysis] med=0.000013210 s  min=0.000013207  max=0.000013701  CV=0.7%  (samples=31, inner-reps=699)
+  [copy-and-return total] med=0.000101632 s  min=0.000101240  max=0.000102828  CV=0.5%  (samples=31, inner-reps=103)
+  [copy-and-return analysis] med=0.000000036 s  min=0.000000033  max=0.000000039  CV=4.3%  (samples=31, inner-reps=20000)
 [XMACC_V, two rows of the hostile view, n=112] repetitions 2048 | per repetition: 14 groups of eight, 0 entries, 224 strided elements, instruction gas 827 | gas 8484891 | static count + memory 8484891: equal | copy-and-return gas 6766610 | fingerprint 1afcfed355823864 | PASSED
-  [XMACC_V, two rows of the hostile view, n=112 total] med=0.001092069 s  min=0.001071464  max=0.001488066  CV=9.5%  (samples=31, inner-reps=8)
-  [XMACC_V, two rows of the hostile view, n=112 analysis] med=0.000014945 s  min=0.000014633  max=0.000018200  CV=4.7%  (samples=31, inner-reps=619)
-  [copy-and-return total] med=0.000115172 s  min=0.000109428  max=0.000525204  CV=55.5%  (samples=31, inner-reps=24)
-  [copy-and-return analysis] med=0.000000037 s  min=0.000000036  max=0.000000129  CV=40.1%  (samples=31, inner-reps=20000)
+  [XMACC_V, two rows of the hostile view, n=112 total] med=0.001028404 s  min=0.001022771  max=0.001076561  CV=0.9%  (samples=31, inner-reps=9)
+  [XMACC_V, two rows of the hostile view, n=112 analysis] med=0.000013145 s  min=0.000013121  max=0.000013681  CV=0.7%  (samples=31, inner-reps=704)
+  [copy-and-return total] med=0.000101296 s  min=0.000100781  max=0.000102095  CV=0.5%  (samples=31, inner-reps=102)
+  [copy-and-return analysis] med=0.000000036 s  min=0.000000032  max=0.000000040  CV=4.6%  (samples=31, inner-reps=20000)
 [XMACC_V, two rows of the hostile view, n=224] repetitions 2048 | per repetition: 28 groups of eight, 0 entries, 448 strided elements, instruction gas 1611 | gas 10090523 | static count + memory 10090523: equal | copy-and-return gas 6766610 | fingerprint 9c604778dc7beb85 | PASSED
-  [XMACC_V, two rows of the hostile view, n=224 total] med=0.002094279 s  min=0.001981451  max=0.003150682  CV=11.5%  (samples=31, inner-reps=6)
-  [XMACC_V, two rows of the hostile view, n=224 analysis] med=0.000014820 s  min=0.000014653  max=0.000017972  CV=3.9%  (samples=31, inner-reps=612)
-  [copy-and-return total] med=0.000111079 s  min=0.000109615  max=0.000159533  CV=8.0%  (samples=31, inner-reps=30)
-  [copy-and-return analysis] med=0.000000037 s  min=0.000000036  max=0.000000042  CV=3.4%  (samples=31, inner-reps=20000)
+  [XMACC_V, two rows of the hostile view, n=224 total] med=0.001860581 s  min=0.001849316  max=0.001908018  CV=0.6%  (samples=31, inner-reps=6)
+  [XMACC_V, two rows of the hostile view, n=224 analysis] med=0.000013145 s  min=0.000013121  max=0.000013577  CV=0.6%  (samples=31, inner-reps=706)
+  [copy-and-return total] med=0.000101218 s  min=0.000100560  max=0.000102130  CV=0.6%  (samples=31, inner-reps=102)
+  [copy-and-return analysis] med=0.000000036 s  min=0.000000032  max=0.000000038  CV=3.5%  (samples=31, inner-reps=20000)
 [XMACC_V, two rows of the hostile view, n=448] repetitions 2048 | per repetition: 56 groups of eight, 0 entries, 896 strided elements, instruction gas 3179 | gas 13301787 | static count + memory 13301787: equal | copy-and-return gas 6766610 | fingerprint 02427b7d8b4584c9 | PASSED
-  [XMACC_V, two rows of the hostile view, n=448 total] med=0.004011562 s  min=0.003677014  max=0.006260444  CV=11.7%  (samples=31, inner-reps=3)
-  [XMACC_V, two rows of the hostile view, n=448 analysis] med=0.000014911 s  min=0.000014692  max=0.000024081  CV=11.0%  (samples=31, inner-reps=605)
-  [copy-and-return total] med=0.000116559 s  min=0.000109448  max=0.000161643  CV=11.6%  (samples=31, inner-reps=19)
-  [copy-and-return analysis] med=0.000000037 s  min=0.000000036  max=0.000000040  CV=2.6%  (samples=31, inner-reps=15749)
+  [XMACC_V, two rows of the hostile view, n=448 total] med=0.003432660 s  min=0.003412529  max=0.003469577  CV=0.3%  (samples=31, inner-reps=3)
+  [XMACC_V, two rows of the hostile view, n=448 analysis] med=0.000013146 s  min=0.000013120  max=0.000013526  CV=0.6%  (samples=31, inner-reps=703)
+  [copy-and-return total] med=0.000101379 s  min=0.000100501  max=0.000102244  CV=0.6%  (samples=31, inner-reps=102)
+  [copy-and-return analysis] med=0.000000036 s  min=0.000000033  max=0.000000039  CV=3.7%  (samples=31, inner-reps=20000)
 [XMACC_V, one row of the hostile view and one unit-stride row, n=448] repetitions 2048 | per repetition: 56 groups of eight, 0 entries, 448 strided elements, instruction gas 1835 | gas 10555946 | static count + memory 10555946: equal | copy-and-return gas 6773281 | fingerprint 811cc0d05a35bfaa | PASSED
-  [XMACC_V, one row of the hostile view and one unit-stride row, n=448 total] med=0.002839548 s  min=0.002742000  max=0.004044698  CV=9.5%  (samples=31, inner-reps=4)
-  [XMACC_V, one row of the hostile view and one unit-stride row, n=448 analysis] med=0.000014971 s  min=0.000014820  max=0.000018739  CV=4.4%  (samples=31, inner-reps=614)
-  [copy-and-return total] med=0.000115805 s  min=0.000110214  max=0.000203056  CV=13.3%  (samples=31, inner-reps=27)
-  [copy-and-return analysis] med=0.000000038 s  min=0.000000036  max=0.000000044  CV=4.8%  (samples=31, inner-reps=20000)
+  [XMACC_V, one row of the hostile view and one unit-stride row, n=448 total] med=0.002457432 s  min=0.002439310  max=0.002495470  CV=0.5%  (samples=31, inner-reps=4)
+  [XMACC_V, one row of the hostile view and one unit-stride row, n=448 analysis] med=0.000013149 s  min=0.000013147  max=0.000013705  CV=0.7%  (samples=31, inner-reps=675)
+  [copy-and-return total] med=0.000102145 s  min=0.000099028  max=0.000102559  CV=1.5%  (samples=31, inner-reps=103)
+  [copy-and-return analysis] med=0.000000037 s  min=0.000000033  max=0.000000039  CV=3.4%  (samples=31, inner-reps=20000)
 ---- XMATMUL ----
 [XMATMUL, unit stride, 1 row x 1 row, n=8] repetitions 4096 | per repetition: 1 groups of eight, 1 entries, 0 strided elements, instruction gas 61 | gas 286765 | static count + memory 286765: equal | copy-and-return gas 45 | fingerprint 1711e89dc8d983c1 | PASSED
-  [XMATMUL, unit stride, 1 row x 1 row, n=8 total] med=0.001023253 s  min=0.000997470  max=0.001638386  CV=13.6%  (samples=31, inner-reps=10)
-  [XMATMUL, unit stride, 1 row x 1 row, n=8 analysis] med=0.000022674 s  min=0.000022437  max=0.000032997  CV=11.3%  (samples=31, inner-reps=419)
-  [copy-and-return total] med=0.000000067 s  min=0.000000064  max=0.000000082  CV=4.7%  (samples=31, inner-reps=908)
-  [copy-and-return analysis] med=0.000000038 s  min=0.000000036  max=0.000000157  CV=50.3%  (samples=31, inner-reps=20000)
+  [XMATMUL, unit stride, 1 row x 1 row, n=8 total] med=0.000903116 s  min=0.000895382  max=0.000949107  CV=1.0%  (samples=31, inner-reps=11)
+  [XMATMUL, unit stride, 1 row x 1 row, n=8 analysis] med=0.000020174 s  min=0.000020170  max=0.000021155  CV=0.9%  (samples=31, inner-reps=429)
+  [copy-and-return total] med=0.000000066 s  min=0.000000060  max=0.000000069  CV=3.7%  (samples=31, inner-reps=20000)
+  [copy-and-return analysis] med=0.000000035 s  min=0.000000034  max=0.000000037  CV=1.9%  (samples=31, inner-reps=20000)
 [XMATMUL, unit stride, 1 row x 1 row, n=64] repetitions 3571 | per repetition: 8 groups of eight, 1 entries, 0 strided elements, instruction gas 117 | gas 450027 | static count + memory 450027: equal | copy-and-return gas 81 | fingerprint bae86a860871527b | PASSED
-  [XMATMUL, unit stride, 1 row x 1 row, n=64 total] med=0.001052521 s  min=0.001033774  max=0.001223184  CV=3.4%  (samples=31, inner-reps=9)
-  [XMATMUL, unit stride, 1 row x 1 row, n=64 analysis] med=0.000019849 s  min=0.000019639  max=0.000024414  CV=5.5%  (samples=31, inner-reps=471)
-  [copy-and-return total] med=0.000000071 s  min=0.000000069  max=0.000000085  CV=4.4%  (samples=31, inner-reps=3083)
-  [copy-and-return analysis] med=0.000000037 s  min=0.000000036  max=0.000000042  CV=2.9%  (samples=31, inner-reps=20000)
+  [XMATMUL, unit stride, 1 row x 1 row, n=64 total] med=0.000926069 s  min=0.000917463  max=0.000933937  CV=0.4%  (samples=31, inner-reps=11)
+  [XMATMUL, unit stride, 1 row x 1 row, n=64 analysis] med=0.000017607 s  min=0.000017604  max=0.000018430  CV=0.8%  (samples=31, inner-reps=525)
+  [copy-and-return total] med=0.000000068 s  min=0.000000062  max=0.000000070  CV=4.0%  (samples=31, inner-reps=20000)
+  [copy-and-return analysis] med=0.000000036 s  min=0.000000035  max=0.000000038  CV=1.4%  (samples=31, inner-reps=20000)
 [XMATMUL, unit stride, 4 rows x 1 row, n=8] repetitions 3000 | per repetition: 4 groups of eight, 4 entries, 0 strided elements, instruction gas 115 | gas 372060 | static count + memory 372060: equal | copy-and-return gas 60 | fingerprint 4b06856d032ed784 | PASSED
-  [XMATMUL, unit stride, 4 rows x 1 row, n=8 total] med=0.000869531 s  min=0.000851480  max=0.001409368  CV=13.6%  (samples=31, inner-reps=12)
-  [XMATMUL, unit stride, 4 rows x 1 row, n=8 analysis] med=0.000016446 s  min=0.000016346  max=0.000020823  CV=6.7%  (samples=31, inner-reps=416)
-  [copy-and-return total] med=0.000000071 s  min=0.000000064  max=0.000000104  CV=13.0%  (samples=31, inner-reps=3322)
-  [copy-and-return analysis] med=0.000000037 s  min=0.000000036  max=0.000000055  CV=12.5%  (samples=31, inner-reps=20000)
+  [XMATMUL, unit stride, 4 rows x 1 row, n=8 total] med=0.000763803 s  min=0.000759655  max=0.000771219  CV=0.4%  (samples=31, inner-reps=13)
+  [XMATMUL, unit stride, 4 rows x 1 row, n=8 analysis] med=0.000014680 s  min=0.000014678  max=0.000015369  CV=0.8%  (samples=31, inner-reps=630)
+  [copy-and-return total] med=0.000000067 s  min=0.000000061  max=0.000000070  CV=3.9%  (samples=31, inner-reps=20000)
+  [copy-and-return analysis] med=0.000000036 s  min=0.000000035  max=0.000000038  CV=2.0%  (samples=31, inner-reps=20000)
 [XMATMUL, unit stride, 10 rows x 1 row, n=32] repetitions 1363 | per repetition: 40 groups of eight, 10 entries, 0 strided elements, instruction gas 463 | gas 643530 | static count + memory 643530: equal | copy-and-return gas 194 | fingerprint 061fb9edcddace99 | PASSED
-  [XMATMUL, unit stride, 10 rows x 1 row, n=32 total] med=0.000754987 s  min=0.000735975  max=0.000889940  CV=5.2%  (samples=31, inner-reps=14)
-  [XMATMUL, unit stride, 10 rows x 1 row, n=32 analysis] med=0.000007510 s  min=0.000007462  max=0.000009429  CV=5.6%  (samples=31, inner-reps=1155)
-  [copy-and-return total] med=0.000000079 s  min=0.000000076  max=0.000000096  CV=5.4%  (samples=31, inner-reps=2716)
-  [copy-and-return analysis] med=0.000000039 s  min=0.000000036  max=0.000000082  CV=31.0%  (samples=31, inner-reps=20000)
+  [XMATMUL, unit stride, 10 rows x 1 row, n=32 total] med=0.000688597 s  min=0.000681069  max=0.000697804  CV=0.4%  (samples=31, inner-reps=15)
+  [XMATMUL, unit stride, 10 rows x 1 row, n=32 analysis] med=0.000006720 s  min=0.000006718  max=0.000007118  CV=1.0%  (samples=31, inner-reps=1327)
+  [copy-and-return total] med=0.000000075 s  min=0.000000068  max=0.000000078  CV=3.5%  (samples=31, inner-reps=20000)
+  [copy-and-return analysis] med=0.000000035 s  min=0.000000034  max=0.000000037  CV=2.1%  (samples=31, inner-reps=20000)
 [XMATMUL, unit stride, 32 rows x 1 row, n=784] repetitions 45 | per repetition: 3136 groups of eight, 32 entries, 0 strided elements, instruction gas 25451 | gas 1160851 | static count + memory 1160851: equal | copy-and-return gas 15151 | fingerprint 30eba5a2d8a1915d | PASSED
-  [XMATMUL, unit stride, 32 rows x 1 row, n=784 total] med=0.000919923 s  min=0.000911037  max=0.001288332  CV=7.6%  (samples=31, inner-reps=10)
-  [XMATMUL, unit stride, 32 rows x 1 row, n=784 analysis] med=0.000000300 s  min=0.000000293  max=0.000000356  CV=3.5%  (samples=31, inner-reps=18692)
-  [copy-and-return total] med=0.000001861 s  min=0.000001668  max=0.000007224  CV=45.7%  (samples=31, inner-reps=917)
-  [copy-and-return analysis] med=0.000000038 s  min=0.000000036  max=0.000000058  CV=14.7%  (samples=31, inner-reps=20000)
+  [XMATMUL, unit stride, 32 rows x 1 row, n=784 total] med=0.000850363 s  min=0.000841274  max=0.000857008  CV=0.4%  (samples=31, inner-reps=12)
+  [XMATMUL, unit stride, 32 rows x 1 row, n=784 analysis] med=0.000000263 s  min=0.000000257  max=0.000000285  CV=1.8%  (samples=31, inner-reps=20000)
+  [copy-and-return total] med=0.000001592 s  min=0.000001533  max=0.000001603  CV=1.2%  (samples=31, inner-reps=6189)
+  [copy-and-return analysis] med=0.000000036 s  min=0.000000034  max=0.000000037  CV=3.0%  (samples=31, inner-reps=20000)
 [XMATMUL, unit stride, 128 rows x 1 row, n=64] repetitions 95 | per repetition: 1024 groups of eight, 128 entries, 0 strided elements, instruction gas 9515 | gas 909105 | static count + memory 909105: equal | copy-and-return gas 4325 | fingerprint 8f214c970aa44fc4 | PASSED
-  [XMATMUL, unit stride, 128 rows x 1 row, n=64 total] med=0.000719314 s  min=0.000709950  max=0.000890988  CV=5.9%  (samples=31, inner-reps=14)
-  [XMATMUL, unit stride, 128 rows x 1 row, n=64 analysis] med=0.000000572 s  min=0.000000566  max=0.000000753  CV=7.1%  (samples=31, inner-reps=14185)
-  [copy-and-return total] med=0.000000343 s  min=0.000000335  max=0.000000380  CV=3.7%  (samples=31, inner-reps=1364)
-  [copy-and-return analysis] med=0.000000037 s  min=0.000000036  max=0.000000053  CV=11.4%  (samples=31, inner-reps=20000)
+  [XMATMUL, unit stride, 128 rows x 1 row, n=64 total] med=0.000676669 s  min=0.000672195  max=0.000708149  CV=1.1%  (samples=31, inner-reps=15)
+  [XMATMUL, unit stride, 128 rows x 1 row, n=64 analysis] med=0.000000505 s  min=0.000000505  max=0.000000548  CV=1.5%  (samples=31, inner-reps=14663)
+  [copy-and-return total] med=0.000000297 s  min=0.000000276  max=0.000000304  CV=2.2%  (samples=31, inner-reps=14642)
+  [copy-and-return analysis] med=0.000000036 s  min=0.000000034  max=0.000000037  CV=1.8%  (samples=31, inner-reps=20000)
 [XMATMUL, unit stride, 128 rows x 1 row, n=256] repetitions 32 | per repetition: 4096 groups of eight, 128 entries, 0 strided elements, instruction gas 34091 | gas 1113399 | static count + memory 1113399: equal | copy-and-return gas 22199 | fingerprint 15a616a53174b0af | PASSED
-  [XMATMUL, unit stride, 128 rows x 1 row, n=256 total] med=0.000875586 s  min=0.000869733  max=0.001109807  CV=6.7%  (samples=31, inner-reps=10)
-  [XMATMUL, unit stride, 128 rows x 1 row, n=256 analysis] med=0.000000228 s  min=0.000000225  max=0.000000290  CV=7.4%  (samples=31, inner-reps=20000)
-  [copy-and-return total] med=0.000002242 s  min=0.000002191  max=0.000002632  CV=3.9%  (samples=31, inner-reps=430)
-  [copy-and-return analysis] med=0.000000038 s  min=0.000000036  max=0.000000042  CV=4.6%  (samples=31, inner-reps=20000)
+  [XMATMUL, unit stride, 128 rows x 1 row, n=256 total] med=0.000819968 s  min=0.000813698  max=0.000823644  CV=0.3%  (samples=31, inner-reps=13)
+  [XMATMUL, unit stride, 128 rows x 1 row, n=256 analysis] med=0.000000200 s  min=0.000000199  max=0.000000220  CV=2.1%  (samples=31, inner-reps=20000)
+  [copy-and-return total] med=0.000002101 s  min=0.000002021  max=0.000002114  CV=1.1%  (samples=31, inner-reps=4801)
+  [copy-and-return analysis] med=0.000000037 s  min=0.000000034  max=0.000000039  CV=3.8%  (samples=31, inner-reps=20000)
 [XMATMUL, unit stride, 128 rows x 1 row, n=784] repetitions 11 | per repetition: 12544 groups of eight, 128 entries, 0 strided elements, instruction gas 101675 | gas 1238144 | static count + memory 1238144: equal | copy-and-return gas 119620 | fingerprint 712cf0d46ffcd52c | PASSED
-  [XMATMUL, unit stride, 128 rows x 1 row, n=784 total] med=0.000912872 s  min=0.000890687  max=0.001282410  CV=7.7%  (samples=31, inner-reps=12)
-  [XMATMUL, unit stride, 128 rows x 1 row, n=784 analysis] med=0.000000108 s  min=0.000000105  max=0.000000146  CV=8.9%  (samples=31, inner-reps=20000)
-  [copy-and-return total] med=0.000006058 s  min=0.000005950  max=0.000006747  CV=2.4%  (samples=31, inner-reps=359)
-  [copy-and-return analysis] med=0.000000037 s  min=0.000000036  max=0.000000040  CV=2.9%  (samples=31, inner-reps=20000)
+  [XMATMUL, unit stride, 128 rows x 1 row, n=784 total] med=0.000833757 s  min=0.000828556  max=0.000871915  CV=1.0%  (samples=31, inner-reps=12)
+  [XMATMUL, unit stride, 128 rows x 1 row, n=784 analysis] med=0.000000085 s  min=0.000000084  max=0.000000091  CV=1.9%  (samples=31, inner-reps=20000)
+  [copy-and-return total] med=0.000006073 s  min=0.000005930  max=0.000006140  CV=0.8%  (samples=31, inner-reps=1534)
+  [copy-and-return analysis] med=0.000000037 s  min=0.000000035  max=0.000000039  CV=3.6%  (samples=31, inner-reps=20000)
 [XMATMUL, unit stride, 128 rows x 1 row, n=2048] repetitions 4 | per repetition: 32768 groups of eight, 128 entries, 0 strided elements, instruction gas 263467 | gas 1694320 | static count + memory 1694320: equal | copy-and-return gas 640416 | fingerprint e758359b66f401e3 | PASSED
-  [XMATMUL, unit stride, 128 rows x 1 row, n=2048 total] med=0.000857930 s  min=0.000845788  max=0.000989143  CV=4.3%  (samples=31, inner-reps=12)
-  [XMATMUL, unit stride, 128 rows x 1 row, n=2048 analysis] med=0.000000054 s  min=0.000000052  max=0.000000083  CV=15.3%  (samples=31, inner-reps=20000)
-  [copy-and-return total] med=0.000017102 s  min=0.000016789  max=0.000027367  CV=10.6%  (samples=31, inner-reps=186)
-  [copy-and-return analysis] med=0.000000037 s  min=0.000000036  max=0.000000055  CV=14.5%  (samples=31, inner-reps=20000)
+  [XMATMUL, unit stride, 128 rows x 1 row, n=2048 total] med=0.000787657 s  min=0.000780917  max=0.000819023  CV=1.1%  (samples=31, inner-reps=13)
+  [XMATMUL, unit stride, 128 rows x 1 row, n=2048 analysis] med=0.000000052 s  min=0.000000051  max=0.000000053  CV=1.4%  (samples=31, inner-reps=20000)
+  [copy-and-return total] med=0.000015724 s  min=0.000015309  max=0.000016014  CV=0.8%  (samples=31, inner-reps=580)
+  [copy-and-return analysis] med=0.000000037 s  min=0.000000034  max=0.000000040  CV=3.8%  (samples=31, inner-reps=20000)
 [XMATMUL, unit stride, 2 x 2 rows (one matrix), n=8] repetitions 3000 | per repetition: 4 groups of eight, 4 entries, 0 strided elements, instruction gas 115 | gas 372042 | static count + memory 372042: equal | copy-and-return gas 42 | fingerprint 32dc9a5de4145013 | PASSED
-  [XMATMUL, unit stride, 2 x 2 rows (one matrix), n=8 total] med=0.000850702 s  min=0.000829801  max=0.001359785  CV=11.2%  (samples=31, inner-reps=13)
-  [XMATMUL, unit stride, 2 x 2 rows (one matrix), n=8 analysis] med=0.000016546 s  min=0.000016329  max=0.000020437  CV=5.6%  (samples=31, inner-reps=566)
-  [copy-and-return total] med=0.000000068 s  min=0.000000064  max=0.000000122  CV=14.6%  (samples=31, inner-reps=3185)
-  [copy-and-return analysis] med=0.000000038 s  min=0.000000036  max=0.000000058  CV=9.9%  (samples=31, inner-reps=20000)
+  [XMATMUL, unit stride, 2 x 2 rows (one matrix), n=8 total] med=0.000757435 s  min=0.000748435  max=0.000804020  CV=1.3%  (samples=31, inner-reps=13)
+  [XMATMUL, unit stride, 2 x 2 rows (one matrix), n=8 analysis] med=0.000014680 s  min=0.000014678  max=0.000015438  CV=0.9%  (samples=31, inner-reps=607)
+  [copy-and-return total] med=0.000000065 s  min=0.000000059  max=0.000000068  CV=3.7%  (samples=31, inner-reps=20000)
+  [copy-and-return analysis] med=0.000000036 s  min=0.000000035  max=0.000000036  CV=1.2%  (samples=31, inner-reps=20000)
 [XMATMUL, unit stride, 8 x 8 rows (one matrix), n=128] repetitions 114 | per repetition: 1024 groups of eight, 64 entries, 0 strided elements, instruction gas 8875 | gas 1013408 | static count + memory 1013408: equal | copy-and-return gas 632 | fingerprint 7b3cd880a7009e12 | PASSED
-  [XMATMUL, unit stride, 8 x 8 rows (one matrix), n=128 total] med=0.000828449 s  min=0.000804780  max=0.001010299  CV=5.2%  (samples=31, inner-reps=13)
-  [XMATMUL, unit stride, 8 x 8 rows (one matrix), n=128 analysis] med=0.000000695 s  min=0.000000687  max=0.000000799  CV=3.1%  (samples=31, inner-reps=11211)
-  [copy-and-return total] med=0.000000136 s  min=0.000000133  max=0.000000156  CV=4.1%  (samples=31, inner-reps=3122)
-  [copy-and-return analysis] med=0.000000037 s  min=0.000000036  max=0.000000046  CV=5.5%  (samples=31, inner-reps=20000)
+  [XMATMUL, unit stride, 8 x 8 rows (one matrix), n=128 total] med=0.000759194 s  min=0.000752607  max=0.000764805  CV=0.4%  (samples=31, inner-reps=14)
+  [XMATMUL, unit stride, 8 x 8 rows (one matrix), n=128 analysis] med=0.000000618 s  min=0.000000618  max=0.000000667  CV=1.4%  (samples=31, inner-reps=12211)
+  [copy-and-return total] med=0.000000133 s  min=0.000000122  max=0.000000136  CV=2.8%  (samples=31, inner-reps=20000)
+  [copy-and-return analysis] med=0.000000036 s  min=0.000000035  max=0.000000037  CV=1.4%  (samples=31, inner-reps=20000)
 [XMATMUL, unit stride, 16 x 16 rows (one matrix), n=128] repetitions 29 | per repetition: 4096 groups of eight, 256 entries, 0 strided elements, instruction gas 35371 | gas 1027869 | static count + memory 1027869: equal | copy-and-return gas 1849 | fingerprint e31ac9a4be64a834 | PASSED
-  [XMATMUL, unit stride, 16 x 16 rows (one matrix), n=128 total] med=0.000811076 s  min=0.000798255  max=0.001337488  CV=18.8%  (samples=31, inner-reps=13)
-  [XMATMUL, unit stride, 16 x 16 rows (one matrix), n=128 analysis] med=0.000000207 s  min=0.000000205  max=0.000000291  CV=9.7%  (samples=31, inner-reps=19842)
-  [copy-and-return total] med=0.000000233 s  min=0.000000226  max=0.000000470  CV=22.3%  (samples=31, inner-reps=822)
-  [copy-and-return analysis] med=0.000000037 s  min=0.000000036  max=0.000000047  CV=6.3%  (samples=31, inner-reps=20000)
+  [XMATMUL, unit stride, 16 x 16 rows (one matrix), n=128 total] med=0.000754220 s  min=0.000743959  max=0.000758421  CV=0.4%  (samples=31, inner-reps=14)
+  [XMATMUL, unit stride, 16 x 16 rows (one matrix), n=128 analysis] med=0.000000184 s  min=0.000000175  max=0.000000196  CV=2.1%  (samples=31, inner-reps=20000)
+  [copy-and-return total] med=0.000000204 s  min=0.000000189  max=0.000000207  CV=1.7%  (samples=31, inner-reps=20000)
+  [copy-and-return analysis] med=0.000000036 s  min=0.000000035  max=0.000000037  CV=1.9%  (samples=31, inner-reps=20000)
 [XMATMUL, unit stride, 32 x 32 rows (one matrix), n=128] repetitions 7 | per repetition: 16384 groups of eight, 1024 entries, 0 strided elements, instruction gas 141355 | gas 997385 | static count + memory 997385: equal | copy-and-return gas 7837 | fingerprint 087ca303282dbccb | PASSED
-  [XMATMUL, unit stride, 32 x 32 rows (one matrix), n=128 total] med=0.000784324 s  min=0.000767138  max=0.000918624  CV=3.9%  (samples=31, inner-reps=14)
-  [XMATMUL, unit stride, 32 x 32 rows (one matrix), n=128 analysis] med=0.000000070 s  min=0.000000069  max=0.000000105  CV=11.9%  (samples=31, inner-reps=19647)
-  [copy-and-return total] med=0.000001272 s  min=0.000001256  max=0.000001367  CV=1.6%  (samples=31, inner-reps=1551)
-  [copy-and-return analysis] med=0.000000037 s  min=0.000000036  max=0.000000045  CV=5.3%  (samples=31, inner-reps=20000)
+  [XMATMUL, unit stride, 32 x 32 rows (one matrix), n=128 total] med=0.000724316 s  min=0.000719027  max=0.000736051  CV=0.5%  (samples=31, inner-reps=14)
+  [XMATMUL, unit stride, 32 x 32 rows (one matrix), n=128 analysis] med=0.000000078 s  min=0.000000065  max=0.000000085  CV=7.4%  (samples=31, inner-reps=20000)
+  [copy-and-return total] med=0.000001115 s  min=0.000001090  max=0.000001124  CV=0.7%  (samples=31, inner-reps=8765)
+  [copy-and-return analysis] med=0.000000036 s  min=0.000000034  max=0.000000038  CV=3.0%  (samples=31, inner-reps=20000)
 [XMATMUL, unit stride, 64 x 64 rows (one matrix), n=128] repetitions 1 | per repetition: 65536 groups of eight, 4096 entries, 0 strided elements, instruction gas 565291 | gas 622174 | static count + memory 622174: equal | copy-and-return gas 56874 | fingerprint 2b9fe26c0d6c53c2 | PASSED
-  [XMATMUL, unit stride, 64 x 64 rows (one matrix), n=128 total] med=0.000455148 s  min=0.000441706  max=0.000612404  CV=7.1%  (samples=31, inner-reps=24)
-  [XMATMUL, unit stride, 64 x 64 rows (one matrix), n=128 analysis] med=0.000000040 s  min=0.000000038  max=0.000000048  CV=6.0%  (samples=31, inner-reps=20000)
-  [copy-and-return total] med=0.000004276 s  min=0.000004231  max=0.000005698  CV=6.4%  (samples=31, inner-reps=1021)
-  [copy-and-return analysis] med=0.000000037 s  min=0.000000036  max=0.000000039  CV=2.2%  (samples=31, inner-reps=20000)
+  [XMATMUL, unit stride, 64 x 64 rows (one matrix), n=128 total] med=0.000418589 s  min=0.000415259  max=0.000437073  CV=1.1%  (samples=31, inner-reps=24)
+  [XMATMUL, unit stride, 64 x 64 rows (one matrix), n=128 analysis] med=0.000000038 s  min=0.000000037  max=0.000000038  CV=1.3%  (samples=31, inner-reps=20000)
+  [copy-and-return total] med=0.000004186 s  min=0.000004107  max=0.000004398  CV=1.1%  (samples=31, inner-reps=2114)
+  [copy-and-return analysis] med=0.000000036 s  min=0.000000033  max=0.000000038  CV=3.0%  (samples=31, inner-reps=20000)
 [XMATMUL, unit stride, 128 x 128 rows (one matrix), n=128] repetitions 1 | per repetition: 262144 groups of eight, 16384 entries, 0 strided elements, instruction gas 2261035 | gas 2908304 | static count + memory 2908304: equal | copy-and-return gas 647260 | fingerprint 158ad7fb3f5202b7 | PASSED
-  [XMATMUL, unit stride, 128 x 128 rows (one matrix), n=128 total] med=0.001806460 s  min=0.001774067  max=0.002314626  CV=6.2%  (samples=31, inner-reps=6)
-  [XMATMUL, unit stride, 128 x 128 rows (one matrix), n=128 analysis] med=0.000000039 s  min=0.000000038  max=0.000000047  CV=4.5%  (samples=31, inner-reps=14105)
-  [copy-and-return total] med=0.000018339 s  min=0.000018017  max=0.000030464  CV=12.7%  (samples=31, inner-reps=272)
-  [copy-and-return analysis] med=0.000000037 s  min=0.000000036  max=0.000000053  CV=7.4%  (samples=31, inner-reps=20000)
+  [XMATMUL, unit stride, 128 x 128 rows (one matrix), n=128 total] med=0.001675931 s  min=0.001657614  max=0.001714737  CV=0.8%  (samples=31, inner-reps=6)
+  [XMATMUL, unit stride, 128 x 128 rows (one matrix), n=128 analysis] med=0.000000038 s  min=0.000000037  max=0.000000039  CV=1.3%  (samples=31, inner-reps=20000)
+  [copy-and-return total] med=0.000017812 s  min=0.000017267  max=0.000018348  CV=1.2%  (samples=31, inner-reps=468)
+  [copy-and-return analysis] med=0.000000036 s  min=0.000000033  max=0.000000037  CV=3.8%  (samples=31, inner-reps=20000)
 [XMATMUL, unit stride, 64 x 64 rows (one matrix), n=8] repetitions 7 | per repetition: 4096 groups of eight, 4096 entries, 0 strided elements, instruction gas 73771 | gas 562262 | static count + memory 562262: equal | copy-and-return gas 45802 | fingerprint 501181be55fa7f71 | PASSED
-  [XMATMUL, unit stride, 64 x 64 rows (one matrix), n=8 total] med=0.000296288 s  min=0.000291935  max=0.000368405  CV=5.4%  (samples=31, inner-reps=34)
-  [XMATMUL, unit stride, 64 x 64 rows (one matrix), n=8 analysis] med=0.000000070 s  min=0.000000068  max=0.000000078  CV=2.5%  (samples=31, inner-reps=20000)
-  [copy-and-return total] med=0.000003995 s  min=0.000003921  max=0.000004127  CV=1.4%  (samples=31, inner-reps=514)
-  [copy-and-return analysis] med=0.000000037 s  min=0.000000036  max=0.000000040  CV=2.5%  (samples=31, inner-reps=20000)
+  [XMATMUL, unit stride, 64 x 64 rows (one matrix), n=8 total] med=0.000292892 s  min=0.000288033  max=0.000299589  CV=0.9%  (samples=31, inner-reps=35)
+  [XMATMUL, unit stride, 64 x 64 rows (one matrix), n=8 analysis] med=0.000000079 s  min=0.000000064  max=0.000000084  CV=7.4%  (samples=31, inner-reps=20000)
+  [copy-and-return total] med=0.000003862 s  min=0.000003778  max=0.000003891  CV=0.6%  (samples=31, inner-reps=2506)
+  [copy-and-return analysis] med=0.000000036 s  min=0.000000033  max=0.000000039  CV=3.5%  (samples=31, inner-reps=20000)
 [XMATMUL, unit stride, 32 x 32 rows (one matrix), n=16] repetitions 24 | per repetition: 2048 groups of eight, 1024 entries, 0 strided elements, instruction gas 26667 | gas 645694 | static count + memory 645694: equal | copy-and-return gas 5470 | fingerprint ef0c2a22eb08d0bf | PASSED
-  [XMATMUL, unit stride, 32 x 32 rows (one matrix), n=16 total] med=0.000427083 s  min=0.000413993  max=0.000505700  CV=4.6%  (samples=31, inner-reps=25)
-  [XMATMUL, unit stride, 32 x 32 rows (one matrix), n=16 analysis] med=0.000000181 s  min=0.000000177  max=0.000000199  CV=2.9%  (samples=31, inner-reps=10788)
-  [copy-and-return total] med=0.000001109 s  min=0.000001074  max=0.000001259  CV=4.1%  (samples=31, inner-reps=1505)
-  [copy-and-return analysis] med=0.000000037 s  min=0.000000036  max=0.000000046  CV=5.6%  (samples=31, inner-reps=20000)
+  [XMATMUL, unit stride, 32 x 32 rows (one matrix), n=16 total] med=0.000402900 s  min=0.000398565  max=0.000414778  CV=1.0%  (samples=31, inner-reps=25)
+  [XMATMUL, unit stride, 32 x 32 rows (one matrix), n=16 analysis] med=0.000000160 s  min=0.000000149  max=0.000000178  CV=3.2%  (samples=31, inner-reps=20000)
+  [copy-and-return total] med=0.000000917 s  min=0.000000883  max=0.000000923  CV=1.0%  (samples=31, inner-reps=10342)
+  [copy-and-return analysis] med=0.000000036 s  min=0.000000033  max=0.000000038  CV=3.4%  (samples=31, inner-reps=20000)
 [XMATMUL, unit stride, 32 x 32 rows (one matrix), n=64] repetitions 12 | per repetition: 8192 groups of eight, 1024 entries, 0 strided elements, instruction gas 75819 | gas 916396 | static count + memory 916396: equal | copy-and-return gas 6460 | fingerprint 60d7c5bc9bd41930 | PASSED
-  [XMATMUL, unit stride, 32 x 32 rows (one matrix), n=64 total] med=0.000699302 s  min=0.000691593  max=0.000941397  CV=6.1%  (samples=31, inner-reps=12)
-  [XMATMUL, unit stride, 32 x 32 rows (one matrix), n=64 analysis] med=0.000000115 s  min=0.000000113  max=0.000000117  CV=1.1%  (samples=31, inner-reps=20000)
-  [copy-and-return total] med=0.000001191 s  min=0.000001181  max=0.000001222  CV=0.8%  (samples=31, inner-reps=4857)
-  [copy-and-return analysis] med=0.000000037 s  min=0.000000036  max=0.000000039  CV=2.3%  (samples=31, inner-reps=20000)
+  [XMATMUL, unit stride, 32 x 32 rows (one matrix), n=64 total] med=0.000657229 s  min=0.000655296  max=0.000678206  CV=0.9%  (samples=31, inner-reps=15)
+  [XMATMUL, unit stride, 32 x 32 rows (one matrix), n=64 analysis] med=0.000000102 s  min=0.000000091  max=0.000000109  CV=4.3%  (samples=31, inner-reps=20000)
+  [copy-and-return total] med=0.000000987 s  min=0.000000961  max=0.000000993  CV=0.9%  (samples=31, inner-reps=7128)
+  [copy-and-return analysis] med=0.000000036 s  min=0.000000034  max=0.000000038  CV=3.3%  (samples=31, inner-reps=20000)
 [XMATMUL, unit stride, 32 x 32 rows (one matrix), n=512] repetitions 2 | per repetition: 65536 groups of eight, 1024 entries, 0 strided elements, instruction gas 534571 | gas 1086600 | static count + memory 1086600: equal | copy-and-return gas 17440 | fingerprint 2e615670f486cca9 | PASSED
-  [XMATMUL, unit stride, 32 x 32 rows (one matrix), n=512 total] med=0.000844535 s  min=0.000838394  max=0.001033659  CV=4.9%  (samples=31, inner-reps=12)
-  [XMATMUL, unit stride, 32 x 32 rows (one matrix), n=512 analysis] med=0.000000042 s  min=0.000000040  max=0.000000046  CV=2.7%  (samples=31, inner-reps=20000)
-  [copy-and-return total] med=0.000001868 s  min=0.000001849  max=0.000002716  CV=8.3%  (samples=31, inner-reps=2304)
-  [copy-and-return analysis] med=0.000000037 s  min=0.000000036  max=0.000000039  CV=2.0%  (samples=31, inner-reps=20000)
+  [XMATMUL, unit stride, 32 x 32 rows (one matrix), n=512 total] med=0.000786378 s  min=0.000779604  max=0.000823350  CV=1.1%  (samples=31, inner-reps=13)
+  [XMATMUL, unit stride, 32 x 32 rows (one matrix), n=512 analysis] med=0.000000042 s  min=0.000000041  max=0.000000042  CV=1.0%  (samples=31, inner-reps=20000)
+  [copy-and-return total] med=0.000001767 s  min=0.000001726  max=0.000001834  CV=1.0%  (samples=31, inner-reps=5292)
+  [copy-and-return analysis] med=0.000000036 s  min=0.000000033  max=0.000000038  CV=3.3%  (samples=31, inner-reps=20000)
 [XMATMUL, transposed view, 8 x 8 rows (one view), n=128] repetitions 52 | per repetition: 1024 groups of eight, 64 entries, 1024 strided elements, instruction gas 11947 | gas 622359 | static count + memory 622359: equal | copy-and-return gas 632 | fingerprint d3c57337ab9fbd9d | PASSED
-  [XMATMUL, transposed view, 8 x 8 rows (one view), n=128 total] med=0.000496938 s  min=0.000491535  max=0.000968981  CV=16.9%  (samples=31, inner-reps=21)
-  [XMATMUL, transposed view, 8 x 8 rows (one view), n=128 analysis] med=0.000000337 s  min=0.000000334  max=0.000000443  CV=6.4%  (samples=31, inner-reps=13141)
-  [copy-and-return total] med=0.000000131 s  min=0.000000128  max=0.000000145  CV=2.9%  (samples=31, inner-reps=1895)
-  [copy-and-return analysis] med=0.000000037 s  min=0.000000036  max=0.000000039  CV=2.1%  (samples=31, inner-reps=20000)
+  [XMATMUL, transposed view, 8 x 8 rows (one view), n=128 total] med=0.000484494 s  min=0.000481009  max=0.000511841  CV=1.2%  (samples=31, inner-reps=20)
+  [XMATMUL, transposed view, 8 x 8 rows (one view), n=128 analysis] med=0.000000298 s  min=0.000000298  max=0.000000321  CV=1.5%  (samples=31, inner-reps=20000)
+  [copy-and-return total] med=0.000000134 s  min=0.000000121  max=0.000000136  CV=2.8%  (samples=31, inner-reps=20000)
+  [copy-and-return analysis] med=0.000000036 s  min=0.000000035  max=0.000000037  CV=1.2%  (samples=31, inner-reps=20000)
 [XMATMUL, transposed view, 16 x 16 rows (one view), n=128] repetitions 18 | per repetition: 4096 groups of eight, 256 entries, 2048 strided elements, instruction gas 41515 | gas 749296 | static count + memory 749296: equal | copy-and-return gas 1849 | fingerprint 337dedf10ce7111c | PASSED
-  [XMATMUL, transposed view, 16 x 16 rows (one view), n=128 total] med=0.000582515 s  min=0.000578248  max=0.000712989  CV=4.4%  (samples=31, inner-reps=18)
-  [XMATMUL, transposed view, 16 x 16 rows (one view), n=128 analysis] med=0.000000150 s  min=0.000000148  max=0.000000162  CV=2.3%  (samples=31, inner-reps=20000)
-  [copy-and-return total] med=0.000000264 s  min=0.000000248  max=0.000000381  CV=11.8%  (samples=31, inner-reps=1870)
-  [copy-and-return analysis] med=0.000000039 s  min=0.000000036  max=0.000000081  CV=32.4%  (samples=31, inner-reps=20000)
+  [XMATMUL, transposed view, 16 x 16 rows (one view), n=128 total] med=0.000558990 s  min=0.000556583  max=0.000563274  CV=0.3%  (samples=31, inner-reps=18)
+  [XMATMUL, transposed view, 16 x 16 rows (one view), n=128 analysis] med=0.000000133 s  min=0.000000120  max=0.000000148  CV=4.1%  (samples=31, inner-reps=20000)
+  [copy-and-return total] med=0.000000228 s  min=0.000000216  max=0.000000232  CV=1.3%  (samples=31, inner-reps=20000)
+  [copy-and-return analysis] med=0.000000036 s  min=0.000000034  max=0.000000038  CV=2.2%  (samples=31, inner-reps=20000)
 [XMATMUL, transposed view, 32 x 32 rows (one view), n=128] repetitions 5 | per repetition: 16384 groups of eight, 1024 entries, 4096 strided elements, instruction gas 153643 | gas 776112 | static count + memory 776112: equal | copy-and-return gas 7837 | fingerprint 8610eacb6341b6e2 | PASSED
-  [XMATMUL, transposed view, 32 x 32 rows (one view), n=128 total] med=0.000598483 s  min=0.000592970  max=0.000746733  CV=4.4%  (samples=31, inner-reps=17)
-  [XMATMUL, transposed view, 32 x 32 rows (one view), n=128 analysis] med=0.000000061 s  min=0.000000059  max=0.000000069  CV=3.5%  (samples=31, inner-reps=20000)
-  [copy-and-return total] med=0.000001269 s  min=0.000001254  max=0.000001990  CV=10.2%  (samples=31, inner-reps=2115)
-  [copy-and-return analysis] med=0.000000037 s  min=0.000000036  max=0.000000039  CV=2.0%  (samples=31, inner-reps=20000)
+  [XMATMUL, transposed view, 32 x 32 rows (one view), n=128 total] med=0.000569056 s  min=0.000563905  max=0.000572721  CV=0.4%  (samples=31, inner-reps=18)
+  [XMATMUL, transposed view, 32 x 32 rows (one view), n=128 analysis] med=0.000000058 s  min=0.000000057  max=0.000000060  CV=1.1%  (samples=31, inner-reps=20000)
+  [copy-and-return total] med=0.000001117 s  min=0.000001096  max=0.000001136  CV=0.8%  (samples=31, inner-reps=7553)
+  [copy-and-return analysis] med=0.000000037 s  min=0.000000033  max=0.000000038  CV=3.3%  (samples=31, inner-reps=20000)
 [XMATMUL, transposed view, 64 x 64 rows (one view), n=128] repetitions 1 | per repetition: 65536 groups of eight, 4096 entries, 8192 strided elements, instruction gas 589867 | gas 646765 | static count + memory 646765: equal | copy-and-return gas 56874 | fingerprint ccb03926fe58c5a2 | PASSED
-  [XMATMUL, transposed view, 64 x 64 rows (one view), n=128 total] med=0.000463560 s  min=0.000459391  max=0.000563908  CV=4.0%  (samples=31, inner-reps=23)
-  [XMATMUL, transposed view, 64 x 64 rows (one view), n=128 analysis] med=0.000000042 s  min=0.000000040  max=0.000000045  CV=2.7%  (samples=31, inner-reps=20000)
-  [copy-and-return total] med=0.000004286 s  min=0.000004232  max=0.000005986  CV=7.0%  (samples=31, inner-reps=1155)
-  [copy-and-return analysis] med=0.000000037 s  min=0.000000036  max=0.000000044  CV=3.8%  (samples=31, inner-reps=20000)
+  [XMATMUL, transposed view, 64 x 64 rows (one view), n=128 total] med=0.000439134 s  min=0.000434693  max=0.000456304  CV=1.0%  (samples=31, inner-reps=23)
+  [XMATMUL, transposed view, 64 x 64 rows (one view), n=128 analysis] med=0.000000040 s  min=0.000000039  max=0.000000041  CV=1.5%  (samples=31, inner-reps=20000)
+  [copy-and-return total] med=0.000004186 s  min=0.000004095  max=0.000004402  CV=1.2%  (samples=31, inner-reps=2090)
+  [copy-and-return analysis] med=0.000000036 s  min=0.000000032  max=0.000000037  CV=3.5%  (samples=31, inner-reps=20000)
 [XMATMUL, transposed view, 32 x 32 rows (one view), n=32] repetitions 15 | per repetition: 4096 groups of eight, 1024 entries, 1024 strided elements, instruction gas 46123 | gas 697791 | static count + memory 697791: equal | copy-and-return gas 5796 | fingerprint 7472e828bf3dd227 | PASSED
-  [XMATMUL, transposed view, 32 x 32 rows (one view), n=32 total] med=0.000499523 s  min=0.000496645  max=0.000636784  CV=5.8%  (samples=31, inner-reps=18)
-  [XMATMUL, transposed view, 32 x 32 rows (one view), n=32 analysis] med=0.000000134 s  min=0.000000132  max=0.000000303  CV=21.5%  (samples=31, inner-reps=20000)
-  [copy-and-return total] med=0.000001129 s  min=0.000001099  max=0.000002708  CV=24.9%  (samples=31, inner-reps=1510)
-  [copy-and-return analysis] med=0.000000037 s  min=0.000000036  max=0.000000038  CV=1.8%  (samples=31, inner-reps=20000)
+  [XMATMUL, transposed view, 32 x 32 rows (one view), n=32 total] med=0.000480038 s  min=0.000476324  max=0.000504507  CV=1.2%  (samples=31, inner-reps=20)
+  [XMATMUL, transposed view, 32 x 32 rows (one view), n=32 analysis] med=0.000000119 s  min=0.000000111  max=0.000000131  CV=3.6%  (samples=31, inner-reps=20000)
+  [copy-and-return total] med=0.000000951 s  min=0.000000918  max=0.000000956  CV=0.9%  (samples=31, inner-reps=9700)
+  [copy-and-return analysis] med=0.000000036 s  min=0.000000034  max=0.000000037  CV=3.1%  (samples=31, inner-reps=20000)
 [XMATMUL, transposed view, 32 x 32 rows (one view), n=512] repetitions 1 | per repetition: 65536 groups of eight, 1024 entries, 16384 strided elements, instruction gas 583723 | gas 601187 | static count + memory 601187: equal | copy-and-return gas 17440 | fingerprint 86ec6400b2b0ac2a | PASSED
-  [XMATMUL, transposed view, 32 x 32 rows (one view), n=512 total] med=0.000464180 s  min=0.000454266  max=0.000782847  CV=16.0%  (samples=31, inner-reps=23)
-  [XMATMUL, transposed view, 32 x 32 rows (one view), n=512 analysis] med=0.000000042 s  min=0.000000041  max=0.000000054  CV=6.4%  (samples=31, inner-reps=11710)
-  [copy-and-return total] med=0.000001868 s  min=0.000001841  max=0.000001958  CV=1.7%  (samples=31, inner-reps=1033)
-  [copy-and-return analysis] med=0.000000037 s  min=0.000000036  max=0.000000048  CV=9.3%  (samples=31, inner-reps=20000)
+  [XMATMUL, transposed view, 32 x 32 rows (one view), n=512 total] med=0.000433709 s  min=0.000430613  max=0.000447541  CV=1.0%  (samples=31, inner-reps=23)
+  [XMATMUL, transposed view, 32 x 32 rows (one view), n=512 analysis] med=0.000000040 s  min=0.000000038  max=0.000000041  CV=1.3%  (samples=31, inner-reps=20000)
+  [copy-and-return total] med=0.000001766 s  min=0.000001731  max=0.000001825  CV=0.9%  (samples=31, inner-reps=5084)
+  [copy-and-return analysis] med=0.000000036 s  min=0.000000033  max=0.000000038  CV=3.2%  (samples=31, inner-reps=20000)
 [XMATMUL, 1 unit-stride row x 512 rows of the hostile view, n=56] repetitions 12 | per repetition: 3584 groups of eight, 512 entries, 28672 strided elements, instruction gas 119851 | gas 8322826 | static count + memory 8322826: equal | copy-and-return gas 6884506 | fingerprint cfa2ee3b075ff5de | PASSED
-  [XMATMUL, 1 unit-stride row x 512 rows of the hostile view, n=56 total] med=0.001288092 s  min=0.001261502  max=0.001569419  CV=4.1%  (samples=31, inner-reps=8)
-  [XMATMUL, 1 unit-stride row x 512 rows of the hostile view, n=56 analysis] med=0.000000119 s  min=0.000000117  max=0.000000127  CV=1.8%  (samples=31, inner-reps=17065)
-  [copy-and-return total] med=0.000116351 s  min=0.000110718  max=0.000125449  CV=2.9%  (samples=31, inner-reps=31)
-  [copy-and-return analysis] med=0.000000038 s  min=0.000000036  max=0.000000169  CV=55.2%  (samples=31, inner-reps=20000)
+  [XMATMUL, 1 unit-stride row x 512 rows of the hostile view, n=56 total] med=0.001300046 s  min=0.001290870  max=0.001313928  CV=0.4%  (samples=31, inner-reps=8)
+  [XMATMUL, 1 unit-stride row x 512 rows of the hostile view, n=56 analysis] med=0.000000110 s  min=0.000000099  max=0.000000119  CV=3.4%  (samples=31, inner-reps=20000)
+  [copy-and-return total] med=0.000101277 s  min=0.000099535  max=0.000101816  CV=0.8%  (samples=31, inner-reps=102)
+  [copy-and-return analysis] med=0.000000036 s  min=0.000000032  max=0.000000038  CV=3.8%  (samples=31, inner-reps=20000)
 [XMATMUL, 1 unit-stride row x 256 rows of the hostile view, n=112] repetitions 12 | per repetition: 3584 groups of eight, 256 entries, 28672 strided elements, instruction gas 117291 | gas 8234298 | static count + memory 8234298: equal | copy-and-return gas 6826698 | fingerprint 0468eecf18906bf5 | PASSED
-  [XMATMUL, 1 unit-stride row x 256 rows of the hostile view, n=112 total] med=0.001295911 s  min=0.001263610  max=0.001449739  CV=2.8%  (samples=31, inner-reps=8)
-  [XMATMUL, 1 unit-stride row x 256 rows of the hostile view, n=112 analysis] med=0.000000120 s  min=0.000000117  max=0.000000185  CV=9.7%  (samples=31, inner-reps=20000)
-  [copy-and-return total] med=0.000112800 s  min=0.000109738  max=0.000164339  CV=10.7%  (samples=31, inner-reps=26)
-  [copy-and-return analysis] med=0.000000037 s  min=0.000000036  max=0.000000047  CV=4.9%  (samples=31, inner-reps=20000)
+  [XMATMUL, 1 unit-stride row x 256 rows of the hostile view, n=112 total] med=0.001284286 s  min=0.001267363  max=0.001299297  CV=0.7%  (samples=31, inner-reps=8)
+  [XMATMUL, 1 unit-stride row x 256 rows of the hostile view, n=112 analysis] med=0.000000109 s  min=0.000000100  max=0.000000119  CV=4.0%  (samples=31, inner-reps=20000)
+  [copy-and-return total] med=0.000100047 s  min=0.000099194  max=0.000101988  CV=0.9%  (samples=31, inner-reps=104)
+  [copy-and-return analysis] med=0.000000036 s  min=0.000000032  max=0.000000039  CV=3.8%  (samples=31, inner-reps=20000)
 [XMATMUL, 1 unit-stride row x 128 rows of the hostile view, n=224] repetitions 12 | per repetition: 3584 groups of eight, 128 entries, 28672 strided elements, instruction gas 116011 | gas 8191395 | static count + memory 8191395: equal | copy-and-return gas 6799155 | fingerprint 79af17d8d351c36e | PASSED
-  [XMATMUL, 1 unit-stride row x 128 rows of the hostile view, n=224 total] med=0.001267578 s  min=0.001247827  max=0.001554606  CV=5.3%  (samples=31, inner-reps=8)
-  [XMATMUL, 1 unit-stride row x 128 rows of the hostile view, n=224 analysis] med=0.000000120 s  min=0.000000107  max=0.000000134  CV=4.2%  (samples=31, inner-reps=12049)
-  [copy-and-return total] med=0.000113881 s  min=0.000111309  max=0.000312104  CV=34.0%  (samples=31, inner-reps=40)
-  [copy-and-return analysis] med=0.000000037 s  min=0.000000036  max=0.000000041  CV=2.9%  (samples=31, inner-reps=20000)
+  [XMATMUL, 1 unit-stride row x 128 rows of the hostile view, n=224 total] med=0.001271639 s  min=0.001253947  max=0.001299081  CV=0.7%  (samples=31, inner-reps=8)
+  [XMATMUL, 1 unit-stride row x 128 rows of the hostile view, n=224 analysis] med=0.000000109 s  min=0.000000095  max=0.000000121  CV=4.8%  (samples=31, inner-reps=20000)
+  [copy-and-return total] med=0.000099959 s  min=0.000099130  max=0.000100554  CV=0.4%  (samples=31, inner-reps=104)
+  [copy-and-return analysis] med=0.000000036 s  min=0.000000033  max=0.000000037  CV=3.0%  (samples=31, inner-reps=20000)
 [XMATMUL, 1 unit-stride row x 64 rows of the hostile view, n=448] repetitions 12 | per repetition: 3584 groups of eight, 64 entries, 28672 strided elements, instruction gas 115371 | gas 8172384 | static count + memory 8172384: equal | copy-and-return gas 6787824 | fingerprint c70ace5a71699c42 | PASSED
-  [XMATMUL, 1 unit-stride row x 64 rows of the hostile view, n=448 total] med=0.001305729 s  min=0.001255661  max=0.001564927  CV=5.7%  (samples=31, inner-reps=9)
-  [XMATMUL, 1 unit-stride row x 64 rows of the hostile view, n=448 analysis] med=0.000000121 s  min=0.000000118  max=0.000000240  CV=18.1%  (samples=31, inner-reps=20000)
-  [copy-and-return total] med=0.000112435 s  min=0.000110434  max=0.000155425  CV=9.7%  (samples=31, inner-reps=32)
-  [copy-and-return analysis] med=0.000000037 s  min=0.000000036  max=0.000000053  CV=8.0%  (samples=31, inner-reps=20000)
+  [XMATMUL, 1 unit-stride row x 64 rows of the hostile view, n=448 total] med=0.001267978 s  min=0.001246362  max=0.001321829  CV=1.1%  (samples=31, inner-reps=8)
+  [XMATMUL, 1 unit-stride row x 64 rows of the hostile view, n=448 analysis] med=0.000000108 s  min=0.000000100  max=0.000000120  CV=4.6%  (samples=31, inner-reps=20000)
+  [copy-and-return total] med=0.000100536 s  min=0.000098984  max=0.000100991  CV=0.6%  (samples=31, inner-reps=100)
+  [copy-and-return analysis] med=0.000000037 s  min=0.000000032  max=0.000000039  CV=4.6%  (samples=31, inner-reps=20000)
 [XMATMUL, hostile view, 64 x 64 rows (one view), n=448] repetitions 2 | per repetition: 229376 groups of eight, 4096 entries, 28672 strided elements, instruction gas 1962027 | gas 11653242 | static count + memory 11653242: equal | copy-and-return gas 7729170 | fingerprint cd109cfbd30b2fda | PASSED
-  [XMATMUL, hostile view, 64 x 64 rows (one view), n=448 total] med=0.003377019 s  min=0.003273806  max=0.005312684  CV=10.6%  (samples=31, inner-reps=4)
-  [XMATMUL, hostile view, 64 x 64 rows (one view), n=448 analysis] med=0.000000042 s  min=0.000000040  max=0.000000098  CV=23.0%  (samples=31, inner-reps=7221)
-  [copy-and-return total] med=0.000123532 s  min=0.000118022  max=0.000144937  CV=4.3%  (samples=31, inner-reps=42)
-  [copy-and-return analysis] med=0.000000037 s  min=0.000000036  max=0.000000040  CV=2.7%  (samples=31, inner-reps=20000)
+  [XMATMUL, hostile view, 64 x 64 rows (one view), n=448 total] med=0.003054255 s  min=0.003020869  max=0.003141571  CV=0.9%  (samples=31, inner-reps=4)
+  [XMATMUL, hostile view, 64 x 64 rows (one view), n=448 analysis] med=0.000000042 s  min=0.000000041  max=0.000000042  CV=1.1%  (samples=31, inner-reps=20000)
+  [copy-and-return total] med=0.000107838 s  min=0.000106878  max=0.000111553  CV=0.9%  (samples=31, inner-reps=88)
+  [copy-and-return analysis] med=0.000000036 s  min=0.000000033  max=0.000000038  CV=4.3%  (samples=31, inner-reps=20000)
 ---- reference again at the end of the run (a check for drift of the machine during the run) ----
 [REF_STEP, PUSH MLOAD PUSH MLOAD MUL ADD, end of run, n=4096] repetitions 4096 | per repetition: 1 groups of eight, 0 entries, 0 strided elements, instruction gas 20 | gas 142139 | static count + memory 142139: equal | copy-and-return gas 60210 | fingerprint 704862d29ec889d0 | PASSED
-  [REF_STEP, PUSH MLOAD PUSH MLOAD MUL ADD, end of run, n=4096 total] med=0.000089493 s  min=0.000087953  max=0.000161333  CV=18.2%  (samples=31, inner-reps=107)
-  [REF_STEP, PUSH MLOAD PUSH MLOAD MUL ADD, end of run, n=4096 analysis] med=0.000019125 s  min=0.000018769  max=0.000026113  CV=8.2%  (samples=31, inner-reps=461)
-  [copy-and-return total] med=0.000004147 s  min=0.000003979  max=0.000006526  CV=12.5%  (samples=31, inner-reps=461)
-  [copy-and-return analysis] med=0.000000037 s  min=0.000000036  max=0.000000050  CV=7.7%  (samples=31, inner-reps=20000)
+  [REF_STEP, PUSH MLOAD PUSH MLOAD MUL ADD, end of run, n=4096 total] med=0.000085933 s  min=0.000085035  max=0.000091922  CV=1.4%  (samples=31, inner-reps=107)
+  [REF_STEP, PUSH MLOAD PUSH MLOAD MUL ADD, end of run, n=4096 analysis] med=0.000017050 s  min=0.000016979  max=0.000017985  CV=1.1%  (samples=31, inner-reps=525)
+  [copy-and-return total] med=0.000003841 s  min=0.000003836  max=0.000003885  CV=0.2%  (samples=31, inner-reps=240)
+  [copy-and-return analysis] med=0.000000037 s  min=0.000000033  max=0.000000038  CV=3.5%  (samples=31, inner-reps=20000)
 TIME OF ONE REPETITION = ((total - analysis) of the program minus (total - analysis) of its copy-and-return program) / repetitions; ms columns are medians for one call of the whole program
 instruction | variant | n | repetitions | groups | entries | strided | instruction gas | total ms | analysis ms | copy-return ms | compute ms | ns per repetition | ns per instruction gas
-REF_STEP | PUSH MLOAD PUSH MLOAD MUL ADD | 512 | 512 | 1 | 0 | 0 | 20 | 0.01445 | 0.00236 | 0.00370 | 0.00838 | 16.375 | 0.8187
-REF_STEP | PUSH MLOAD PUSH MLOAD MUL ADD | 4096 | 4096 | 1 | 0 | 0 | 20 | 0.08857 | 0.01883 | 0.00370 | 0.06605 | 16.125 | 0.8062
-REF_STEP | PUSH MLOAD PUSH MLOAD MUL ADD | 32768 | 32768 | 1 | 0 | 0 | 20 | 0.69653 | 0.14963 | 0.00370 | 0.54321 | 16.577 | 0.8289
-REF_OP | DUP, ADD | 0 | 16384 | 0 | 0 | 0 | 6 | 0.06007 | 0.02419 | 0.00003 | 0.03585 | 2.188 | 0.3647
-REF_OP | DUP, MUL | 0 | 16384 | 0 | 0 | 0 | 8 | 0.23125 | 0.02455 | 0.00003 | 0.20667 | 12.614 | 1.5768
-REF_OP | DUP, DUP, DUP, MULMOD, POP | 0 | 16384 | 0 | 0 | 0 | 19 | 1.08711 | 0.05157 | 0.00003 | 1.03552 | 63.203 | 3.3265
-REF_OP | PUSH, PUSH, KECCAK256 of one word, POP | 0 | 16384 | 0 | 0 | 0 | 44 | 4.49366 | 0.06607 | 0.00002 | 4.42757 | 270.237 | 6.1418
-REF_WALK | PUSH MLOAD POP, sequential words | 448 | 28672 | 0 | 0 | 0 | 8 | 0.22799 | 0.07130 | 0.04634 | 0.11036 | 3.849 | 0.4811
-REF_WALK | PUSH MLOAD POP, all addresses of the hostile view | 448 | 28672 | 0 | 0 | 0 | 8 | 0.34482 | 0.06647 | 0.11082 | 0.16754 | 5.843 | 0.7304
-XMACC | fixed price | 0 | 16384 | 1 | 0 | 0 | 11 | 0.27331 | 0.03108 | 0.00003 | 0.24220 | 14.783 | 1.3439
-XMACC_S | fixed price | 0 | 8192 | 1 | 0 | 8 | 14 | 0.33566 | 0.07392 | 0.00175 | 0.25998 | 31.736 | 2.2669
-XMACC_S | fixed price, hostile view | 0 | 8192 | 1 | 0 | 8 | 14 | 0.52096 | 0.07465 | 0.09985 | 0.34646 | 42.293 | 3.0209
-XRELU | fixed price | 0 | 16384 | 0 | 0 | 0 | 6 | 0.17266 | 0.01254 | 0.00003 | 0.16010 | 9.772 | 1.6286
-XSUM32 | fixed price | 0 | 16384 | 0 | 0 | 0 | 6 | 0.08871 | 0.03425 | 0.00003 | 0.05443 | 3.322 | 0.5537
-XPACK | fixed price | 0 | 16384 | 0 | 0 | 0 | 6 | 0.17078 | 0.01231 | 0.00002 | 0.15845 | 9.671 | 1.6118
-XGT_IMM | fixed price | 0 | 16384 | 0 | 0 | 0 | 6 | 0.21648 | 0.02110 | 0.00002 | 0.19536 | 11.924 | 1.9873
-XADD_IMM | fixed price | 0 | 16384 | 0 | 0 | 0 | 6 | 0.16986 | 0.01968 | 0.00007 | 0.15011 | 9.162 | 1.5270
-XSUB_IMM | fixed price | 0 | 16384 | 0 | 0 | 0 | 6 | 0.16541 | 0.01981 | 0.00003 | 0.14557 | 8.885 | 1.4809
-XMUL_IMM | fixed price | 0 | 16384 | 0 | 0 | 0 | 8 | 0.17899 | 0.02093 | 0.00003 | 0.15804 | 9.646 | 1.2057
-XTRANSPOSE | fixed price | 0 | 16384 | 0 | 0 | 0 | 10 | 0.34257 | 0.03692 | 0.00003 | 0.30563 | 18.654 | 1.8654
-XBCAST | fixed price | 0 | 16384 | 0 | 0 | 0 | 8 | 0.33630 | 0.10245 | 0.00003 | 0.23382 | 14.272 | 1.7839
-XGATHER | pseudo-random indices into 65536 elements | 8 | 8192 | 0 | 0 | 0 | 20 | 0.26329 | 0.05183 | 0.00388 | 0.20758 | 25.339 | 1.2669
-XGATHER | pseudo-random indices into 65536 elements | 64 | 2586 | 0 | 0 | 0 | 20 | 0.15242 | 0.01637 | 0.00389 | 0.13217 | 51.110 | 2.5555
-XGATHER | pseudo-random indices into 65536 elements | 512 | 380 | 0 | 0 | 0 | 20 | 0.08368 | 0.00242 | 0.00396 | 0.07730 | 203.415 | 10.1708
-XGATHER | pseudo-random indices into 65536 elements | 4096 | 64 | 0 | 0 | 0 | 20 | 0.13703 | 0.00047 | 0.00438 | 0.13218 | 2065.282 | 103.2641
-XMACC_N | groups of eight elements | 1 | 8192 | 1 | 0 | 0 | 11 | 0.28186 | 0.04499 | 0.00004 | 0.23683 | 28.910 | 2.6282
-XMACC_N | groups of eight elements | 2 | 8192 | 2 | 0 | 0 | 22 | 0.35174 | 0.04506 | 0.00005 | 0.30662 | 37.430 | 1.7014
-XMACC_N | groups of eight elements | 4 | 8192 | 4 | 0 | 0 | 44 | 0.48691 | 0.04503 | 0.00008 | 0.44181 | 53.932 | 1.2257
-XMACC_N | groups of eight elements | 8 | 8192 | 8 | 0 | 0 | 88 | 0.75399 | 0.04706 | 0.00013 | 0.70681 | 86.280 | 0.9805
-XMACC_N | groups of eight elements | 16 | 5769 | 16 | 0 | 0 | 176 | 0.90876 | 0.03325 | 0.00023 | 0.87528 | 151.721 | 0.8621
-XMACC_N | groups of eight elements | 32 | 3571 | 32 | 0 | 0 | 352 | 1.03686 | 0.01999 | 0.00085 | 1.01602 | 284.519 | 0.8083
-XMACC_N | groups of eight elements | 64 | 2027 | 64 | 0 | 0 | 704 | 1.12339 | 0.01100 | 0.00206 | 1.11034 | 547.773 | 0.7781
-XMACC_N | groups of eight elements | 98 | 1388 | 98 | 0 | 0 | 1078 | 1.16327 | 0.00759 | 0.00308 | 1.15261 | 830.411 | 0.7703
-XMACC_N | groups of eight elements | 128 | 1086 | 128 | 0 | 0 | 1408 | 1.18040 | 0.00600 | 0.00397 | 1.17043 | 1077.745 | 0.7654
-XMACC_N | groups of eight elements | 256 | 563 | 256 | 0 | 0 | 2816 | 1.22215 | 0.00312 | 0.00784 | 1.21118 | 2151.294 | 0.7640
-XMACC_N | groups of eight elements | 16384 | 12 | 16384 | 0 | 0 | 180224 | 1.79196 | 0.00012 | 0.09394 | 1.69790 | 141492.041 | 0.7851
-XMACC_N16 | words of sixteen elements | 1 | 8192 | 2 | 0 | 0 | 22 | 0.38939 | 0.04505 | 0.00004 | 0.34431 | 42.030 | 1.9104
-XMACC_N16 | words of sixteen elements | 2 | 8192 | 4 | 0 | 0 | 44 | 0.55066 | 0.04525 | 0.00005 | 0.50536 | 61.690 | 1.4020
-XMACC_N16 | words of sixteen elements | 4 | 8192 | 8 | 0 | 0 | 88 | 0.86313 | 0.04499 | 0.00008 | 0.81806 | 99.861 | 1.1348
-XMACC_N16 | words of sixteen elements | 8 | 5769 | 16 | 0 | 0 | 176 | 1.01444 | 0.03321 | 0.00013 | 0.98111 | 170.065 | 0.9663
-XMACC_N16 | words of sixteen elements | 16 | 3571 | 32 | 0 | 0 | 352 | 1.14037 | 0.01991 | 0.00023 | 1.12022 | 313.700 | 0.8912
-XMACC_N16 | words of sixteen elements | 32 | 2027 | 64 | 0 | 0 | 704 | 1.23435 | 0.01103 | 0.00085 | 1.22246 | 603.090 | 0.8567
-XMACC_N16 | words of sixteen elements | 49 | 1388 | 98 | 0 | 0 | 1078 | 1.28096 | 0.00757 | 0.00160 | 1.27179 | 916.275 | 0.8500
-XMACC_N16 | words of sixteen elements | 64 | 1086 | 128 | 0 | 0 | 1408 | 1.30187 | 0.00604 | 0.00208 | 1.29374 | 1191.292 | 0.8461
-XMACC_N16 | words of sixteen elements | 128 | 563 | 256 | 0 | 0 | 2816 | 1.36118 | 0.00318 | 0.00411 | 1.35389 | 2404.783 | 0.8540
-XMACC_N16 | words of sixteen elements | 16384 | 12 | 32768 | 0 | 0 | 360448 | 3.74062 | 0.00012 | 0.09452 | 3.64598 | 303832.062 | 0.8429
-XMACC_V | two unit-stride rows | 8 | 8192 | 1 | 0 | 0 | 51 | 0.44977 | 0.06002 | 0.00004 | 0.38971 | 47.572 | 0.9328
-XMACC_V | two unit-stride rows | 16 | 8192 | 2 | 0 | 0 | 59 | 0.51959 | 0.05958 | 0.00005 | 0.45996 | 56.148 | 0.9517
-XMACC_V | two unit-stride rows | 32 | 8192 | 4 | 0 | 0 | 75 | 0.64935 | 0.05963 | 0.00008 | 0.58964 | 71.977 | 0.9597
-XMACC_V | two unit-stride rows | 64 | 7317 | 8 | 0 | 0 | 107 | 0.82342 | 0.05346 | 0.00013 | 0.76982 | 105.210 | 0.9833
-XMACC_V | two unit-stride rows | 128 | 5263 | 16 | 0 | 0 | 171 | 0.92275 | 0.03816 | 0.00023 | 0.88436 | 168.034 | 0.9827
-XMACC_V | two unit-stride rows | 256 | 3370 | 32 | 0 | 0 | 299 | 1.03240 | 0.02472 | 0.00086 | 1.00682 | 298.759 | 0.9992
-XMACC_V | two unit-stride rows | 512 | 1960 | 64 | 0 | 0 | 555 | 1.10708 | 0.01422 | 0.00203 | 1.09084 | 556.550 | 1.0028
-XMACC_V | two unit-stride rows | 784 | 1357 | 98 | 0 | 0 | 827 | 1.13453 | 0.00985 | 0.00305 | 1.12163 | 826.551 | 0.9995
-XMACC_V | two unit-stride rows | 1024 | 1067 | 128 | 0 | 0 | 1067 | 1.14699 | 0.00774 | 0.00394 | 1.13530 | 1064.013 | 0.9972
-XMACC_V | two unit-stride rows | 2048 | 558 | 256 | 0 | 0 | 2091 | 1.17203 | 0.00409 | 0.00764 | 1.16031 | 2079.401 | 0.9945
-XMACC_V | two unit-stride rows of a 1.5 MB matrix | 262144 | 12 | 32768 | 0 | 0 | 262187 | 3.24798 | 0.00014 | 0.09450 | 3.15334 | 262777.966 | 1.0023
-XMACC_V | two rows of a transposed view (stride 128 bytes) | 8 | 8108 | 1 | 0 | 16 | 99 | 0.52396 | 0.05942 | 0.00004 | 0.46450 | 57.289 | 0.5787
-XMACC_V | two rows of a transposed view (stride 128 bytes) | 16 | 6122 | 2 | 0 | 32 | 155 | 0.50172 | 0.04458 | 0.00006 | 0.45708 | 74.662 | 0.4817
-XMACC_V | two rows of a transposed view (stride 128 bytes) | 32 | 4109 | 4 | 0 | 64 | 267 | 0.47332 | 0.03000 | 0.00007 | 0.44325 | 107.873 | 0.4040
-XMACC_V | two rows of a transposed view (stride 128 bytes) | 64 | 2479 | 8 | 0 | 128 | 491 | 0.45532 | 0.01813 | 0.00013 | 0.43706 | 176.305 | 0.3591
-XMACC_V | two rows of a transposed view (stride 128 bytes) | 128 | 1382 | 16 | 0 | 256 | 939 | 0.44464 | 0.01000 | 0.00023 | 0.43441 | 314.333 | 0.3348
-XMACC_V | two rows of a transposed view (stride 128 bytes) | 256 | 733 | 32 | 0 | 512 | 1835 | 0.43713 | 0.00538 | 0.00083 | 0.43092 | 587.891 | 0.3204
-XMACC_V | two rows of a transposed view (stride 128 bytes) | 448 | 430 | 56 | 0 | 896 | 3179 | 0.45841 | 0.00318 | 0.00178 | 0.45345 | 1054.526 | 0.3317
-XMACC_V | two rows of a transposed view (stride 128 bytes) | 1024 | 256 | 128 | 0 | 2048 | 7211 | 0.60821 | 0.00192 | 0.00394 | 0.60235 | 2352.937 | 0.3263
-XMACC_V | two rows of the hostile view | 56 | 2048 | 7 | 0 | 112 | 435 | 0.60596 | 0.01487 | 0.11619 | 0.47490 | 231.884 | 0.5331
-XMACC_V | two rows of the hostile view | 112 | 2048 | 14 | 0 | 224 | 827 | 1.09207 | 0.01494 | 0.11514 | 0.96199 | 469.721 | 0.5680
-XMACC_V | two rows of the hostile view | 224 | 2048 | 28 | 0 | 448 | 1611 | 2.09428 | 0.01482 | 0.11104 | 1.96842 | 961.141 | 0.5966
-XMACC_V | two rows of the hostile view | 448 | 2048 | 56 | 0 | 896 | 3179 | 4.01156 | 0.01491 | 0.11652 | 3.88013 | 1894.594 | 0.5960
-XMACC_V | one row of the hostile view and one unit-stride row | 448 | 2048 | 56 | 0 | 448 | 1835 | 2.83955 | 0.01497 | 0.11577 | 2.70881 | 1322.661 | 0.7208
-XMATMUL | unit stride, 1 row x 1 row | 8 | 4096 | 1 | 1 | 0 | 61 | 1.02325 | 0.02267 | 0.00003 | 1.00055 | 244.275 | 4.0045
-XMATMUL | unit stride, 1 row x 1 row | 64 | 3571 | 8 | 1 | 0 | 117 | 1.05252 | 0.01985 | 0.00003 | 1.03264 | 289.173 | 2.4716
-XMATMUL | unit stride, 4 rows x 1 row | 8 | 3000 | 4 | 4 | 0 | 115 | 0.86953 | 0.01645 | 0.00003 | 0.85305 | 284.350 | 2.4726
-XMATMUL | unit stride, 10 rows x 1 row | 32 | 1363 | 40 | 10 | 0 | 463 | 0.75499 | 0.00751 | 0.00004 | 0.74744 | 548.376 | 1.1844
-XMATMUL | unit stride, 32 rows x 1 row | 784 | 45 | 3136 | 32 | 0 | 25451 | 0.91992 | 0.00030 | 0.00182 | 0.91780 | 20395.560 | 0.8014
-XMATMUL | unit stride, 128 rows x 1 row | 64 | 95 | 1024 | 128 | 0 | 9515 | 0.71931 | 0.00057 | 0.00031 | 0.71844 | 7562.475 | 0.7948
-XMATMUL | unit stride, 128 rows x 1 row | 256 | 32 | 4096 | 128 | 0 | 34091 | 0.87559 | 0.00023 | 0.00220 | 0.87315 | 27286.066 | 0.8004
-XMATMUL | unit stride, 128 rows x 1 row | 784 | 11 | 12544 | 128 | 0 | 101675 | 0.91287 | 0.00011 | 0.00602 | 0.90674 | 82431.164 | 0.8107
-XMATMUL | unit stride, 128 rows x 1 row | 2048 | 4 | 32768 | 128 | 0 | 263467 | 0.85793 | 0.00005 | 0.01707 | 0.84081 | 210202.834 | 0.7978
-XMATMUL | unit stride, 2 x 2 rows (one matrix) | 8 | 3000 | 4 | 4 | 0 | 115 | 0.85070 | 0.01655 | 0.00003 | 0.83412 | 278.042 | 2.4178
-XMATMUL | unit stride, 8 x 8 rows (one matrix) | 128 | 114 | 1024 | 64 | 0 | 8875 | 0.82845 | 0.00070 | 0.00010 | 0.82765 | 7260.129 | 0.8180
-XMATMUL | unit stride, 16 x 16 rows (one matrix) | 128 | 29 | 4096 | 256 | 0 | 35371 | 0.81108 | 0.00021 | 0.00020 | 0.81067 | 27954.274 | 0.7903
-XMATMUL | unit stride, 32 x 32 rows (one matrix) | 128 | 7 | 16384 | 1024 | 0 | 141355 | 0.78432 | 0.00007 | 0.00124 | 0.78302 | 111859.771 | 0.7913
-XMATMUL | unit stride, 64 x 64 rows (one matrix) | 128 | 1 | 65536 | 4096 | 0 | 565291 | 0.45515 | 0.00004 | 0.00424 | 0.45087 | 450870.562 | 0.7976
-XMATMUL | unit stride, 128 x 128 rows (one matrix) | 128 | 1 | 262144 | 16384 | 0 | 2261035 | 1.80646 | 0.00004 | 0.01830 | 1.78812 | 1788118.447 | 0.7908
-XMATMUL | unit stride, 64 x 64 rows (one matrix) | 8 | 7 | 4096 | 4096 | 0 | 73771 | 0.29629 | 0.00007 | 0.00396 | 0.29226 | 41751.548 | 0.5660
-XMATMUL | unit stride, 32 x 32 rows (one matrix) | 16 | 24 | 2048 | 1024 | 0 | 26667 | 0.42708 | 0.00018 | 0.00107 | 0.42583 | 17742.926 | 0.6654
-XMATMUL | unit stride, 32 x 32 rows (one matrix) | 64 | 12 | 8192 | 1024 | 0 | 75819 | 0.69930 | 0.00011 | 0.00115 | 0.69803 | 58169.417 | 0.7672
-XMATMUL | unit stride, 32 x 32 rows (one matrix) | 512 | 2 | 65536 | 1024 | 0 | 534571 | 0.84454 | 0.00004 | 0.00183 | 0.84266 | 421331.188 | 0.7882
-XMATMUL | transposed view, 8 x 8 rows (one view) | 128 | 52 | 1024 | 64 | 1024 | 11947 | 0.49694 | 0.00034 | 0.00009 | 0.49651 | 9548.200 | 0.7992
-XMATMUL | transposed view, 16 x 16 rows (one view) | 128 | 18 | 4096 | 256 | 2048 | 41515 | 0.58252 | 0.00015 | 0.00022 | 0.58214 | 32341.152 | 0.7790
-XMATMUL | transposed view, 32 x 32 rows (one view) | 128 | 5 | 16384 | 1024 | 4096 | 153643 | 0.59848 | 0.00006 | 0.00123 | 0.59719 | 119438.117 | 0.7774
-XMATMUL | transposed view, 64 x 64 rows (one view) | 128 | 1 | 65536 | 4096 | 8192 | 589867 | 0.46356 | 0.00004 | 0.00425 | 0.45927 | 459268.991 | 0.7786
-XMATMUL | transposed view, 32 x 32 rows (one view) | 32 | 15 | 4096 | 1024 | 1024 | 46123 | 0.49952 | 0.00013 | 0.00109 | 0.49830 | 33219.741 | 0.7202
-XMATMUL | transposed view, 32 x 32 rows (one view) | 512 | 1 | 65536 | 1024 | 16384 | 583723 | 0.46418 | 0.00004 | 0.00183 | 0.46231 | 462307.193 | 0.7920
-XMATMUL | 1 unit-stride row x 512 rows of the hostile view | 56 | 12 | 3584 | 512 | 28672 | 119851 | 1.28809 | 0.00012 | 0.11631 | 1.17166 | 97638.283 | 0.8147
-XMATMUL | 1 unit-stride row x 256 rows of the hostile view | 112 | 12 | 3584 | 256 | 28672 | 117291 | 1.29591 | 0.00012 | 0.11276 | 1.18303 | 98585.724 | 0.8405
-XMATMUL | 1 unit-stride row x 128 rows of the hostile view | 224 | 12 | 3584 | 128 | 28672 | 116011 | 1.26758 | 0.00012 | 0.11384 | 1.15361 | 96134.457 | 0.8287
-XMATMUL | 1 unit-stride row x 64 rows of the hostile view | 448 | 12 | 3584 | 64 | 28672 | 115371 | 1.30573 | 0.00012 | 0.11240 | 1.19321 | 99434.186 | 0.8619
-XMATMUL | hostile view, 64 x 64 rows (one view) | 448 | 2 | 229376 | 4096 | 28672 | 1962027 | 3.37702 | 0.00004 | 0.12349 | 3.25348 | 1626741.278 | 0.8291
-REF_STEP | PUSH MLOAD PUSH MLOAD MUL ADD, end of run | 4096 | 4096 | 1 | 0 | 0 | 20 | 0.08949 | 0.01913 | 0.00411 | 0.06626 | 16.176 | 0.8088
+REF_STEP | PUSH MLOAD PUSH MLOAD MUL ADD | 512 | 512 | 1 | 0 | 0 | 20 | 0.01384 | 0.00212 | 0.00392 | 0.00781 | 15.251 | 0.7626
+REF_STEP | PUSH MLOAD PUSH MLOAD MUL ADD | 4096 | 4096 | 1 | 0 | 0 | 20 | 0.08582 | 0.01697 | 0.00392 | 0.06493 | 15.853 | 0.7927
+REF_STEP | PUSH MLOAD PUSH MLOAD MUL ADD | 32768 | 32768 | 1 | 0 | 0 | 20 | 0.65791 | 0.13641 | 0.00392 | 0.51758 | 15.795 | 0.7898
+REF_OP | DUP, ADD | 0 | 16384 | 0 | 0 | 0 | 6 | 0.05577 | 0.01900 | 0.00003 | 0.03674 | 2.243 | 0.3738
+REF_OP | DUP, MUL | 0 | 16384 | 0 | 0 | 0 | 8 | 0.20428 | 0.01904 | 0.00003 | 0.18522 | 11.305 | 1.4131
+REF_OP | DUP, DUP, DUP, MULMOD, POP | 0 | 16384 | 0 | 0 | 0 | 19 | 1.06847 | 0.04782 | 0.00003 | 1.02062 | 62.294 | 3.2786
+REF_OP | PUSH, PUSH, KECCAK256 of one word, POP | 0 | 16384 | 0 | 0 | 0 | 44 | 4.46372 | 0.05893 | 0.00003 | 4.40477 | 268.846 | 6.1101
+REF_WALK | PUSH MLOAD POP, sequential words | 448 | 28672 | 0 | 0 | 0 | 8 | 0.19319 | 0.05981 | 0.04127 | 0.09211 | 3.212 | 0.4016
+REF_WALK | PUSH MLOAD POP, all addresses of the hostile view | 448 | 28672 | 0 | 0 | 0 | 8 | 0.31040 | 0.06006 | 0.10304 | 0.14731 | 5.138 | 0.6422
+XMACC | fixed price | 0 | 16384 | 1 | 0 | 0 | 11 | 0.27199 | 0.02872 | 0.00003 | 0.24325 | 14.847 | 1.3497
+XMACC_S | fixed price | 0 | 8192 | 1 | 0 | 8 | 14 | 0.30993 | 0.06646 | 0.00171 | 0.24176 | 29.512 | 2.1080
+XMACC_S | fixed price, hostile view | 0 | 8192 | 1 | 0 | 8 | 14 | 0.51231 | 0.06666 | 0.10061 | 0.34503 | 42.118 | 3.0085
+XRELU | fixed price | 0 | 16384 | 0 | 0 | 0 | 6 | 0.16077 | 0.00988 | 0.00003 | 0.15086 | 9.208 | 1.5346
+XSUM32 | fixed price | 0 | 16384 | 0 | 0 | 0 | 6 | 0.08552 | 0.02864 | 0.00003 | 0.05685 | 3.470 | 0.5783
+XPACK | fixed price | 0 | 16384 | 0 | 0 | 0 | 6 | 0.15788 | 0.00946 | 0.00003 | 0.14839 | 9.057 | 1.5095
+XGT_IMM | fixed price | 0 | 16384 | 0 | 0 | 0 | 6 | 0.18450 | 0.01852 | 0.00003 | 0.16595 | 10.129 | 1.6882
+XADD_IMM | fixed price | 0 | 16384 | 0 | 0 | 0 | 6 | 0.16490 | 0.01843 | 0.00003 | 0.14645 | 8.939 | 1.4898
+XSUB_IMM | fixed price | 0 | 16384 | 0 | 0 | 0 | 6 | 0.16032 | 0.01842 | 0.00003 | 0.14187 | 8.659 | 1.4432
+XMUL_IMM | fixed price | 0 | 16384 | 0 | 0 | 0 | 8 | 0.17070 | 0.01857 | 0.00003 | 0.15211 | 9.284 | 1.1605
+XTRANSPOSE | fixed price | 0 | 16384 | 0 | 0 | 0 | 10 | 0.30849 | 0.03326 | 0.00003 | 0.27521 | 16.797 | 1.6797
+XBCAST | fixed price | 0 | 16384 | 0 | 0 | 0 | 8 | 0.30823 | 0.09225 | 0.00003 | 0.21595 | 13.181 | 1.6476
+XGATHER | pseudo-random indices into 65536 elements | 8 | 8192 | 0 | 0 | 0 | 20 | 0.23715 | 0.04672 | 0.00383 | 0.18661 | 22.779 | 1.1389
+XGATHER | pseudo-random indices into 65536 elements | 64 | 2586 | 0 | 0 | 0 | 20 | 0.14192 | 0.01475 | 0.00384 | 0.12333 | 47.693 | 2.3846
+XGATHER | pseudo-random indices into 65536 elements | 512 | 380 | 0 | 0 | 0 | 20 | 0.08026 | 0.00218 | 0.00391 | 0.07417 | 195.175 | 9.7587
+XGATHER | pseudo-random indices into 65536 elements | 4096 | 64 | 0 | 0 | 0 | 20 | 0.13367 | 0.00042 | 0.00435 | 0.12890 | 2014.059 | 100.7030
+XMACC_N | groups of eight elements | 1 | 8192 | 1 | 0 | 0 | 11 | 0.26614 | 0.04056 | 0.00004 | 0.22554 | 27.532 | 2.5029
+XMACC_N | groups of eight elements | 2 | 8192 | 2 | 0 | 0 | 22 | 0.32737 | 0.04062 | 0.00005 | 0.28670 | 34.998 | 1.5908
+XMACC_N | groups of eight elements | 4 | 8192 | 4 | 0 | 0 | 44 | 0.45379 | 0.04059 | 0.00007 | 0.41313 | 50.430 | 1.1461
+XMACC_N | groups of eight elements | 8 | 8192 | 8 | 0 | 0 | 88 | 0.70565 | 0.04245 | 0.00011 | 0.66309 | 80.944 | 0.9198
+XMACC_N | groups of eight elements | 16 | 5769 | 16 | 0 | 0 | 176 | 0.84996 | 0.02988 | 0.00017 | 0.81990 | 142.122 | 0.8075
+XMACC_N | groups of eight elements | 32 | 3571 | 32 | 0 | 0 | 352 | 0.96580 | 0.01791 | 0.00078 | 0.94711 | 265.223 | 0.7535
+XMACC_N | groups of eight elements | 64 | 2027 | 64 | 0 | 0 | 704 | 1.05529 | 0.00987 | 0.00198 | 1.04345 | 514.774 | 0.7312
+XMACC_N | groups of eight elements | 98 | 1388 | 98 | 0 | 0 | 1078 | 1.09195 | 0.00679 | 0.00299 | 1.08217 | 779.664 | 0.7233
+XMACC_N | groups of eight elements | 128 | 1086 | 128 | 0 | 0 | 1408 | 1.10802 | 0.00535 | 0.00388 | 1.09879 | 1011.780 | 0.7186
+XMACC_N | groups of eight elements | 256 | 563 | 256 | 0 | 0 | 2816 | 1.13846 | 0.00280 | 0.00769 | 1.12797 | 2003.499 | 0.7115
+XMACC_N | groups of eight elements | 16384 | 12 | 16384 | 0 | 0 | 180224 | 1.66212 | 0.00011 | 0.09179 | 1.57023 | 130852.183 | 0.7261
+XMACC_N16 | words of sixteen elements | 1 | 8192 | 2 | 0 | 0 | 22 | 0.36193 | 0.04057 | 0.00004 | 0.32132 | 39.224 | 1.7829
+XMACC_N16 | words of sixteen elements | 2 | 8192 | 4 | 0 | 0 | 44 | 0.50997 | 0.04061 | 0.00005 | 0.46931 | 57.289 | 1.3020
+XMACC_N16 | words of sixteen elements | 4 | 8192 | 8 | 0 | 0 | 88 | 0.79587 | 0.04057 | 0.00007 | 0.75523 | 92.191 | 1.0476
+XMACC_N16 | words of sixteen elements | 8 | 5769 | 16 | 0 | 0 | 176 | 0.95404 | 0.02989 | 0.00011 | 0.92405 | 160.174 | 0.9101
+XMACC_N16 | words of sixteen elements | 16 | 3571 | 32 | 0 | 0 | 352 | 1.07975 | 0.01767 | 0.00018 | 1.06190 | 297.368 | 0.8448
+XMACC_N16 | words of sixteen elements | 32 | 2027 | 64 | 0 | 0 | 704 | 1.17063 | 0.00987 | 0.00078 | 1.15997 | 572.262 | 0.8129
+XMACC_N16 | words of sixteen elements | 49 | 1388 | 98 | 0 | 0 | 1078 | 1.22340 | 0.00678 | 0.00155 | 1.21508 | 875.415 | 0.8121
+XMACC_N16 | words of sixteen elements | 64 | 1086 | 128 | 0 | 0 | 1408 | 1.24682 | 0.00536 | 0.00201 | 1.23944 | 1141.293 | 0.8106
+XMACC_N16 | words of sixteen elements | 128 | 563 | 256 | 0 | 0 | 2816 | 1.27578 | 0.00280 | 0.00393 | 1.26905 | 2254.079 | 0.8005
+XMACC_N16 | words of sixteen elements | 16384 | 12 | 32768 | 0 | 0 | 360448 | 3.49831 | 0.00011 | 0.08979 | 3.40842 | 284034.770 | 0.7880
+XMACC_V | two unit-stride rows | 8 | 8192 | 1 | 0 | 0 | 51 | 0.42900 | 0.05319 | 0.00004 | 0.37578 | 45.871 | 0.8994
+XMACC_V | two unit-stride rows | 16 | 8192 | 2 | 0 | 0 | 59 | 0.48578 | 0.05318 | 0.00005 | 0.43255 | 52.801 | 0.8949
+XMACC_V | two unit-stride rows | 32 | 8192 | 4 | 0 | 0 | 75 | 0.60822 | 0.05318 | 0.00007 | 0.55496 | 67.745 | 0.9033
+XMACC_V | two unit-stride rows | 64 | 7317 | 8 | 0 | 0 | 107 | 0.76104 | 0.04758 | 0.00011 | 0.71335 | 97.492 | 0.9111
+XMACC_V | two unit-stride rows | 128 | 5263 | 16 | 0 | 0 | 171 | 0.86302 | 0.03422 | 0.00016 | 0.82863 | 157.445 | 0.9207
+XMACC_V | two unit-stride rows | 256 | 3370 | 32 | 0 | 0 | 299 | 0.95554 | 0.02186 | 0.00074 | 0.93294 | 276.836 | 0.9259
+XMACC_V | two unit-stride rows | 512 | 1960 | 64 | 0 | 0 | 555 | 1.03550 | 0.01260 | 0.00196 | 1.02094 | 520.889 | 0.9385
+XMACC_V | two unit-stride rows | 784 | 1357 | 98 | 0 | 0 | 827 | 1.07000 | 0.00872 | 0.00294 | 1.05834 | 779.909 | 0.9431
+XMACC_V | two unit-stride rows | 1024 | 1067 | 128 | 0 | 0 | 1067 | 1.08598 | 0.00688 | 0.00381 | 1.07528 | 1007.764 | 0.9445
+XMACC_V | two unit-stride rows | 2048 | 558 | 256 | 0 | 0 | 2091 | 1.11602 | 0.00363 | 0.00752 | 1.10487 | 1980.058 | 0.9469
+XMACC_V | two unit-stride rows of a 1.5 MB matrix | 262144 | 12 | 32768 | 0 | 0 | 262187 | 3.05161 | 0.00012 | 0.08793 | 2.96355 | 246962.698 | 0.9419
+XMACC_V | two rows of a transposed view (stride 128 bytes) | 8 | 8108 | 1 | 0 | 16 | 99 | 0.48510 | 0.05264 | 0.00004 | 0.43242 | 53.332 | 0.5387
+XMACC_V | two rows of a transposed view (stride 128 bytes) | 16 | 6122 | 2 | 0 | 32 | 155 | 0.45380 | 0.03971 | 0.00006 | 0.41403 | 67.630 | 0.4363
+XMACC_V | two rows of a transposed view (stride 128 bytes) | 32 | 4109 | 4 | 0 | 64 | 267 | 0.42716 | 0.02664 | 0.00006 | 0.40046 | 97.459 | 0.3650
+XMACC_V | two rows of a transposed view (stride 128 bytes) | 64 | 2479 | 8 | 0 | 128 | 491 | 0.40297 | 0.01596 | 0.00011 | 0.38690 | 156.070 | 0.3179
+XMACC_V | two rows of a transposed view (stride 128 bytes) | 128 | 1382 | 16 | 0 | 256 | 939 | 0.38834 | 0.00888 | 0.00017 | 0.37930 | 274.456 | 0.2923
+XMACC_V | two rows of a transposed view (stride 128 bytes) | 256 | 733 | 32 | 0 | 512 | 1835 | 0.38324 | 0.00474 | 0.00074 | 0.37776 | 515.363 | 0.2809
+XMACC_V | two rows of a transposed view (stride 128 bytes) | 448 | 430 | 56 | 0 | 896 | 3179 | 0.40536 | 0.00283 | 0.00173 | 0.40081 | 932.110 | 0.2932
+XMACC_V | two rows of a transposed view (stride 128 bytes) | 1024 | 256 | 128 | 0 | 2048 | 7211 | 0.53840 | 0.00170 | 0.00383 | 0.53286 | 2081.501 | 0.2887
+XMACC_V | two rows of the hostile view | 56 | 2048 | 7 | 0 | 112 | 435 | 0.61538 | 0.01321 | 0.10160 | 0.50057 | 244.421 | 0.5619
+XMACC_V | two rows of the hostile view | 112 | 2048 | 14 | 0 | 224 | 827 | 1.02840 | 0.01315 | 0.10126 | 0.91400 | 446.288 | 0.5396
+XMACC_V | two rows of the hostile view | 224 | 2048 | 28 | 0 | 448 | 1611 | 1.86058 | 0.01315 | 0.10118 | 1.74625 | 852.663 | 0.5293
+XMACC_V | two rows of the hostile view | 448 | 2048 | 56 | 0 | 896 | 3179 | 3.43266 | 0.01315 | 0.10134 | 3.31817 | 1620.201 | 0.5097
+XMACC_V | one row of the hostile view and one unit-stride row | 448 | 2048 | 56 | 0 | 448 | 1835 | 2.45743 | 0.01315 | 0.10211 | 2.34217 | 1143.640 | 0.6232
+XMATMUL | unit stride, 1 row x 1 row | 8 | 4096 | 1 | 1 | 0 | 61 | 0.90312 | 0.02017 | 0.00003 | 0.88291 | 215.554 | 3.5337
+XMATMUL | unit stride, 1 row x 1 row | 64 | 3571 | 8 | 1 | 0 | 117 | 0.92607 | 0.01761 | 0.00003 | 0.90843 | 254.391 | 2.1743
+XMATMUL | unit stride, 4 rows x 1 row | 8 | 3000 | 4 | 4 | 0 | 115 | 0.76380 | 0.01468 | 0.00003 | 0.74909 | 249.697 | 2.1713
+XMATMUL | unit stride, 10 rows x 1 row | 32 | 1363 | 40 | 10 | 0 | 463 | 0.68860 | 0.00672 | 0.00004 | 0.68184 | 500.248 | 1.0804
+XMATMUL | unit stride, 32 rows x 1 row | 784 | 45 | 3136 | 32 | 0 | 25451 | 0.85036 | 0.00026 | 0.00156 | 0.84854 | 18856.540 | 0.7409
+XMATMUL | unit stride, 128 rows x 1 row | 64 | 95 | 1024 | 128 | 0 | 9515 | 0.67667 | 0.00051 | 0.00026 | 0.67590 | 7114.770 | 0.7477
+XMATMUL | unit stride, 128 rows x 1 row | 256 | 32 | 4096 | 128 | 0 | 34091 | 0.81997 | 0.00020 | 0.00206 | 0.81770 | 25553.222 | 0.7496
+XMATMUL | unit stride, 128 rows x 1 row | 784 | 11 | 12544 | 128 | 0 | 101675 | 0.83376 | 0.00008 | 0.00604 | 0.82764 | 75239.656 | 0.7400
+XMATMUL | unit stride, 128 rows x 1 row | 2048 | 4 | 32768 | 128 | 0 | 263467 | 0.78766 | 0.00005 | 0.01569 | 0.77192 | 192979.332 | 0.7325
+XMATMUL | unit stride, 2 x 2 rows (one matrix) | 8 | 3000 | 4 | 4 | 0 | 115 | 0.75743 | 0.01468 | 0.00003 | 0.74272 | 247.575 | 2.1528
+XMATMUL | unit stride, 8 x 8 rows (one matrix) | 128 | 114 | 1024 | 64 | 0 | 8875 | 0.75919 | 0.00062 | 0.00010 | 0.75848 | 6653.319 | 0.7497
+XMATMUL | unit stride, 16 x 16 rows (one matrix) | 128 | 29 | 4096 | 256 | 0 | 35371 | 0.75422 | 0.00018 | 0.00017 | 0.75387 | 25995.454 | 0.7349
+XMATMUL | unit stride, 32 x 32 rows (one matrix) | 128 | 7 | 16384 | 1024 | 0 | 141355 | 0.72432 | 0.00008 | 0.00108 | 0.72316 | 103308.472 | 0.7308
+XMATMUL | unit stride, 64 x 64 rows (one matrix) | 128 | 1 | 65536 | 4096 | 0 | 565291 | 0.41859 | 0.00004 | 0.00415 | 0.41440 | 414401.869 | 0.7331
+XMATMUL | unit stride, 128 x 128 rows (one matrix) | 128 | 1 | 262144 | 16384 | 0 | 2261035 | 1.67593 | 0.00004 | 0.01778 | 1.65812 | 1658117.741 | 0.7333
+XMATMUL | unit stride, 64 x 64 rows (one matrix) | 8 | 7 | 4096 | 4096 | 0 | 73771 | 0.29289 | 0.00008 | 0.00383 | 0.28899 | 41283.775 | 0.5596
+XMATMUL | unit stride, 32 x 32 rows (one matrix) | 16 | 24 | 2048 | 1024 | 0 | 26667 | 0.40290 | 0.00016 | 0.00088 | 0.40186 | 16744.125 | 0.6279
+XMATMUL | unit stride, 32 x 32 rows (one matrix) | 64 | 12 | 8192 | 1024 | 0 | 75819 | 0.65723 | 0.00010 | 0.00095 | 0.65618 | 54681.372 | 0.7212
+XMATMUL | unit stride, 32 x 32 rows (one matrix) | 512 | 2 | 65536 | 1024 | 0 | 534571 | 0.78638 | 0.00004 | 0.00173 | 0.78461 | 392302.886 | 0.7339
+XMATMUL | transposed view, 8 x 8 rows (one view) | 128 | 52 | 1024 | 64 | 1024 | 11947 | 0.48449 | 0.00030 | 0.00010 | 0.48410 | 9309.588 | 0.7792
+XMATMUL | transposed view, 16 x 16 rows (one view) | 128 | 18 | 4096 | 256 | 2048 | 41515 | 0.55899 | 0.00013 | 0.00019 | 0.55866 | 31036.926 | 0.7476
+XMATMUL | transposed view, 32 x 32 rows (one view) | 128 | 5 | 16384 | 1024 | 4096 | 153643 | 0.56906 | 0.00006 | 0.00108 | 0.56792 | 113583.552 | 0.7393
+XMATMUL | transposed view, 64 x 64 rows (one view) | 128 | 1 | 65536 | 4096 | 8192 | 589867 | 0.43913 | 0.00004 | 0.00415 | 0.43494 | 434944.540 | 0.7374
+XMATMUL | transposed view, 32 x 32 rows (one view) | 32 | 15 | 4096 | 1024 | 1024 | 46123 | 0.48004 | 0.00012 | 0.00091 | 0.47900 | 31933.664 | 0.6924
+XMATMUL | transposed view, 32 x 32 rows (one view) | 512 | 1 | 65536 | 1024 | 16384 | 583723 | 0.43371 | 0.00004 | 0.00173 | 0.43194 | 431939.757 | 0.7400
+XMATMUL | 1 unit-stride row x 512 rows of the hostile view | 56 | 12 | 3584 | 512 | 28672 | 119851 | 1.30005 | 0.00011 | 0.10124 | 1.19869 | 99891.212 | 0.8335
+XMATMUL | 1 unit-stride row x 256 rows of the hostile view | 112 | 12 | 3584 | 256 | 28672 | 117291 | 1.28429 | 0.00011 | 0.10001 | 1.18417 | 98680.594 | 0.8413
+XMATMUL | 1 unit-stride row x 128 rows of the hostile view | 224 | 12 | 3584 | 128 | 28672 | 116011 | 1.27164 | 0.00011 | 0.09992 | 1.17161 | 97633.896 | 0.8416
+XMATMUL | 1 unit-stride row x 64 rows of the hostile view | 448 | 12 | 3584 | 64 | 28672 | 115371 | 1.26798 | 0.00011 | 0.10050 | 1.16737 | 97280.855 | 0.8432
+XMATMUL | hostile view, 64 x 64 rows (one view) | 448 | 2 | 229376 | 4096 | 28672 | 1962027 | 3.05425 | 0.00004 | 0.10780 | 2.94641 | 1473205.829 | 0.7509
+REF_STEP | PUSH MLOAD PUSH MLOAD MUL ADD, end of run | 4096 | 4096 | 1 | 0 | 0 | 20 | 0.08593 | 0.01705 | 0.00380 | 0.06508 | 15.888 | 0.7944
 
 *** ALL CHECKS PASSED -> gas is valid; timing numbers are valid for this build ***
