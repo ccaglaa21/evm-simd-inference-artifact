@@ -21,6 +21,8 @@
 // of the central w x w window of the image (w = 8 or 16, values 0 to 255). Pixels are not negative, so Path S
 // needs no offset and its correction steps are left out. In both cases every lane of Path S stays below 2^32
 // and no saturating addition of the instructions is reached, so the three programs return the same values.
+// MATRIX LEVEL. Two more programs compute the whole Gram matrix with one XMATMUL: Path MV on the transposed view
+// and Path MK on the transposed copy. XMATMUL writes the same words as the loop of XMACC_V, XSUM32 and MSTORE.
 // SCALE. The feature sweep goes up to C = 256 (8.4 million multiply-accumulates), the sample sweep up to
 // R = 500 images. For R = 128 the program also finds, for every path, the largest C (a multiple of 8) whose
 // total execution gas stays within the per-transaction cap of EIP-7825 (2^24 gas): the size is found with the
@@ -59,8 +61,8 @@ static uint32_t rnd = 2026u; static uint32_t rnd32() { rnd = rnd * 1664525u + 10
 static uint64_t pad32(uint64_t x) { return (x + 31) / 32 * 32; }
 static void put64(uint8_t* m, uint64_t v) { for (int k = 0; k < 8; ++k) m[k] = (uint8_t)(v >> (8 * k)); }
 
-struct Row { int R, C; long long gV, gK, gS, gHh, gHs, grp; double tV, tK, tS; long long trace; const char* name; };
-struct Prog { Code kV, kK, kS, kHh, kHs; uint64_t MENDV, MENDK, SEND, HEND, HSEND, OUTB; std::vector<uint8_t> cd; std::vector<uint32_t> ref; };
+struct Row { int R, C; long long gV, gK, gS, gHh, gHs, grp, gMV, gMK; double tV, tK, tS, tMV, tMK; long long trace; const char* name; };
+struct Prog { Code kV, kK, kS, kHh, kHs, kMV, kMK; uint64_t MENDV, MENDK, SEND, HEND, HSEND, OUTB; std::vector<uint8_t> cd; std::vector<uint32_t> ref; };
 // img: null for pseudo-random signed elements (offset 2^11 in Path S), otherwise the pixel rows of the images
 // (784 values each, no offset). withData = false builds the programs only (for the static gas count).
 static void build(const int R, const int C, const std::vector<std::vector<int>>* img, bool withData, Prog& p) {
@@ -94,6 +96,14 @@ static void build(const int R, const int C, const std::vector<std::vector<int>>*
     entries(kK, MT); kK.RET(MO, OUTB);
     kK.sgas += (long long)C * C * (43 + (long long)G8 * 8);
     p.kHh.CDCOPY(0, MA, HB); p.kHh.RET(MO, OUTB);
+    // ---- matrix-level instruction: one XMATMUL for the whole Gram matrix, on the view (MV) or on the copy (MK) ----
+    Code& kMV = p.kMV; kMV.CDCOPY(0, MA, HB); kMV.PUSH(MA); kMV.b(0xDD, 10); kMV.POP(); kMV.PUSH(MO); kMV.PUSH(MA); kMV.PUSH(MA); kMV.b(0xE9, 0); kMV.RET(MO, OUTB);
+    kMV.sgas += 43 + (long long)C * C * (10 + (long long)G8 * 14);
+    Code& kMK = p.kMK; kMK.CDCOPY(0, MA, HB);
+    for (int c = 0; c < C; ++c) for (int t = 0; t < R; ++t) kMK.MCOPY2(MA + 32 + 2 * ((uint64_t)t * C + c), MT + 32 + 2 * ((uint64_t)c * R + t));
+    { uint8_t hw[32]; put64(hw, (uint64_t)C); put64(hw + 8, (uint64_t)R); put64(hw + 16, (uint64_t)R); put64(hw + 24, 1); kMK.W32(hw); kMK.PUSH(MT); kMK.MSTORE(); }
+    kMK.PUSH(MO); kMK.PUSH(MT); kMK.PUSH(MT); kMK.b(0xE9, 0); kMK.RET(MO, OUTB);
+    kMK.sgas += 43 + (long long)C * C * (10 + (long long)G8 * 8);
     // ---- Path S: packed rows at 0, outputs at SO, column sums at SCS, offset terms at SBC, scalar column at SSC ----
     const uint64_t SP = 0, SO = PB, SCS = SO + OUTB, SBC = SCS + (uint64_t)Cw * 32, SSC = B ? SBC + (uint64_t)C * 32 : SO + OUTB; p.SEND = SSC + (uint64_t)R * 32; p.HSEND = SO + OUTB;
     Code& kS = p.kS; kS.CDCOPY(HB, SP, PB);
@@ -154,6 +164,7 @@ static int runShape(const int R, const int C, Row& out, const std::vector<std::v
       auto r2 = VM->execute(VM, &g_host.get_interface(), g_host.to_context(), EVMC_CANCUN, &msg, p.kHs.c.data(), p.kHs.c.size()); out.gHs = GAS - r2.gas_left; ok = ok && r2.status_code == EVMC_SUCCESS && out.gHs == p.kHs.sgas + memgas(p.HSEND); if (r2.release) r2.release(&r2);
       std::printf("  [H] harness (call-data copy and return only): %s | gas %lld (header layout) | gas %lld (packed layout)\n", ok ? "PASSED" : "FAILED", out.gHh, out.gHs); if (!ok) fail = 1; }
     timePath(p.kV, p.MENDV, "V", out.tV, out.gV); timePath(p.kK, p.MENDK, "K", out.tK, out.gK); timePath(p.kS, p.SEND, "S", out.tS, out.gS);
+    timePath(p.kMV, p.MENDV, "MV", out.tMV, out.gMV); timePath(p.kMK, p.MENDK, "MK", out.tMK, out.gMK);
     out.trace = 0; for (int i = 0; i < C; ++i) out.trace += (long long)ref[(size_t)i * C + i]; out.name = name;
     out.R = R; out.C = C; out.grp = (long long)C * C * (long long)((R + 7) / 8);
     return fail;
@@ -209,6 +220,18 @@ int main() {
         std::printf("TIME ON REAL IMAGE DATA (median, machine and build dependent)\n");
         std::printf("          data |    R |   C |     V ms |     K ms |     S ms |   S/V |   S/K |   K/V\n");
         for (auto& r : Q) std::printf("%14s | %4d | %3d | %8.4f | %8.4f | %8.4f | %5.2f | %5.2f | %5.2f\n", r.name, r.R, r.C, r.tV * 1e3, r.tK * 1e3, r.tS * 1e3, r.tS / r.tV, r.tS / r.tK, r.tK / r.tV); }
+    // ---- matrix-level instruction: gas table (identical on every build), then its timing table ----
+    std::vector<Row*> ALL; for (auto& r : T) ALL.push_back(&r); if (okd) for (auto& r : Q) ALL.push_back(&r);
+    std::printf("\n================ MATRIX-LEVEL INSTRUCTION: ONE XMATMUL FOR THE WHOLE GRAM MATRIX ================\n");
+    std::printf("Path MV: XTRANSPOSE, then XMATMUL on the view (no copy). Path MK: transposed copy with MCOPY, then XMATMUL on the copy.\n");
+    std::printf("PROVISIONAL PRICE of XMATMUL: 43 per call, 10 per entry, 14 (strided) or 8 (unit stride) per group of eight. COMPUTE GAS, identical on every build\n");
+    std::printf("          data |    R |   C |   compute MV |   compute MK |    compute S | S/MV | S/MK | V/MV | K/MK | MV gas/MAC | MK gas/MAC | total MV | of cap\n");
+    for (auto* q : ALL) { auto& r = *q; long long cMV = r.gMV - r.gHh, cMK = r.gMK - r.gHh, cS = r.gS - r.gHs, cV = r.gV - r.gHh, cK = r.gK - r.gHh; double m = (double)r.C * r.C * r.R;
+        std::printf("%14s | %4d | %3d | %12lld | %12lld | %12lld | %4.2f | %4.2f | %4.2f | %4.2f | %10.3f | %10.3f | %8lld | %5.1f%%\n", r.name, r.R, r.C, cMV, cMK, cS, (double)cS / cMV, (double)cS / cMK, (double)cV / cMV, (double)cK / cMK, cMV / m, cMK / m, r.gMV, 100.0 * r.gMV / CAP); }
+    std::printf("TIME, MATRIX-LEVEL INSTRUCTION (median, machine and build dependent)\n");
+    std::printf("          data |    R |   C |    MV ms |    MK ms |     S ms |  S/MV |  S/MK |  V/MV |  K/MK | ns/MAC MV | ns/MAC MK | ns/MAC S\n");
+    for (auto* q : ALL) { auto& r = *q; double m = (double)r.C * r.C * r.R;
+        std::printf("%14s | %4d | %3d | %8.4f | %8.4f | %8.4f | %5.2f | %5.2f | %5.2f | %5.2f | %9.3f | %9.3f | %8.3f\n", r.name, r.R, r.C, r.tMV * 1e3, r.tMK * 1e3, r.tS * 1e3, r.tS / r.tMV, r.tS / r.tMK, r.tV / r.tMV, r.tK / r.tMK, r.tMV * 1e9 / m, r.tMK * 1e9 / m, r.tS * 1e9 / m); }
     std::printf("%s\n", fail ? "*** A CHECK FAILED -> the numbers are not valid ***" : "*** ALL CHECKS PASSED -> gas is valid; timing numbers are valid for this build ***");
     VM->destroy(VM); dlclose(h);
     return fail;

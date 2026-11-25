@@ -1,0 +1,15 @@
+=== XMATMUL TESTS ===
+[PASS] R1  2000/2000 random trials equal the C++ reference (6253 saturating steps, output digest b2dfe3e17893a5ca)
+[PASS] R2  60/60 shapes: XMATMUL equals the loop of XMACC_V, XSUM32 and MSTORE byte for byte
+[PASS] R3  XTRANSPOSE + XMATMUL(A^T, A^T) equals the Gram matrix of the stored 9 x 7 matrix (49 entries): yes
+[PASS] G1  cols 20 against cols 19: status=3 (OUT_OF_GAS=3 expected)
+[PASS] G2  rows of A = 2^31: status=3 (OUT_OF_GAS=3 expected)
+[PASS] G3  dst at the last element of A: status=3 (OUT_OF_GAS=3 expected)
+[PASS] G4  last output word on the header of A: status=3 (OUT_OF_GAS=3 expected)
+[PASS] G5  dst = 2^200: status=3 (OUT_OF_GAS=3 expected)
+[PASS] G6  2^30 x 2^30 entries with 1e9 gas: status=3 (OUT_OF_GAS=3 expected from the charge)
+[PASS] G7  stride_row = 2^62 with two rows: status=3 (OUT_OF_GAS=3 expected)
+[PASS] G8  rows of B = 0: status=0, output word untouched: yes, gas 193 == static count with 43 for the call 193: yes
+[PASS] G9  3 x 4 entries of 20 elements, unit stride: gas 635, static count 635 | one strided operand: gas 851, static count 851: equal
+
+--- SUMMARY --- 12/12 passed  *** ALL CHECKS PASSED ***

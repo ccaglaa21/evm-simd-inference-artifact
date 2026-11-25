@@ -2,209 +2,301 @@
 Bytecode: V=1043 K=10308 S=29443 bytes | 64 entries x 128 elements = 8192 multiply-accumulates
   [H] harness (call-data copy and return only): PASSED | gas 632 (header layout) | gas 1050 (packed layout)
   [V] equals the C++ reference (64 entries): PASSED | gas 19463 | static count + memory 19463: equal
-  [V] med=0.000019 s  min=0.000018  max=0.000023  CV=7.7%  (samples=31, inner-reps=448)
+  [V] med=0.000022 s  min=0.000021  max=0.000033  CV=13.2%  (samples=31, inner-reps=473)
   [K] equals the C++ reference (64 entries): PASSED | gas 28909 | static count + memory 28909: equal
-  [K] med=0.000029 s  min=0.000027  max=0.000032  CV=4.3%  (samples=31, inner-reps=351)
+  [K] med=0.000026 s  min=0.000025  max=0.000030  CV=4.7%  (samples=31, inner-reps=393)
   [S] equals the C++ reference (64 entries): PASSED | gas 49883 | static count + memory 49883: equal
-  [S] med=0.000048 s  min=0.000046  max=0.000064  CV=9.3%  (samples=31, inner-reps=210)
+  [S] med=0.000044 s  min=0.000044  max=0.000053  CV=3.9%  (samples=31, inner-reps=230)
+  [MV] equals the C++ reference (64 entries): PASSED | gas 15675 | static count + memory 15675: equal
+  [MV] med=0.000010 s  min=0.000010  max=0.000018  CV=17.1%  (samples=31, inner-reps=1028)
+  [MK] equals the C++ reference (64 entries): PASSED | gas 25121 | static count + memory 25121: equal
+  [MK] med=0.000021 s  min=0.000021  max=0.000029  CV=9.0%  (samples=31, inner-reps=485)
 ---- R = 128 samples, C = 16 features, data: random ----
 Bytecode: V=4115 K=22980 S=82238 bytes | 256 entries x 128 elements = 32768 multiply-accumulates
   [H] harness (call-data copy and return only): PASSED | gas 1849 (header layout) | gas 2834 (packed layout)
   [V] equals the C++ reference (256 entries): PASSED | gas 77128 | static count + memory 77128: equal
-  [V] med=0.000078 s  min=0.000071  max=0.000090  CV=5.4%  (samples=31, inner-reps=130)
+  [V] med=0.000085 s  min=0.000084  max=0.000089  CV=1.4%  (samples=31, inner-reps=122)
   [K] equals the C++ reference (256 entries): PASSED | gas 83880 | static count + memory 83880: equal
-  [K] med=0.000085 s  min=0.000077  max=0.000132  CV=10.8%  (samples=31, inner-reps=119)
+  [K] med=0.000075 s  min=0.000074  max=0.000119  CV=10.4%  (samples=31, inner-reps=138)
   [S] equals the C++ reference (256 entries): PASSED | gas 146107 | static count + memory 146107: equal
-  [S] med=0.000149 s  min=0.000136  max=0.000219  CV=14.0%  (samples=31, inner-reps=77)
+  [S] med=0.000133 s  min=0.000129  max=0.000151  CV=4.0%  (samples=31, inner-reps=3)
+  [MV] equals the C++ reference (256 entries): PASSED | gas 61820 | static count + memory 61820: equal
+  [MV] med=0.000033 s  min=0.000032  max=0.000037  CV=2.4%  (samples=31, inner-reps=303)
+  [MK] equals the C++ reference (256 entries): PASSED | gas 68572 | static count + memory 68572: equal
+  [MK] med=0.000055 s  min=0.000054  max=0.000057  CV=0.8%  (samples=31, inner-reps=188)
 ---- R = 128 samples, C = 24 features, data: random ----
 Bytecode: V=9235 K=37956 S=158329 bytes | 576 entries x 128 elements = 73728 multiply-accumulates
   [H] harness (call-data copy and return only): PASSED | gas 4059 (header layout) | gas 5850 (packed layout)
   [V] equals the C++ reference (576 entries): PASSED | gas 173418 | static count + memory 173418: equal
-  [V] med=0.000178 s  min=0.000166  max=0.000244  CV=7.2%  (samples=31, inner-reps=57)
+  [V] med=0.000191 s  min=0.000189  max=0.000200  CV=1.2%  (samples=31, inner-reps=46)
   [K] equals the C++ reference (576 entries): PASSED | gas 165427 | static count + memory 165427: equal
-  [K] med=0.000186 s  min=0.000167  max=0.000274  CV=15.4%  (samples=31, inner-reps=62)
+  [K] med=0.000149 s  min=0.000146  max=0.000290  CV=16.8%  (samples=31, inner-reps=69)
   [S] equals the C++ reference (576 entries): PASSED | gas 289600 | static count + memory 289600: equal
-  [S] med=0.000374 s  min=0.000300  max=0.000640  CV=18.0%  (samples=31, inner-reps=30)
+  [S] med=0.000272 s  min=0.000268  max=0.000305  CV=2.6%  (samples=31, inner-reps=34)
+  [MV] equals the C++ reference (576 entries): PASSED | gas 138910 | static count + memory 138910: equal
+  [MV] med=0.000069 s  min=0.000069  max=0.000076  CV=2.5%  (samples=31, inner-reps=144)
+  [MK] equals the C++ reference (576 entries): PASSED | gas 130919 | static count + memory 130919: equal
+  [MK] med=0.000103 s  min=0.000102  max=0.000155  CV=10.0%  (samples=31, inner-reps=101)
 ---- R = 128 samples, C = 32 features, data: random ----
 Bytecode: V=16403 K=55236 S=257716 bytes | 1024 entries x 128 elements = 131072 multiply-accumulates
   [H] harness (call-data copy and return only): PASSED | gas 7837 (header layout) | gas 10770 (packed layout)
   [V] equals the C++ reference (1024 entries): PASSED | gas 308908 | static count + memory 308908: equal
-  [V] med=0.000317 s  min=0.000285  max=0.001013  CV=36.8%  (samples=31, inner-reps=18)
+  [V] med=0.000340 s  min=0.000337  max=0.000431  CV=5.0%  (samples=31, inner-reps=31)
   [K] equals the C++ reference (1024 entries): PASSED | gas 274224 | static count + memory 274224: equal
-  [K] med=0.000281 s  min=0.000276  max=0.000308  CV=2.7%  (samples=31, inner-reps=37)
+  [K] med=0.000245 s  min=0.000241  max=0.000263  CV=1.8%  (samples=31, inner-reps=41)
   [S] equals the C++ reference (1024 entries): PASSED | gas 481046 | static count + memory 481046: equal
-  [S] med=0.000518 s  min=0.000450  max=0.001211  CV=26.8%  (samples=31, inner-reps=21)
+  [S] med=0.000452 s  min=0.000449  max=0.000572  CV=4.7%  (samples=31, inner-reps=21)
+  [MV] equals the C++ reference (1024 entries): PASSED | gas 247520 | static count + memory 247520: equal
+  [MV] med=0.000119 s  min=0.000117  max=0.000124  CV=1.4%  (samples=31, inner-reps=74)
+  [MK] equals the C++ reference (1024 entries): PASSED | gas 212836 | static count + memory 212836: equal
+  [MK] med=0.000163 s  min=0.000161  max=0.000187  CV=2.7%  (samples=31, inner-reps=64)
 ---- R = 128 samples, C = 40 features, data: random ----
 Bytecode: V=25619 K=77924 S=413036 bytes | 1600 entries x 128 elements = 204800 multiply-accumulates
   [H] harness (call-data copy and return only): PASSED | gas 13951 (header layout) | gas 18458 (packed layout)
   [V] equals the C++ reference (1600 entries): PASSED | gas 484366 | static count + memory 484366: equal
-  [V] med=0.000523 s  min=0.000490  max=0.000853  CV=12.6%  (samples=31, inner-reps=14)
+  [V] med=0.000530 s  min=0.000525  max=0.000658  CV=4.4%  (samples=31, inner-reps=20)
   [K] equals the C++ reference (1600 entries): PASSED | gas 411133 | static count + memory 411133: equal
-  [K] med=0.000434 s  min=0.000398  max=0.000489  CV=4.3%  (samples=31, inner-reps=21)
+  [K] med=0.000364 s  min=0.000361  max=0.000375  CV=0.8%  (samples=31, inner-reps=29)
   [S] equals the C++ reference (1600 entries): PASSED | gas 721324 | static count + memory 721324: equal
-  [S] med=0.000769 s  min=0.000751  max=0.000820  CV=2.1%  (samples=31, inner-reps=10)
+  [S] med=0.000687 s  min=0.000679  max=0.000766  CV=2.1%  (samples=31, inner-reps=14)
+  [MV] equals the C++ reference (1600 entries): PASSED | gas 388418 | static count + memory 388418: equal
+  [MV] med=0.000182 s  min=0.000180  max=0.000286  CV=10.7%  (samples=31, inner-reps=57)
+  [MK] equals the C++ reference (1600 entries): PASSED | gas 315185 | static count + memory 315185: equal
+  [MK] med=0.000240 s  min=0.000235  max=0.000425  CV=17.0%  (samples=31, inner-reps=43)
 ---- R = 128 samples, C = 48 features, data: random ----
 Bytecode: V=37525 K=108103 S=572865 bytes | 2304 entries x 128 elements = 294912 multiply-accumulates
   [H] harness (call-data copy and return only): PASSED | gas 23362 (header layout) | gas 29970 (packed layout)
   [V] equals the C++ reference (2304 entries): PASSED | gas 700753 | static count + memory 700753: equal
-  [V] med=0.000709 s  min=0.000649  max=0.001411  CV=29.0%  (samples=31, inner-reps=15)
+  [V] med=0.000763 s  min=0.000754  max=0.000786  CV=0.9%  (samples=31, inner-reps=14)
   [K] equals the C++ reference (2304 entries): PASSED | gas 577212 | static count + memory 577212: equal
-  [K] med=0.000587 s  min=0.000556  max=0.000709  CV=5.5%  (samples=31, inner-reps=16)
+  [K] med=0.000510 s  min=0.000503  max=0.000600  CV=3.3%  (samples=31, inner-reps=19)
   [S] equals the C++ reference (2304 entries): PASSED | gas 1011502 | static count + memory 1011502: equal
-  [S] med=0.001072 s  min=0.000976  max=0.001253  CV=5.4%  (samples=31, inner-reps=9)
+  [S] med=0.000982 s  min=0.000963  max=0.001651  CV=17.3%  (samples=31, inner-reps=9)
+  [MV] equals the C++ reference (2304 entries): PASSED | gas 562565 | static count + memory 562565: equal
+  [MV] med=0.000257 s  min=0.000255  max=0.000338  CV=5.7%  (samples=31, inner-reps=39)
+  [MK] equals the C++ reference (2304 entries): PASSED | gas 439024 | static count + memory 439024: equal
+  [MK] med=0.000326 s  min=0.000322  max=0.000355  CV=2.2%  (samples=31, inner-reps=26)
 ---- R = 128 samples, C = 64 features, data: random ----
 Bytecode: V=68117 K=166343 S=969321 bytes | 4096 entries x 128 elements = 524288 multiply-accumulates
   [H] harness (call-data copy and return only): PASSED | gas 56874 (header layout) | gas 69650 (packed layout)
   [V] equals the C++ reference (4096 entries): PASSED | gas 1261113 | static count + memory 1261113: equal
-  [V] med=0.001327 s  min=0.001191  max=0.002119  CV=13.4%  (samples=31, inner-reps=8)
+  [V] med=0.001362 s  min=0.001344  max=0.001759  CV=7.6%  (samples=31, inner-reps=8)
   [K] equals the C++ reference (4096 entries): PASSED | gas 1002060 | static count + memory 1002060: equal
-  [K] med=0.001004 s  min=0.000922  max=0.001406  CV=7.6%  (samples=31, inner-reps=11)
+  [K] med=0.000872 s  min=0.000860  max=0.000910  CV=1.3%  (samples=31, inner-reps=12)
   [S] equals the C++ reference (4096 entries): PASSED | gas 1746800 | static count + memory 1746800: equal
-  [S] med=0.001764 s  min=0.001666  max=0.001931  CV=5.5%  (samples=31, inner-reps=5)
+  [S] med=0.001699 s  min=0.001667  max=0.002800  CV=12.3%  (samples=31, inner-reps=6)
+  [MV] equals the C++ reference (4096 entries): PASSED | gas 1015405 | static count + memory 1015405: equal
+  [MV] med=0.000453 s  min=0.000447  max=0.000583  CV=6.9%  (samples=31, inner-reps=23)
+  [MK] equals the C++ reference (4096 entries): PASSED | gas 756352 | static count + memory 756352: equal
+  [MK] med=0.000539 s  min=0.000534  max=0.000564  CV=1.1%  (samples=31, inner-reps=19)
 ---- R = 128 samples, C = 96 features, data: random ----
 Bytecode: V=155413 K=315079 S=2069433 bytes | 9216 entries x 128 elements = 1179648 multiply-accumulates
   [H] harness (call-data copy and return only): PASSED | gas 227007 (header layout) | gas 262674 (packed layout)
   [V] equals the C++ reference (9216 entries): PASSED | gas 2936526 | static count + memory 2936526: equal
-  [V] med=0.002667 s  min=0.002573  max=0.003620  CV=10.5%  (samples=31, inner-reps=4)
+  [V] med=0.003067 s  min=0.003036  max=0.003354  CV=2.3%  (samples=31, inner-reps=4)
   [K] equals the C++ reference (9216 entries): PASSED | gas 2269560 | static count + memory 2269560: equal
-  [K] med=0.002189 s  min=0.001953  max=0.002775  CV=8.4%  (samples=31, inner-reps=6)
+  [K] med=0.001887 s  min=0.001869  max=0.002866  CV=10.8%  (samples=31, inner-reps=6)
   [S] equals the C++ reference (9216 entries): PASSED | gas 3884574 | static count + memory 3884574: equal
-  [S] med=0.004327 s  min=0.004017  max=0.006071  CV=8.0%  (samples=31, inner-reps=3)
+  [S] med=0.003822 s  min=0.003754  max=0.006099  CV=11.8%  (samples=31, inner-reps=3)
+  [MV] equals the C++ reference (9216 entries): PASSED | gas 2383618 | static count + memory 2383618: equal
+  [MV] med=0.001000 s  min=0.000988  max=0.001247  CV=5.7%  (samples=31, inner-reps=10)
+  [MK] equals the C++ reference (9216 entries): PASSED | gas 1716652 | static count + memory 1716652: equal
+  [MK] med=0.001132 s  min=0.001119  max=0.001157  CV=0.7%  (samples=31, inner-reps=9)
 ---- R = 128 samples, C = 128 features, data: random ----
 Bytecode: V=277525 K=506823 S=3579147 bytes | 16384 entries x 128 elements = 2097152 multiply-accumulates
   [H] harness (call-data copy and return only): PASSED | gas 647260 (header layout) | gas 725010 (packed layout)
   [V] equals the C++ reference (16384 entries): PASSED | gas 5464171 | static count + memory 5464171: equal
-  [V] med=0.004826 s  min=0.004583  max=0.008842  CV=16.8%  (samples=31, inner-reps=3)
+  [V] med=0.005477 s  min=0.005410  max=0.006554  CV=3.6%  (samples=31, inner-reps=2)
   [K] equals the C++ reference (16384 entries): PASSED | gas 4211892 | static count + memory 4211892: equal
-  [K] med=0.003460 s  min=0.003417  max=0.003649  CV=1.3%  (samples=31, inner-reps=3)
+  [K] med=0.003314 s  min=0.003262  max=0.003863  CV=3.8%  (samples=31, inner-reps=4)
   [S] equals the C++ reference (16384 entries): PASSED | gas 7030402 | static count + memory 7030402: equal
-  [S] med=0.007091 s  min=0.006871  max=0.008078  CV=4.7%  (samples=31, inner-reps=2)
+  [S] med=0.006924 s  min=0.006831  max=0.007337  CV=1.6%  (samples=31, inner-reps=2)
+  [MV] equals the C++ reference (16384 entries): PASSED | gas 4481183 | static count + memory 4481183: equal
+  [MV] med=0.001783 s  min=0.001760  max=0.001927  CV=2.0%  (samples=31, inner-reps=6)
+  [MK] equals the C++ reference (16384 entries): PASSED | gas 3228904 | static count + memory 3228904: equal
+  [MK] med=0.001950 s  min=0.001919  max=0.002044  CV=1.5%  (samples=31, inner-reps=5)
 ---- R = 128 samples, C = 192 features, data: random ----
 Bytecode: V=626197 K=1019335 S=8032171 bytes | 36864 entries x 128 elements = 4718592 multiply-accumulates
   [H] harness (call-data copy and return only): PASSED | gas 2999982 (header layout) | gas 3244050 (packed layout)
   [V] equals the C++ reference (36864 entries): PASSED | gas 13838013 | static count + memory 13838013: equal
-  [V] med=0.010520 s  min=0.010363  max=0.011646  CV=2.8%  (samples=31, inner-reps=1)
+  [V] med=0.012339 s  min=0.012191  max=0.012583  CV=0.7%  (samples=31, inner-reps=1)
   [K] equals the C++ reference (36864 entries): PASSED | gas 10907484 | static count + memory 10907484: equal
-  [K] med=0.007702 s  min=0.007575  max=0.008693  CV=2.8%  (samples=31, inner-reps=2)
+  [K] med=0.007326 s  min=0.007246  max=0.007907  CV=1.9%  (samples=31, inner-reps=2)
   [S] equals the C++ reference (36864 entries): PASSED | gas 17136105 | static count + memory 17136105: equal
-  [S] med=0.015264 s  min=0.014989  max=0.016420  CV=2.0%  (samples=31, inner-reps=1)
+  [S] med=0.015092 s  min=0.014911  max=0.015364  CV=0.7%  (samples=31, inner-reps=1)
+  [MV] equals the C++ reference (36864 entries): PASSED | gas 11626225 | static count + memory 11626225: equal
+  [MV] med=0.003945 s  min=0.003902  max=0.004146  CV=1.7%  (samples=31, inner-reps=3)
+  [MK] equals the C++ reference (36864 entries): PASSED | gas 8695696 | static count + memory 8695696: equal
+  [MK] med=0.004254 s  min=0.004225  max=0.008380  CV=16.5%  (samples=31, inner-reps=3)
 ---- R = 128 samples, C = 256 features, data: random ----
 Bytecode: V=1114134 K=1703896 S=14254668 bytes | 65536 entries x 128 elements = 8388608 multiply-accumulates
   [H] harness (call-data copy and return only): PASSED | gas 9130272 (header layout) | gas 9691154 (packed layout)
   [V] equals the C++ reference (65536 entries): PASSED | gas 28397871 | static count + memory 28397871: equal
-  [V] med=0.019912 s  min=0.019606  max=0.024309  CV=5.2%  (samples=31, inner-reps=1)
+  [V] med=0.023444 s  min=0.023095  max=0.034137  CV=8.1%  (samples=31, inner-reps=1)
   [K] equals the C++ reference (65536 entries): PASSED | gas 23153220 | static count + memory 23153220: equal
-  [K] med=0.013745 s  min=0.013619  max=0.015175  CV=2.7%  (samples=31, inner-reps=1)
+  [K] med=0.013245 s  min=0.012977  max=0.021292  CV=10.6%  (samples=31, inner-reps=1)
   [S] equals the C++ reference (65536 entries): PASSED | gas 34135204 | static count + memory 34135204: equal
-  [S] med=0.030132 s  min=0.027070  max=0.033421  CV=5.6%  (samples=31, inner-reps=1)
+  [S] med=0.026951 s  min=0.026554  max=0.033714  CV=4.5%  (samples=31, inner-reps=1)
+  [MV] equals the C++ reference (65536 entries): PASSED | gas 24465763 | static count + memory 24465763: equal
+  [MV] med=0.007066 s  min=0.006988  max=0.008592  CV=4.3%  (samples=31, inner-reps=2)
+  [MK] equals the C++ reference (65536 entries): PASSED | gas 19221112 | static count + memory 19221112: equal
+  [MK] med=0.007513 s  min=0.007413  max=0.007814  CV=1.3%  (samples=31, inner-reps=2)
 ---- R = 16 samples, C = 32 features, data: random ----
 Bytecode: V=16403 K=22980 S=52532 bytes | 1024 entries x 16 elements = 16384 multiply-accumulates
   [H] harness (call-data copy and return only): PASSED | gas 5470 (header layout) | gas 5786 (packed layout)
   [V] equals the C++ reference (1024 entries): PASSED | gas 105837 | static count + memory 105837: equal
-  [V] med=0.000092 s  min=0.000089  max=0.000117  CV=6.1%  (samples=31, inner-reps=51)
+  [V] med=0.000097 s  min=0.000096  max=0.000149  CV=9.7%  (samples=31, inner-reps=107)
   [K] equals the C++ reference (1024 entries): PASSED | gas 101460 | static count + memory 101460: equal
-  [K] med=0.000086 s  min=0.000084  max=0.000097  CV=4.3%  (samples=31, inner-reps=123)
+  [K] med=0.000083 s  min=0.000081  max=0.000091  CV=2.7%  (samples=31, inner-reps=127)
   [S] equals the C++ reference (1024 entries): PASSED | gas 100836 | static count + memory 100836: equal
-  [S] med=0.000096 s  min=0.000086  max=0.000129  CV=9.5%  (samples=31, inner-reps=111)
+  [S] med=0.000087 s  min=0.000085  max=0.000110  CV=6.3%  (samples=31, inner-reps=119)
+  [MV] equals the C++ reference (1024 entries): PASSED | gas 44449 | static count + memory 44449: equal
+  [MV] med=0.000019 s  min=0.000019  max=0.000021  CV=3.3%  (samples=31, inner-reps=533)
+  [MK] equals the C++ reference (1024 entries): PASSED | gas 40072 | static count + memory 40072: equal
+  [MK] med=0.000025 s  min=0.000025  max=0.000027  CV=1.9%  (samples=31, inner-reps=406)
 ---- R = 32 samples, C = 32 features, data: random ----
 Bytecode: V=16403 K=27588 S=81844 bytes | 1024 entries x 32 elements = 32768 multiply-accumulates
   [H] harness (call-data copy and return only): PASSED | gas 5796 (header layout) | gas 6450 (packed layout)
   [V] equals the C++ reference (1024 entries): PASSED | gas 134835 | static count + memory 134835: equal
-  [V] med=0.000121 s  min=0.000118  max=0.000149  CV=6.4%  (samples=31, inner-reps=87)
+  [V] med=0.000130 s  min=0.000129  max=0.000134  CV=0.8%  (samples=31, inner-reps=80)
   [K] equals the C++ reference (1024 entries): PASSED | gas 126093 | static count + memory 126093: equal
-  [K] med=0.000114 s  min=0.000107  max=0.000186  CV=12.3%  (samples=31, inner-reps=96)
+  [K] med=0.000105 s  min=0.000104  max=0.000129  CV=5.2%  (samples=31, inner-reps=81)
   [S] equals the C++ reference (1024 entries): PASSED | gas 155077 | static count + memory 155077: equal
-  [S] med=0.000174 s  min=0.000152  max=0.000242  CV=12.7%  (samples=31, inner-reps=39)
+  [S] med=0.000139 s  min=0.000137  max=0.000151  CV=2.2%  (samples=31, inner-reps=73)
+  [MV] equals the C++ reference (1024 entries): PASSED | gas 73447 | static count + memory 73447: equal
+  [MV] med=0.000034 s  min=0.000034  max=0.000035  CV=0.9%  (samples=31, inner-reps=285)
+  [MK] equals the C++ reference (1024 entries): PASSED | gas 64705 | static count + memory 64705: equal
+  [MK] med=0.000045 s  min=0.000045  max=0.000047  CV=0.8%  (samples=31, inner-reps=224)
 ---- R = 64 samples, C = 32 features, data: random ----
 Bytecode: V=16403 K=36804 S=140468 bytes | 1024 entries x 64 elements = 65536 multiply-accumulates
   [H] harness (call-data copy and return only): PASSED | gas 6460 (header layout) | gas 7826 (packed layout)
   [V] equals the C++ reference (1024 entries): PASSED | gas 192843 | static count + memory 192843: equal
-  [V] med=0.000212 s  min=0.000194  max=0.000394  CV=19.0%  (samples=31, inner-reps=30)
+  [V] med=0.000202 s  min=0.000199  max=0.000296  CV=8.8%  (samples=31, inner-reps=52)
   [K] equals the C++ reference (1024 entries): PASSED | gas 175406 | static count + memory 175406: equal
-  [K] med=0.000169 s  min=0.000156  max=0.000210  CV=6.3%  (samples=31, inner-reps=59)
+  [K] med=0.000152 s  min=0.000150  max=0.000156  CV=1.1%  (samples=31, inner-reps=68)
   [S] equals the C++ reference (1024 entries): PASSED | gas 263633 | static count + memory 263633: equal
-  [S] med=0.000265 s  min=0.000244  max=0.000505  CV=18.5%  (samples=31, inner-reps=43)
+  [S] med=0.000244 s  min=0.000241  max=0.000260  CV=1.6%  (samples=31, inner-reps=42)
+  [MV] equals the C++ reference (1024 entries): PASSED | gas 131455 | static count + memory 131455: equal
+  [MV] med=0.000063 s  min=0.000062  max=0.000107  CV=12.2%  (samples=31, inner-reps=147)
+  [MK] equals the C++ reference (1024 entries): PASSED | gas 114018 | static count + memory 114018: equal
+  [MK] med=0.000085 s  min=0.000084  max=0.000133  CV=13.5%  (samples=31, inner-reps=122)
 ---- R = 256 samples, C = 32 features, data: random ----
 Bytecode: V=16403 K=92132 S=534296 bytes | 1024 entries x 256 elements = 262144 multiply-accumulates
   [H] harness (call-data copy and return only): PASSED | gas 10782 (header layout) | gas 17426 (packed layout)
   [V] equals the C++ reference (1024 entries): PASSED | gas 541229 | static count + memory 541229: equal
-  [V] med=0.000577 s  min=0.000540  max=0.000946  CV=15.0%  (samples=31, inner-reps=11)
+  [V] med=0.000624 s  min=0.000615  max=0.000644  CV=0.9%  (samples=31, inner-reps=15)
   [K] equals the C++ reference (1024 entries): PASSED | gas 472628 | static count + memory 472628: equal
-  [K] med=0.000516 s  min=0.000457  max=0.000642  CV=9.1%  (samples=31, inner-reps=19)
+  [K] med=0.000430 s  min=0.000423  max=0.000455  CV=1.3%  (samples=31, inner-reps=25)
   [S] equals the C++ reference (1024 entries): PASSED | gas 917072 | static count + memory 917072: equal
-  [S] med=0.001015 s  min=0.000876  max=0.001726  CV=19.8%  (samples=31, inner-reps=11)
+  [S] med=0.000881 s  min=0.000872  max=0.000901  CV=0.8%  (samples=31, inner-reps=11)
+  [MV] equals the C++ reference (1024 entries): PASSED | gas 479841 | static count + memory 479841: equal
+  [MV] med=0.000230 s  min=0.000227  max=0.000243  CV=1.3%  (samples=31, inner-reps=44)
+  [MK] equals the C++ reference (1024 entries): PASSED | gas 411240 | static count + memory 411240: equal
+  [MK] med=0.000320 s  min=0.000314  max=0.000780  CV=24.8%  (samples=31, inner-reps=32)
 ---- R = 64 samples, C = 64 features, data: MNIST ----
 Bytecode: V=67861 K=125127 S=491985 bytes | 4096 entries x 64 elements = 262144 multiply-accumulates
   [H] harness (call-data copy and return only): PASSED | gas 50857 (header layout) | gas 56850 (packed layout)
   [V] equals the C++ reference (4096 entries): PASSED | gas 796344 | static count + memory 796344: equal
-  [V] med=0.000792 s  min=0.000745  max=0.001118  CV=9.3%  (samples=31, inner-reps=12)
+  [V] med=0.000847 s  min=0.000795  max=0.001084  CV=8.0%  (samples=31, inner-reps=13)
   [K] equals the C++ reference (4096 entries): PASSED | gas 666440 | static count + memory 666440: equal
-  [K] med=0.000640 s  min=0.000567  max=0.000992  CV=13.7%  (samples=31, inner-reps=17)
+  [K] med=0.000553 s  min=0.000548  max=0.000582  CV=1.1%  (samples=31, inner-reps=19)
   [S] equals the C++ reference (4096 entries): PASSED | gas 894298 | static count + memory 894298: equal
-  [S] med=0.000844 s  min=0.000829  max=0.001031  CV=4.6%  (samples=31, inner-reps=12)
+  [S] med=0.000845 s  min=0.000834  max=0.000925  CV=2.4%  (samples=31, inner-reps=12)
+  [MV] equals the C++ reference (4096 entries): PASSED | gas 550636 | static count + memory 550636: equal
+  [MV] med=0.000236 s  min=0.000233  max=0.000242  CV=1.1%  (samples=31, inner-reps=39)
+  [MK] equals the C++ reference (4096 entries): PASSED | gas 420732 | static count + memory 420732: equal
+  [MK] med=0.000281 s  min=0.000279  max=0.000284  CV=0.4%  (samples=31, inner-reps=37)
 ---- R = 128 samples, C = 64 features, data: MNIST ----
 Bytecode: V=68117 K=166343 S=925137 bytes | 4096 entries x 128 elements = 524288 multiply-accumulates
   [H] harness (call-data copy and return only): PASSED | gas 56874 (header layout) | gas 69650 (packed layout)
   [V] equals the C++ reference (4096 entries): PASSED | gas 1261113 | static count + memory 1261113: equal
-  [V] med=0.001208 s  min=0.001188  max=0.001251  CV=1.2%  (samples=31, inner-reps=8)
+  [V] med=0.001355 s  min=0.001348  max=0.001746  CV=5.1%  (samples=31, inner-reps=8)
   [K] equals the C++ reference (4096 entries): PASSED | gas 1002060 | static count + memory 1002060: equal
-  [K] med=0.001042 s  min=0.000948  max=0.001289  CV=8.6%  (samples=31, inner-reps=11)
+  [K] med=0.000873 s  min=0.000860  max=0.000979  CV=2.5%  (samples=31, inner-reps=12)
   [S] equals the C++ reference (4096 entries): PASSED | gas 1659314 | static count + memory 1659314: equal
-  [S] med=0.001986 s  min=0.001637  max=0.002574  CV=13.0%  (samples=31, inner-reps=6)
+  [S] med=0.001635 s  min=0.001613  max=0.001674  CV=1.0%  (samples=31, inner-reps=7)
+  [MV] equals the C++ reference (4096 entries): PASSED | gas 1015405 | static count + memory 1015405: equal
+  [MV] med=0.000450 s  min=0.000445  max=0.000490  CV=2.0%  (samples=31, inner-reps=23)
+  [MK] equals the C++ reference (4096 entries): PASSED | gas 756352 | static count + memory 756352: equal
+  [MK] med=0.000540 s  min=0.000534  max=0.000835  CV=9.6%  (samples=31, inner-reps=19)
 ---- R = 256 samples, C = 64 features, data: MNIST ----
 Bytecode: V=68629 K=248775 S=1791443 bytes | 4096 entries x 256 elements = 1048576 multiply-accumulates
   [H] harness (call-data copy and return only): PASSED | gas 69676 (header layout) | gas 98322 (packed layout)
   [V] equals the C++ reference (4096 entries): PASSED | gas 2191419 | static count + memory 2191419: equal
-  [V] med=0.002094 s  min=0.002049  max=0.002236  CV=1.7%  (samples=31, inner-reps=5)
+  [V] med=0.002506 s  min=0.002461  max=0.002596  CV=1.3%  (samples=31, inner-reps=4)
   [K] equals the C++ reference (4096 entries): PASSED | gas 1676372 | static count + memory 1676372: equal
-  [K] med=0.001586 s  min=0.001565  max=0.001687  CV=1.8%  (samples=31, inner-reps=7)
+  [K] med=0.001505 s  min=0.001487  max=0.001549  CV=0.9%  (samples=31, inner-reps=6)
   [S] equals the C++ reference (4096 entries): PASSED | gas 3193234 | static count + memory 3193234: equal
-  [S] med=0.003360 s  min=0.003245  max=0.005766  CV=17.7%  (samples=31, inner-reps=4)
+  [S] med=0.003293 s  min=0.003230  max=0.003750  CV=3.8%  (samples=31, inner-reps=3)
+  [MV] equals the C++ reference (4096 entries): PASSED | gas 1945711 | static count + memory 1945711: equal
+  [MV] med=0.000891 s  min=0.000866  max=0.001363  CV=9.9%  (samples=31, inner-reps=12)
+  [MK] equals the C++ reference (4096 entries): PASSED | gas 1430664 | static count + memory 1430664: equal
+  [MK] med=0.001054 s  min=0.001047  max=0.001188  CV=2.3%  (samples=31, inner-reps=10)
 ---- R = 500 samples, C = 64 features, data: MNIST ----
 Bytecode: V=69605 K=405911 S=3581427 bytes | 4096 entries x 500 elements = 2048000 multiply-accumulates
   [H] harness (call-data copy and return only): PASSED | gas 96916 (header layout) | gas 164324 (packed layout)
   [V] equals the C++ reference (4096 entries): PASSED | gas 3996323 | static count + memory 3996323: equal
-  [V] med=0.004207 s  min=0.003899  max=0.005080  CV=5.4%  (samples=31, inner-reps=3)
+  [V] med=0.004904 s  min=0.004848  max=0.006515  CV=6.8%  (samples=31, inner-reps=2)
   [K] equals the C++ reference (4096 entries): PASSED | gas 2989509 | static count + memory 2989509: equal
-  [K] med=0.003659 s  min=0.003088  max=0.005024  CV=10.7%  (samples=31, inner-reps=3)
+  [K] med=0.002765 s  min=0.002725  max=0.003212  CV=3.4%  (samples=31, inner-reps=4)
   [S] equals the C++ reference (4096 entries): PASSED | gas 6131628 | static count + memory 6131628: equal
-  [S] med=0.007822 s  min=0.006567  max=0.009889  CV=10.0%  (samples=31, inner-reps=2)
+  [S] med=0.006598 s  min=0.006460  max=0.013120  CV=18.5%  (samples=31, inner-reps=2)
+  [MV] equals the C++ reference (4096 entries): PASSED | gas 3750615 | static count + memory 3750615: equal
+  [MV] med=0.001702 s  min=0.001686  max=0.001758  CV=0.9%  (samples=31, inner-reps=6)
+  [MK] equals the C++ reference (4096 entries): PASSED | gas 2743801 | static count + memory 2743801: equal
+  [MK] med=0.002061 s  min=0.002038  max=0.002103  CV=0.7%  (samples=31, inner-reps=5)
 ---- R = 128 samples, C = 256 features, data: MNIST ----
 Bytecode: V=1114134 K=1703896 S=13633492 bytes | 65536 entries x 128 elements = 8388608 multiply-accumulates
   [H] harness (call-data copy and return only): PASSED | gas 9130272 (header layout) | gas 9691154 (packed layout)
   [V] equals the C++ reference (65536 entries): PASSED | gas 28397871 | static count + memory 28397871: equal
-  [V] med=0.022495 s  min=0.020237  max=0.031935  CV=12.0%  (samples=31, inner-reps=1)
+  [V] med=0.023411 s  min=0.023206  max=0.031530  CV=6.8%  (samples=31, inner-reps=1)
   [K] equals the C++ reference (65536 entries): PASSED | gas 23153220 | static count + memory 23153220: equal
-  [K] med=0.015070 s  min=0.013575  max=0.025758  CV=20.4%  (samples=31, inner-reps=1)
+  [K] med=0.013246 s  min=0.012946  max=0.017690  CV=6.0%  (samples=31, inner-reps=1)
   [S] equals the C++ reference (65536 entries): PASSED | gas 32827826 | static count + memory 32827826: equal
-  [S] med=0.027011 s  min=0.026015  max=0.035752  CV=9.5%  (samples=31, inner-reps=1)
+  [S] med=0.026076 s  min=0.025508  max=0.032157  CV=4.6%  (samples=31, inner-reps=1)
+  [MV] equals the C++ reference (65536 entries): PASSED | gas 24465763 | static count + memory 24465763: equal
+  [MV] med=0.007093 s  min=0.006995  max=0.008535  CV=3.8%  (samples=31, inner-reps=2)
+  [MK] equals the C++ reference (65536 entries): PASSED | gas 19221112 | static count + memory 19221112: equal
+  [MK] med=0.007457 s  min=0.007366  max=0.008611  CV=2.8%  (samples=31, inner-reps=2)
 ---- R = 128 samples, C = 64 features, data: Fashion-MNIST ----
 Bytecode: V=68117 K=166343 S=925137 bytes | 4096 entries x 128 elements = 524288 multiply-accumulates
   [H] harness (call-data copy and return only): PASSED | gas 56874 (header layout) | gas 69650 (packed layout)
   [V] equals the C++ reference (4096 entries): PASSED | gas 1261113 | static count + memory 1261113: equal
-  [V] med=0.001199 s  min=0.001136  max=0.001321  CV=4.5%  (samples=31, inner-reps=8)
+  [V] med=0.001356 s  min=0.001339  max=0.001592  CV=3.2%  (samples=31, inner-reps=8)
   [K] equals the C++ reference (4096 entries): PASSED | gas 1002060 | static count + memory 1002060: equal
-  [K] med=0.000946 s  min=0.000902  max=0.001033  CV=3.0%  (samples=31, inner-reps=11)
+  [K] med=0.000870 s  min=0.000860  max=0.000933  CV=1.8%  (samples=31, inner-reps=12)
   [S] equals the C++ reference (4096 entries): PASSED | gas 1659314 | static count + memory 1659314: equal
-  [S] med=0.001663 s  min=0.001608  max=0.001957  CV=4.2%  (samples=31, inner-reps=6)
+  [S] med=0.001639 s  min=0.001604  max=0.002635  CV=12.1%  (samples=31, inner-reps=7)
+  [MV] equals the C++ reference (4096 entries): PASSED | gas 1015405 | static count + memory 1015405: equal
+  [MV] med=0.000452 s  min=0.000447  max=0.000560  CV=4.4%  (samples=31, inner-reps=23)
+  [MK] equals the C++ reference (4096 entries): PASSED | gas 756352 | static count + memory 756352: equal
+  [MK] med=0.000539 s  min=0.000536  max=0.000615  CV=3.0%  (samples=31, inner-reps=20)
 ---- R = 500 samples, C = 64 features, data: Fashion-MNIST ----
 Bytecode: V=69605 K=405911 S=3581427 bytes | 4096 entries x 500 elements = 2048000 multiply-accumulates
   [H] harness (call-data copy and return only): PASSED | gas 96916 (header layout) | gas 164324 (packed layout)
   [V] equals the C++ reference (4096 entries): PASSED | gas 3996323 | static count + memory 3996323: equal
-  [V] med=0.003911 s  min=0.003878  max=0.004077  CV=1.3%  (samples=31, inner-reps=3)
+  [V] med=0.004873 s  min=0.004836  max=0.005707  CV=3.3%  (samples=31, inner-reps=3)
   [K] equals the C++ reference (4096 entries): PASSED | gas 2989509 | static count + memory 2989509: equal
-  [K] med=0.002895 s  min=0.002854  max=0.003066  CV=1.3%  (samples=31, inner-reps=4)
+  [K] med=0.002755 s  min=0.002739  max=0.002829  CV=0.9%  (samples=31, inner-reps=4)
   [S] equals the C++ reference (4096 entries): PASSED | gas 6131628 | static count + memory 6131628: equal
-  [S] med=0.006644 s  min=0.006521  max=0.007108  CV=2.1%  (samples=31, inner-reps=2)
+  [S] med=0.006646 s  min=0.006444  max=0.010132  CV=9.6%  (samples=31, inner-reps=2)
+  [MV] equals the C++ reference (4096 entries): PASSED | gas 3750615 | static count + memory 3750615: equal
+  [MV] med=0.001708 s  min=0.001684  max=0.003090  CV=14.0%  (samples=31, inner-reps=6)
+  [MK] equals the C++ reference (4096 entries): PASSED | gas 2743801 | static count + memory 2743801: equal
+  [MK] med=0.002062 s  min=0.002041  max=0.002388  CV=3.1%  (samples=31, inner-reps=5)
 ---- R = 128 samples, C = 256 features, data: Fashion-MNIST ----
 Bytecode: V=1114134 K=1703896 S=13633492 bytes | 65536 entries x 128 elements = 8388608 multiply-accumulates
   [H] harness (call-data copy and return only): PASSED | gas 9130272 (header layout) | gas 9691154 (packed layout)
   [V] equals the C++ reference (65536 entries): PASSED | gas 28397871 | static count + memory 28397871: equal
-  [V] med=0.019978 s  min=0.019653  max=0.022353  CV=2.5%  (samples=31, inner-reps=1)
+  [V] med=0.023485 s  min=0.023108  max=0.028733  CV=5.8%  (samples=31, inner-reps=1)
   [K] equals the C++ reference (65536 entries): PASSED | gas 23153220 | static count + memory 23153220: equal
-  [K] med=0.013838 s  min=0.013637  max=0.017136  CV=4.5%  (samples=31, inner-reps=1)
+  [K] med=0.013151 s  min=0.013016  max=0.017016  CV=5.6%  (samples=31, inner-reps=1)
   [S] equals the C++ reference (65536 entries): PASSED | gas 32827826 | static count + memory 32827826: equal
-  [S] med=0.026336 s  min=0.026080  max=0.029618  CV=2.5%  (samples=31, inner-reps=1)
+  [S] med=0.025920 s  min=0.025493  max=0.029328  CV=3.0%  (samples=31, inner-reps=1)
+  [MV] equals the C++ reference (65536 entries): PASSED | gas 24465763 | static count + memory 24465763: equal
+  [MV] med=0.007133 s  min=0.007033  max=0.010245  CV=7.8%  (samples=31, inner-reps=2)
+  [MK] equals the C++ reference (65536 entries): PASSED | gas 19221112 | static count + memory 19221112: equal
+  [MK] med=0.007518 s  min=0.007390  max=0.009120  CV=4.6%  (samples=31, inner-reps=2)
 
 ---- shapes at the per-transaction cap (R = 128): each is executed, without timing ----
 ---- R = 128 samples, C = 200 features, data: random ----
@@ -213,36 +305,48 @@ Bytecode: V=679573 K=1095495 S=8713215 bytes | 40000 entries x 128 elements = 51
   [V] equals the C++ reference (40000 entries): PASSED | gas 15269801 | static count + memory 15269801: equal
   [K] equals the C++ reference (40000 entries): PASSED | gas 12083773 | static count + memory 12083773: equal
   [S] equals the C++ reference (40000 entries): PASSED | gas 18832964 | static count + memory 18832964: equal
+  [MV] equals the C++ reference (40000 entries): PASSED | gas 12869853 | static count + memory 12869853: equal
+  [MK] equals the C++ reference (40000 entries): PASSED | gas 9683825 | static count + memory 9683825: equal
 ---- R = 128 samples, C = 208 features, data: random ----
 Bytecode: V=735125 K=1174343 S=9421907 bytes | 43264 entries x 128 elements = 5537792 multiply-accumulates
   [H] harness (call-data copy and return only): PASSED | gas 4082407 (header layout) | gas 4389650 (packed layout)
   [V] equals the C++ reference (43264 entries): PASSED | gas 16802038 | static count + memory 16802038: equal
   [K] equals the C++ reference (43264 entries): PASSED | gas 13350672 | static count + memory 13350672: equal
   [S] equals the C++ reference (43264 entries): PASSED | gas 20641433 | static count + memory 20641433: equal
+  [MV] equals the C++ reference (43264 entries): PASSED | gas 14206250 | static count + memory 14206250: equal
+  [MK] equals the C++ reference (43264 entries): PASSED | gas 10754884 | static count + memory 10754884: equal
 ---- R = 128 samples, C = 224 features, data: random ----
 Bytecode: V=852757 K=1340103 S=10922235 bytes | 50176 entries x 128 elements = 6422528 multiply-accumulates
   [H] harness (call-data copy and return only): PASSED | gas 5436259 (header layout) | gas 5816850 (packed layout)
   [V] equals the C++ reference (50176 entries): PASSED | gas 20188018 | static count + memory 20188018: equal
   [K] equals the C++ reference (50176 entries): PASSED | gas 16176840 | static count + memory 16176840: equal
   [S] equals the C++ reference (50176 entries): PASSED | gas 24613804 | static count + memory 24613804: equal
+  [MV] equals the C++ reference (50176 entries): PASSED | gas 17177510 | static count + memory 17177510: equal
+  [MK] equals the C++ reference (50176 entries): PASSED | gas 13166332 | static count + memory 13166332: equal
 ---- R = 128 samples, C = 232 features, data: random ----
 Bytecode: V=914837 K=1427015 S=11713871 bytes | 53824 entries x 128 elements = 6889472 multiply-accumulates
   [H] harness (call-data copy and return only): PASSED | gas 6228049 (header layout) | gas 6649370 (packed layout)
   [V] equals the C++ reference (53824 entries): PASSED | gas 22052320 | static count + memory 22052320: equal
   [K] equals the C++ reference (53824 entries): PASSED | gas 17746861 | static count + memory 17746861: equal
   [S] equals the C++ reference (53824 entries): PASSED | gas 26788483 | static count + memory 26788483: equal
+  [MV] equals the C++ reference (53824 entries): PASSED | gas 18822932 | static count + memory 18822932: equal
+  [MK] equals the C++ reference (53824 entries): PASSED | gas 14517473 | static count + memory 14517473: equal
 ---- R = 128 samples, C = 184 features, data: random ----
 Bytecode: V=574997 K=945863 S=7378775 bytes | 33856 entries x 128 elements = 4333568 multiply-accumulates
   [H] harness (call-data copy and return only): PASSED | gas 2548194 (header layout) | gas 2764250 (packed layout)
   [V] equals the C++ reference (33856 entries): PASSED | gas 12501873 | static count + memory 12501873: equal
   [K] equals the C++ reference (33856 entries): PASSED | gas 9816907 | static count + memory 9816907: equal
   [S] equals the C++ reference (33856 entries): PASSED | gas 15545947 | static count + memory 15545947: equal
+  [MV] equals the C++ reference (33856 entries): PASSED | gas 10470565 | static count + memory 10470565: equal
+  [MK] equals the C++ reference (33856 entries): PASSED | gas 7785599 | static count + memory 7785599: equal
 ---- R = 128 samples, C = 192 features, data: random ----
 Bytecode: V=626197 K=1019335 S=8032171 bytes | 36864 entries x 128 elements = 4718592 multiply-accumulates
   [H] harness (call-data copy and return only): PASSED | gas 2999982 (header layout) | gas 3244050 (packed layout)
   [V] equals the C++ reference (36864 entries): PASSED | gas 13838013 | static count + memory 13838013: equal
   [K] equals the C++ reference (36864 entries): PASSED | gas 10907484 | static count + memory 10907484: equal
   [S] equals the C++ reference (36864 entries): PASSED | gas 17136105 | static count + memory 17136105: equal
+  [MV] equals the C++ reference (36864 entries): PASSED | gas 11626225 | static count + memory 11626225: equal
+  [MK] equals the C++ reference (36864 entries): PASSED | gas 8695696 | static count + memory 8695696: equal
 
 ================ GRAM MATRIX G = A^T A (R samples x C features), pseudo-random signed data ================
 COMPUTE GAS = total gas minus harness gas (identical on every build)
@@ -269,21 +373,21 @@ LARGEST FEATURE COUNT WITHIN THE PER-TRANSACTION CAP OF 2^24 = 16777216 GAS (R =
     S |       184 |        33856 |    4333568 |       15545947 |           17136105 | yes
 TIME (median, machine and build dependent)
     R |   C |     V ms |     K ms |     S ms |   S/V |   S/K |   K/V | faster | ns/MAC V | ns/MAC K | ns/MAC S | ns/gas V | ns/gas K | ns/gas S | V rel. S | K rel. S
-  128 |   8 |   0.0193 |   0.0289 |   0.0484 |  2.51 |  1.67 |  1.50 |      V |     2.36 |     3.53 |     5.90 |    1.025 |    1.023 |    0.991 |     1.04 |     1.03
-  128 |  16 |   0.0784 |   0.0848 |   0.1488 |  1.90 |  1.75 |  1.08 |      V |     2.39 |     2.59 |     4.54 |    1.042 |    1.034 |    1.039 |     1.00 |     1.00
-  128 |  24 |   0.1782 |   0.1861 |   0.3744 |  2.10 |  2.01 |  1.04 |      V |     2.42 |     2.52 |     5.08 |    1.052 |    1.153 |    1.319 |     0.80 |     0.87
-  128 |  32 |   0.3171 |   0.2812 |   0.5180 |  1.63 |  1.84 |  0.89 |      K |     2.42 |     2.15 |     3.95 |    1.053 |    1.056 |    1.101 |     0.96 |     0.96
-  128 |  40 |   0.5232 |   0.4345 |   0.7688 |  1.47 |  1.77 |  0.83 |      K |     2.55 |     2.12 |     3.75 |    1.112 |    1.094 |    1.094 |     1.02 |     1.00
-  128 |  48 |   0.7094 |   0.5872 |   1.0716 |  1.51 |  1.83 |  0.83 |      K |     2.41 |     1.99 |     3.63 |    1.047 |    1.060 |    1.092 |     0.96 |     0.97
-  128 |  64 |   1.3273 |   1.0041 |   1.7637 |  1.33 |  1.76 |  0.76 |      K |     2.53 |     1.92 |     3.36 |    1.102 |    1.062 |    1.052 |     1.05 |     1.01
-  128 |  96 |   2.6674 |   2.1886 |   4.3268 |  1.62 |  1.98 |  0.82 |      K |     2.26 |     1.86 |     3.67 |    0.984 |    1.071 |    1.195 |     0.82 |     0.90
-  128 | 128 |   4.8263 |   3.4597 |   7.0911 |  1.47 |  2.05 |  0.72 |      K |     2.30 |     1.65 |     3.38 |    1.002 |    0.971 |    1.125 |     0.89 |     0.86
-  128 | 192 |  10.5197 |   7.7017 |  15.2642 |  1.45 |  1.98 |  0.73 |      K |     2.23 |     1.63 |     3.23 |    0.971 |    0.974 |    1.099 |     0.88 |     0.89
-  128 | 256 |  19.9123 |  13.7452 |  30.1323 |  1.51 |  2.19 |  0.69 |      K |     2.37 |     1.64 |     3.59 |    1.033 |    0.980 |    1.233 |     0.84 |     0.80
-   16 |  32 |   0.0916 |   0.0862 |   0.0963 |  1.05 |  1.12 |  0.94 |      K |     5.59 |     5.26 |     5.88 |    0.912 |    0.898 |    1.013 |     0.90 |     0.89
-   32 |  32 |   0.1212 |   0.1136 |   0.1738 |  1.43 |  1.53 |  0.94 |      K |     3.70 |     3.47 |     5.30 |    0.940 |    0.944 |    1.169 |     0.80 |     0.81
-   64 |  32 |   0.2120 |   0.1692 |   0.2648 |  1.25 |  1.56 |  0.80 |      K |     3.23 |     2.58 |     4.04 |    1.137 |    1.002 |    1.035 |     1.10 |     0.97
-  256 |  32 |   0.5770 |   0.5155 |   1.0153 |  1.76 |  1.97 |  0.89 |      K |     2.20 |     1.97 |     3.87 |    1.088 |    1.116 |    1.129 |     0.96 |     0.99
+  128 |   8 |   0.0217 |   0.0258 |   0.0443 |  2.04 |  1.72 |  1.19 |      V |     2.64 |     3.14 |     5.41 |    1.151 |    0.911 |    0.907 |     1.27 |     1.00
+  128 |  16 |   0.0846 |   0.0753 |   0.1330 |  1.57 |  1.77 |  0.89 |      K |     2.58 |     2.30 |     4.06 |    1.124 |    0.918 |    0.928 |     1.21 |     0.99
+  128 |  24 |   0.1909 |   0.1485 |   0.2719 |  1.42 |  1.83 |  0.78 |      K |     2.59 |     2.01 |     3.69 |    1.127 |    0.920 |    0.958 |     1.18 |     0.96
+  128 |  32 |   0.3397 |   0.2449 |   0.4524 |  1.33 |  1.85 |  0.72 |      K |     2.59 |     1.87 |     3.45 |    1.128 |    0.919 |    0.962 |     1.17 |     0.96
+  128 |  40 |   0.5298 |   0.3645 |   0.6866 |  1.30 |  1.88 |  0.69 |      K |     2.59 |     1.78 |     3.35 |    1.126 |    0.918 |    0.977 |     1.15 |     0.94
+  128 |  48 |   0.7629 |   0.5098 |   0.9825 |  1.29 |  1.93 |  0.67 |      K |     2.59 |     1.73 |     3.33 |    1.126 |    0.921 |    1.001 |     1.13 |     0.92
+  128 |  64 |   1.3618 |   0.8717 |   1.6994 |  1.25 |  1.95 |  0.64 |      K |     2.60 |     1.66 |     3.24 |    1.131 |    0.922 |    1.013 |     1.12 |     0.91
+  128 |  96 |   3.0665 |   1.8868 |   3.8216 |  1.25 |  2.03 |  0.62 |      K |     2.60 |     1.60 |     3.24 |    1.132 |    0.924 |    1.055 |     1.07 |     0.88
+  128 | 128 |   5.4773 |   3.3136 |   6.9239 |  1.26 |  2.09 |  0.60 |      K |     2.61 |     1.58 |     3.30 |    1.137 |    0.930 |    1.098 |     1.04 |     0.85
+  128 | 192 |  12.3389 |   7.3258 |  15.0923 |  1.22 |  2.06 |  0.59 |      K |     2.61 |     1.55 |     3.20 |    1.138 |    0.926 |    1.086 |     1.05 |     0.85
+  128 | 256 |  23.4440 |  13.2453 |  26.9514 |  1.15 |  2.03 |  0.56 |      K |     2.79 |     1.58 |     3.21 |    1.217 |    0.945 |    1.103 |     1.10 |     0.86
+   16 |  32 |   0.0968 |   0.0826 |   0.0872 |  0.90 |  1.06 |  0.85 |      K |     5.91 |     5.04 |     5.32 |    0.964 |    0.860 |    0.917 |     1.05 |     0.94
+   32 |  32 |   0.1305 |   0.1053 |   0.1391 |  1.07 |  1.32 |  0.81 |      K |     3.98 |     3.21 |     4.25 |    1.011 |    0.876 |    0.936 |     1.08 |     0.94
+   64 |  32 |   0.2018 |   0.1519 |   0.2436 |  1.21 |  1.60 |  0.75 |      K |     3.08 |     2.32 |     3.72 |    1.083 |    0.899 |    0.952 |     1.14 |     0.94
+  256 |  32 |   0.6240 |   0.4299 |   0.8809 |  1.41 |  2.05 |  0.69 |      K |     2.38 |     1.64 |     3.36 |    1.176 |    0.931 |    0.979 |     1.20 |     0.95
 
 ================ REAL IMAGE DATA (R images, central w x w window, C = w * w pixels) ================
 COMPUTE GAS (identical on every build) and trace of G (sum of the squared pixels, from the reference that all three programs equal)
@@ -298,12 +402,65 @@ COMPUTE GAS (identical on every build) and trace of G (sum of the squared pixels
  Fashion-MNIST |  128 | 256 |    8388608 |     19267599 |     14022948 |     23136672 | 1.20 | 1.65 | 0.73 | 28397871 | 169.3% |      760980126
 TIME ON REAL IMAGE DATA (median, machine and build dependent)
           data |    R |   C |     V ms |     K ms |     S ms |   S/V |   S/K |   K/V
-         MNIST |   64 |  64 |   0.7923 |   0.6396 |   0.8443 |  1.07 |  1.32 |  0.81
-         MNIST |  128 |  64 |   1.2081 |   1.0416 |   1.9858 |  1.64 |  1.91 |  0.86
-         MNIST |  256 |  64 |   2.0940 |   1.5865 |   3.3599 |  1.60 |  2.12 |  0.76
-         MNIST |  500 |  64 |   4.2069 |   3.6591 |   7.8215 |  1.86 |  2.14 |  0.87
-         MNIST |  128 | 256 |  22.4947 |  15.0704 |  27.0111 |  1.20 |  1.79 |  0.67
- Fashion-MNIST |  128 |  64 |   1.1986 |   0.9464 |   1.6630 |  1.39 |  1.76 |  0.79
- Fashion-MNIST |  500 |  64 |   3.9113 |   2.8949 |   6.6443 |  1.70 |  2.30 |  0.74
- Fashion-MNIST |  128 | 256 |  19.9777 |  13.8382 |  26.3363 |  1.32 |  1.90 |  0.69
+         MNIST |   64 |  64 |   0.8466 |   0.5530 |   0.8450 |  1.00 |  1.53 |  0.65
+         MNIST |  128 |  64 |   1.3554 |   0.8728 |   1.6350 |  1.21 |  1.87 |  0.64
+         MNIST |  256 |  64 |   2.5056 |   1.5047 |   3.2926 |  1.31 |  2.19 |  0.60
+         MNIST |  500 |  64 |   4.9038 |   2.7653 |   6.5980 |  1.35 |  2.39 |  0.56
+         MNIST |  128 | 256 |  23.4111 |  13.2455 |  26.0763 |  1.11 |  1.97 |  0.57
+ Fashion-MNIST |  128 |  64 |   1.3560 |   0.8699 |   1.6387 |  1.21 |  1.88 |  0.64
+ Fashion-MNIST |  500 |  64 |   4.8729 |   2.7554 |   6.6456 |  1.36 |  2.41 |  0.57
+ Fashion-MNIST |  128 | 256 |  23.4846 |  13.1509 |  25.9198 |  1.10 |  1.97 |  0.56
+
+================ MATRIX-LEVEL INSTRUCTION: ONE XMATMUL FOR THE WHOLE GRAM MATRIX ================
+Path MV: XTRANSPOSE, then XMATMUL on the view (no copy). Path MK: transposed copy with MCOPY, then XMATMUL on the copy.
+PROVISIONAL PRICE of XMATMUL: 43 per call, 10 per entry, 14 (strided) or 8 (unit stride) per group of eight. COMPUTE GAS, identical on every build
+          data |    R |   C |   compute MV |   compute MK |    compute S | S/MV | S/MK | V/MV | K/MK | MV gas/MAC | MK gas/MAC | total MV | of cap
+        random |  128 |   8 |        15043 |        24489 |        48833 | 3.25 | 1.99 | 1.25 | 1.15 |      1.836 |      2.989 |    15675 |   0.1%
+        random |  128 |  16 |        59971 |        66723 |       143273 | 2.39 | 2.15 | 1.26 | 1.23 |      1.830 |      2.036 |    61820 |   0.4%
+        random |  128 |  24 |       134851 |       126860 |       283750 | 2.10 | 2.24 | 1.26 | 1.27 |      1.829 |      1.721 |   138910 |   0.8%
+        random |  128 |  32 |       239683 |       204999 |       470276 | 1.96 | 2.29 | 1.26 | 1.30 |      1.829 |      1.564 |   247520 |   1.5%
+        random |  128 |  40 |       374467 |       301234 |       702866 | 1.88 | 2.33 | 1.26 | 1.32 |      1.828 |      1.471 |   388418 |   2.3%
+        random |  128 |  48 |       539203 |       415662 |       981532 | 1.82 | 2.36 | 1.26 | 1.33 |      1.828 |      1.409 |   562565 |   3.4%
+        random |  128 |  64 |       958531 |       699478 |      1677150 | 1.75 | 2.40 | 1.26 | 1.35 |      1.828 |      1.334 |  1015405 |   6.1%
+        random |  128 |  96 |      2156611 |      1489645 |      3621900 | 1.68 | 2.43 | 1.26 | 1.37 |      1.828 |      1.263 |  2383618 |  14.2%
+        random |  128 | 128 |      3833923 |      2581644 |      6305392 | 1.64 | 2.44 | 1.26 | 1.38 |      1.828 |      1.231 |  4481183 |  26.7%
+        random |  128 | 192 |      8626243 |      5695714 |     13892055 | 1.61 | 2.44 | 1.26 | 1.39 |      1.828 |      1.207 | 11626225 |  69.3%
+        random |  128 | 256 |     15335491 |     10090840 |     24444050 | 1.59 | 2.42 | 1.26 | 1.39 |      1.828 |      1.203 | 24465763 | 145.8%
+        random |   16 |  32 |        38979 |        34602 |        95050 | 2.44 | 2.75 | 2.57 | 2.77 |      2.379 |      2.112 |    44449 |   0.3%
+        random |   32 |  32 |        67651 |        58909 |       148627 | 2.20 | 2.52 | 1.91 | 2.04 |      2.065 |      1.798 |    73447 |   0.4%
+        random |   64 |  32 |       124995 |       107558 |       255807 | 2.05 | 2.38 | 1.49 | 1.57 |      1.907 |      1.641 |   131455 |   0.8%
+        random |  256 |  32 |       469059 |       400458 |       899646 | 1.92 | 2.25 | 1.13 | 1.15 |      1.789 |      1.528 |   479841 |   2.9%
+         MNIST |   64 |  64 |       499779 |       369875 |       837448 | 1.68 | 2.26 | 1.49 | 1.66 |      1.907 |      1.411 |   550636 |   3.3%
+         MNIST |  128 |  64 |       958531 |       699478 |      1589664 | 1.66 | 2.27 | 1.26 | 1.35 |      1.828 |      1.334 |  1015405 |   6.1%
+         MNIST |  256 |  64 |      1876035 |      1360988 |      3094912 | 1.65 | 2.27 | 1.13 | 1.18 |      1.789 |      1.298 |  1945711 |  11.6%
+         MNIST |  500 |  64 |      3653699 |      2646885 |      5967304 | 1.63 | 2.25 | 1.07 | 1.09 |      1.784 |      1.292 |  3750615 |  22.4%
+         MNIST |  128 | 256 |     15335491 |     10090840 |     23136672 | 1.51 | 2.29 | 1.26 | 1.39 |      1.828 |      1.203 | 24465763 | 145.8%
+ Fashion-MNIST |  128 |  64 |       958531 |       699478 |      1589664 | 1.66 | 2.27 | 1.26 | 1.35 |      1.828 |      1.334 |  1015405 |   6.1%
+ Fashion-MNIST |  500 |  64 |      3653699 |      2646885 |      5967304 | 1.63 | 2.25 | 1.07 | 1.09 |      1.784 |      1.292 |  3750615 |  22.4%
+ Fashion-MNIST |  128 | 256 |     15335491 |     10090840 |     23136672 | 1.51 | 2.29 | 1.26 | 1.39 |      1.828 |      1.203 | 24465763 | 145.8%
+TIME, MATRIX-LEVEL INSTRUCTION (median, machine and build dependent)
+          data |    R |   C |    MV ms |    MK ms |     S ms |  S/MV |  S/MK |  V/MV |  K/MK | ns/MAC MV | ns/MAC MK | ns/MAC S
+        random |  128 |   8 |   0.0099 |   0.0210 |   0.0443 |  4.46 |  2.11 |  2.18 |  1.23 |     1.213 |     2.563 |    5.406
+        random |  128 |  16 |   0.0329 |   0.0550 |   0.1330 |  4.04 |  2.42 |  2.57 |  1.37 |     1.003 |     1.680 |    4.058
+        random |  128 |  24 |   0.0692 |   0.1032 |   0.2719 |  3.93 |  2.63 |  2.76 |  1.44 |     0.939 |     1.400 |    3.688
+        random |  128 |  32 |   0.1191 |   0.1627 |   0.4524 |  3.80 |  2.78 |  2.85 |  1.51 |     0.908 |     1.241 |    3.452
+        random |  128 |  40 |   0.1823 |   0.2395 |   0.6866 |  3.77 |  2.87 |  2.91 |  1.52 |     0.890 |     1.170 |    3.352
+        random |  128 |  48 |   0.2571 |   0.3260 |   0.9825 |  3.82 |  3.01 |  2.97 |  1.56 |     0.872 |     1.105 |    3.331
+        random |  128 |  64 |   0.4532 |   0.5395 |   1.6994 |  3.75 |  3.15 |  3.01 |  1.62 |     0.864 |     1.029 |    3.241
+        random |  128 |  96 |   0.9997 |   1.1318 |   3.8216 |  3.82 |  3.38 |  3.07 |  1.67 |     0.847 |     0.959 |    3.240
+        random |  128 | 128 |   1.7830 |   1.9503 |   6.9239 |  3.88 |  3.55 |  3.07 |  1.70 |     0.850 |     0.930 |    3.302
+        random |  128 | 192 |   3.9454 |   4.2538 |  15.0923 |  3.83 |  3.55 |  3.13 |  1.72 |     0.836 |     0.901 |    3.198
+        random |  128 | 256 |   7.0655 |   7.5134 |  26.9514 |  3.81 |  3.59 |  3.32 |  1.76 |     0.842 |     0.896 |    3.213
+        random |   16 |  32 |   0.0193 |   0.0254 |   0.0872 |  4.51 |  3.43 |  5.01 |  3.25 |     1.179 |     1.551 |    5.322
+        random |   32 |  32 |   0.0339 |   0.0452 |   0.1391 |  4.11 |  3.08 |  3.85 |  2.33 |     1.033 |     1.380 |    4.245
+        random |   64 |  32 |   0.0625 |   0.0849 |   0.2436 |  3.89 |  2.87 |  3.23 |  1.79 |     0.954 |     1.295 |    3.716
+        random |  256 |  32 |   0.2304 |   0.3197 |   0.8809 |  3.82 |  2.76 |  2.71 |  1.34 |     0.879 |     1.220 |    3.360
+         MNIST |   64 |  64 |   0.2363 |   0.2805 |   0.8450 |  3.58 |  3.01 |  3.58 |  1.97 |     0.901 |     1.070 |    3.224
+         MNIST |  128 |  64 |   0.4498 |   0.5399 |   1.6350 |  3.64 |  3.03 |  3.01 |  1.62 |     0.858 |     1.030 |    3.119
+         MNIST |  256 |  64 |   0.8910 |   1.0535 |   3.2926 |  3.70 |  3.13 |  2.81 |  1.43 |     0.850 |     1.005 |    3.140
+         MNIST |  500 |  64 |   1.7016 |   2.0615 |   6.5980 |  3.88 |  3.20 |  2.88 |  1.34 |     0.831 |     1.007 |    3.222
+         MNIST |  128 | 256 |   7.0933 |   7.4569 |  26.0763 |  3.68 |  3.50 |  3.30 |  1.78 |     0.846 |     0.889 |    3.109
+ Fashion-MNIST |  128 |  64 |   0.4518 |   0.5393 |   1.6387 |  3.63 |  3.04 |  3.00 |  1.61 |     0.862 |     1.029 |    3.126
+ Fashion-MNIST |  500 |  64 |   1.7081 |   2.0619 |   6.6456 |  3.89 |  3.22 |  2.85 |  1.34 |     0.834 |     1.007 |    3.245
+ Fashion-MNIST |  128 | 256 |   7.1334 |   7.5176 |  25.9198 |  3.63 |  3.45 |  3.29 |  1.75 |     0.850 |     0.896 |    3.090
 *** ALL CHECKS PASSED -> gas is valid; timing numbers are valid for this build ***
