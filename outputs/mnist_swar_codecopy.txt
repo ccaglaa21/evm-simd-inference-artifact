@@ -13,8 +13,8 @@ Bytecode: Path S contract with EXTCODECOPY loader 4465 B | 19 data contracts of 
   single image, cold: total 955787 = weight read 91559 (19 cold account accesses x 2,600 + 14053 copied words x 3) + memory 436369 (MSIZE 454368) + the rest 427859
   single image, warm: 908287 | batch of 16, cold: 7369960 | marginal per image 427553 | code 4465 B
   share of the EIP-7825 per-transaction cap (16,777,216): 5.7%
-  anchors, Path N cold single image: weights in storage 32,185,375 | weights as code, 8 lanes 715,664 | weights as code, 16 lanes 368,032
+  anchors, Path N cold single image: weights in storage 32,206,012 | weights as code, 8 lanes 736,301 | weights as code, 16 lanes 390,285
   RATIOS (cold single image, weights as code): Path S / Path N (8 lanes) = 1.34x | Path S / Path N (16 lanes) = 2.60x
-  RATIOS (storage pattern alone): Path N in storage / Path S as code = 33.67x | Path N in storage / Path N as code (8 lanes) = 44.97x
+  RATIOS (storage pattern alone): Path N in storage / Path S as code = 33.70x | Path N in storage / Path N as code (8 lanes) = 45.00x
 
 *** ALL CHECKS PASSED -> numbers are valid ***

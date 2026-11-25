@@ -6,7 +6,7 @@
 // contracts here keep the loop structure of the row-level contract of mnist_rowmacc (batch loop, loop per
 // neuron) but unroll the groups of one neuron inside the loop body, which is the natural way to write a
 // deployable contract without a row-level instruction. They are compared, per image and without memory,
-// with the row-level contract (marginal 199,911) and with the per-group loops (Path B 1,992,849,
+// with the row-level contract (marginal 220,548) and with the per-group loops (Path B 2,158,766,
 // byte-extraction scalar 20,038,957).
 //   B2  fixed-width XMACC, memory map and looped segment loader of mnist_rowmacc, 98/16/8 groups per neuron
 //   S2  Path S lanes (layer 1: 8 x 32-bit, window 32; layers 2-3: 7 x 36-bit, window 4), memory map and
@@ -322,10 +322,10 @@ int main() {
     }
     printf("\n================ LOOP PER NEURON, UNROLLED INNER BODY ================\n");
     printf("  marginal cost per image: B2 (fixed-width XMACC) %lld | S2 (packed scalar) %lld\n", mB, mS);
-    printf("  anchors (marginal, per-group loops): Path B 1,992,849 | byte-extraction scalar 20,038,957 | row-level Path N 199,911\n");
-    printf("  anchors (unrolled, single image, incl. loader): Path B 446,833 | Path S 438,926 | Path N 284,875\n");
+    printf("  anchors (marginal, per-group loops): Path B 2,158,766 | byte-extraction scalar 20,038,957 | row-level Path N 220,548\n");
+    printf("  anchors (unrolled, single image, incl. loader): Path B 612,633 | Path S 438,926 | Path N 284,875\n");
     printf("  RATIOS: S2/B2 = %.2fx | B2/N = %.2fx | S2/N = %.2fx | per-group B / B2 = %.2fx | byte-extraction scalar / S2 = %.2fx\n",
-           (double)mS / mB, (double)mB / 199911.0, (double)mS / 199911.0, 1992849.0 / mB, 20038957.0 / mS);
+           (double)mS / mB, (double)mB / 220548.0, (double)mS / 220548.0, 2158766.0 / mB, 20038957.0 / mS);
     printf("  single image: B2 cold %lld, warm %lld | S2 cold %lld, warm %lld | code B2 %zu B, S2 %zu B\n", coldB1, warmB1, coldS1, warmS1, codeB.size(), codeS.size());
     if (fail) printf("\n*** AT LEAST ONE CHECK FAILED -> numbers are UNRELIABLE, do NOT record ***\n");
     else printf("\n*** ALL CHECKS PASSED -> numbers are valid ***\n");

@@ -70,7 +70,7 @@ static Mat mk(uint64_t R, uint64_t C, bool transposed) { Mat m; m.d.resize(R * C
     if (transposed) { m.rows = C; m.cols = R; m.sr = 1; m.sc = C; } else { m.rows = R; m.cols = C; m.sr = C; m.sc = 1; } return m; }
 static int16_t el(const Mat& m, uint64_t r, uint64_t t) { return m.d[r * m.sr + t * m.sc]; }
 
-static const long long P_CALL = 43, P_ENTRY = 10, P_UNIT = 8, P_PACK = 3;   // must equal the values in the interpreter
+static const long long P_CALL = 270, P_ENTRY = 5, P_UNIT = 9, P_PACK = 6;   // must equal the values in the interpreter
 static uint32_t refEntry(const Mat& A, uint64_t i, const Mat& B, uint64_t j, int* sat) {
     int32_t acc[8] = {0, 0, 0, 0, 0, 0, 0, 0};
     for (uint64_t e = 0; e < A.cols; ++e) { int64_t s = (int64_t)acc[e % 8] + (int32_t)el(A, i, e) * (int32_t)el(B, j, e); if ((s > INT32_MAX || s < INT32_MIN) && sat) ++*sat; acc[e % 8] = sat32(acc[e % 8], (int32_t)el(A, i, e) * (int32_t)el(B, j, e)); }
@@ -107,14 +107,14 @@ int main() {
           Mat A = ta ? mk(n, Ra, true) : mk(Ra, n, false); Mat B = tb ? mk(n, Rb, true) : mk(Rb, n, false);
           std::vector<uint8_t> mem; size_t oa = place(mem, A), ob = place(mem, B); uint64_t dst = mem.size(), nb = 32 * Ra * Rb;
           Res r1 = exec(mem, oa, ob, dst, nullptr, nb, 0, GAS_BIG, nullptr);
-          Code k; load(k, mem); for (uint64_t i = 0; i < Ra; ++i) for (uint64_t j = 0; j < Rb; ++j) { k.PUSH(0); k.PUSH(j); k.PUSH(ob); k.PUSH(i); k.PUSH(oa); k.op(0xEA, 0); k.op(0xCD, 6); k.PUSH(dst + 32 * (i * Rb + j)); k.MSTORE(); }
+          Code k; load(k, mem); for (uint64_t i = 0; i < Ra; ++i) for (uint64_t j = 0; j < Rb; ++j) { k.PUSH(0); k.PUSH(j); k.PUSH(ob); k.PUSH(i); k.PUSH(oa); k.op(0xEA, 0); k.op(0xCD, 14); k.PUSH(dst + 32 * (i * Rb + j)); k.MSTORE(); }
           k.RET(dst, nb); Res r2 = run(k, GAS_BIG);
           ok += (r1.st == EVMC_SUCCESS && r2.st == EVMC_SUCCESS && r1.out == r2.out && r1.out.size() == nb); }
       std::snprintf(d, sizeof d, "%d/%d shapes: XMATMUL equals the loop of XMACC_V, XSUM32 and MSTORE byte for byte", ok, T); report("R2", ok == T, d); }
     // R3: Gram matrix of a stored 9 x 7 matrix through two transposed views of the same data
     { Mat S; S.rows = 9; S.cols = 7; S.sr = 7; S.sc = 1; S.d.resize(63); for (auto& v : S.d) v = (int16_t)((int)(rnd32() % 4096) - 2048);
       std::vector<uint8_t> mem; size_t os = place(mem, S); uint64_t dst = mem.size();
-      Code k; load(k, mem); k.PUSH(dst); k.PUSH(os); k.PUSH(os); k.op(0xDD, 10); k.op(0xE9, 0); k.RET(dst, 32 * 49); Res r = run(k, GAS_BIG);
+      Code k; load(k, mem); k.PUSH(dst); k.PUSH(os); k.PUSH(os); k.op(0xDD, 22); k.op(0xE9, 0); k.RET(dst, 32 * 49); Res r = run(k, GAS_BIG);
       bool ok = r.st == EVMC_SUCCESS && r.out.size() == 32 * 49;
       if (ok) for (int i = 0; i < 7; ++i) for (int j = 0; j < 7; ++j) { int64_t g = 0; for (int t = 0; t < 9; ++t) g += (int64_t)S.d[t * 7 + i] * S.d[t * 7 + j]; if (word32(&r.out[32 * (i * 7 + j)], nullptr) != (uint32_t)g) ok = false; }
       report("R3", ok, ok ? "XTRANSPOSE + XMATMUL(A^T, A^T) equals the Gram matrix of the stored 9 x 7 matrix (49 entries): yes" : "Gram matrix through transposed views: NO"); }

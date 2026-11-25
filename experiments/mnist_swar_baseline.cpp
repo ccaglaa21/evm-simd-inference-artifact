@@ -292,8 +292,8 @@ int main() {
     printf("  S  warm  | %13lld | %14lld | %13lld | %13lld\n", sload_w, mem, h_w, warm);
     printf("  compute per multiply-accumulate (%d MACs): %.2f gas including the loader | %.2f gas without the loader (%lld)\n",
            MACS, (double)h_c / MACS, (double)(h_c - loaderGas) / MACS, loaderGas);
-    printf("  anchors from the other programs: Path C unrolled compute 10,408,685 | Path B unrolled compute 446,833 | Path B looped compute 2,117,326\n");
-    printf("  RATIOS: C/S = %.2fx | B_unrolled/S = %.3fx | B_looped/S = %.2fx\n", 10408685.0 / h_c, 446833.0 / h_c, 2117326.0 / h_c);
+    printf("  anchors from the other programs: Path C unrolled compute 10,408,685 | Path B unrolled compute 612,633 | Path B looped compute 2,283,243\n");
+    printf("  RATIOS: C/S = %.2fx | B_unrolled/S = %.3fx | B_looped/S = %.2fx\n", 10408685.0 / h_c, 612633.0 / h_c, 2283243.0 / h_c);
     if (g2 && g3 && g4 && g5 && g6) printf("\n*** ALL CHECKS PASSED -> numbers are valid ***\n");
     else printf("\n*** AT LEAST ONE CHECK FAILED -> numbers are UNRELIABLE, do NOT record ***\n");
     vm->destroy(vm); dlclose(h); return 0;

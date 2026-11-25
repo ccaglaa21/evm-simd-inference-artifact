@@ -8,7 +8,7 @@
 // The largest row is 2048 elements: with weights in [-4096, 4095] and inputs in [0, 255] every dot product
 // stays below 2^31 in magnitude, so the saturating accumulation of the instructions is not reached.
 // The shape I = 784 repeats the measurement of rowmacc_wallclock.cpp (same seed, same data, same programs),
-// and its four gas values must be equal to the ones printed there (656224, 685199, 535823, 260625).
+// and its four gas values must be equal to the ones printed there (656224, 836751, 552463, 278289).
 // A fifth program, Path M, computes the same layer with the matrix-level instruction: the weights are a
 // 128 x I matrix view and the input is a 1 x I view (32-byte MatrixHeader, 16-bit elements), and one XMATMUL
 // writes the 128 outputs. Path M has its own memory map, as Path N16 has, because its data layout is denser.
@@ -189,8 +189,8 @@ static int runShape(const int NEU, const int I, Row& out) {
     timePath(kS, 0, "S", out.tS, out.gS); timePath(kB, 1, "B", out.tB, out.gB); timePath(kN, 1, "N", out.tN, out.gN);
     MOcur = MO16; MENDcur = MEND16; timePath(kN16, 1, "N16", out.tN16, out.gN16); MOcur = MO; MENDcur = MEND;
     MOcur = MOm; MENDcur = MENDm; timePath(kM, 1, "M", out.tM, out.gM); MOcur = MO; MENDcur = MEND;
-    // static gas count of Path M: the instruction charges 43 per call and, per output, 10 plus 8 per group of eight elements
-    { const long long words = (long long)(MENDm / 32); const long long expect = 3 * 3 + 3 + 3 * (long long)(XMB / 32) + 3 * 3 + 3 + 3 * (long long)(WMB / 32) + 3 * 3 + 43 + (long long)NEU * (10 + 8LL * ((I + 7) / 8)) + 3 * 2 + 3 * words + words * words / 512;
+    // static gas count of Path M: the instruction charges 270 per call and, per output, 5 plus 9 per group of eight elements
+    { const long long words = (long long)(MENDm / 32); const long long expect = 3 * 3 + 3 + 3 * (long long)(XMB / 32) + 3 * 3 + 3 + 3 * (long long)(WMB / 32) + 3 * 3 + 270 + (long long)NEU * (5 + 9LL * ((I + 7) / 8)) + 3 * 2 + 3 * words + words * words / 512;
       std::printf("  [M] static gas count of the program (copies, one XMATMUL, memory): %lld | measured %lld: %s\n", expect, out.gM, expect == out.gM ? "equal" : "DIFFERENT"); if (expect != out.gM) fail = 1; }
     timeBoth(kH, "H", out.tH); timeBoth(kH16, "H16", out.tH16); timeBoth(kHm, "Hm", out.tHm);
     out.I = I;
@@ -209,8 +209,8 @@ int main() {
     for (int i = 0; i < NL; ++i) fail |= runShape(NEU, LEN[i], R[i]);
     // the shape I = 784 must reproduce the gas of rowmacc_wallclock.cpp
     for (int i = 0; i < NL; ++i) if (R[i].I == 784) {
-        bool ok = R[i].gS == 656224 && R[i].gB == 685199 && R[i].gN == 535823 && R[i].gN16 == 260625;
-        std::printf("\n[CHECK] I = 784 reproduces the gas of rowmacc_wallclock (656224, 685199, 535823, 260625): %s\n", ok ? "PASSED" : "FAILED");
+        bool ok = R[i].gS == 656224 && R[i].gB == 836751 && R[i].gN == 552463 && R[i].gN16 == 278289;
+        std::printf("\n[CHECK] I = 784 reproduces the gas of rowmacc_wallclock (656224, 836751, 552463, 278289): %s\n", ok ? "PASSED" : "FAILED");
         if (!ok) fail = 1; }
     std::printf("\n================ ROW-LENGTH SCALING (%d neurons x I inputs) ================\n", NEU);
     std::printf("TOTAL GAS (identical on every build)\n");

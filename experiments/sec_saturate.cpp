@@ -73,7 +73,7 @@ int main() {
         int32_t acc[8] = {MAXI - 5, MINI + 5, 123456, 0, -4, MAXI, MINI, 1000};
         int32_t exp[8] = {MAXI, MINI, 123505, 1, 0, MAXI, MINI + 16, 1025};
         uint8_t wa[32], wb[32], wacc[32]; lanes16(wa, a); lanes16(wb, b); lanes32(wacc, acc);
-        Code k; k.W32(wacc); k.W32(wb); k.W32(wa); k.op(0xCB, 11); k.PUSH(OUT); k.MSTORE(); k.RET(OUT, 32);
+        Code k; k.W32(wacc); k.W32(wb); k.W32(wa); k.op(0xCB, 23); k.PUSH(OUT); k.MSTORE(); k.RET(OUT, 32);
         Res r = run(k, GAS_BIG); bool ok = lanes_ok(r, exp); gascheck(k, r, OUT + 32);
         char d[200]; std::snprintf(d, sizeof d, "XMACC: lanes clamp to 2^31-1 and -2^31, in-range lanes exact: %s (lane0=%d lane1=%d lane2=%d)", ok ? "yes" : "no", r.out.size() >= 32 ? lane32(r.out.data(), 0) : 0, r.out.size() >= 32 ? lane32(r.out.data(), 1) : 0, r.out.size() >= 32 ? lane32(r.out.data(), 2) : 0);
         report("T1", ok, d); }
@@ -89,7 +89,7 @@ int main() {
         uint8_t inw[32]; std::memset(inw, 0, 32); for (int j = 0; j < 8; ++j) std::memcpy(inw + 2 * j, &in[j], 2);
         uint8_t accw[32]; for (int j = 0; j < 8; ++j) std::memcpy(accw + 4 * j, &acc[j], 4);
         Code k; k.W32(hdr); k.PUSH(0); k.MSTORE(); k.W32(dat); k.PUSH(32); k.MSTORE(); k.W32(inw); k.PUSH(0x100); k.MSTORE(); k.W32(accw); k.PUSH(0x200); k.MSTORE();
-        k.PUSH(0); k.PUSH(0); k.PUSH(0x200); k.PUSH(0x100); k.PUSH(0); k.op(0xE5, 14);   // start_col, row, off_acc, off_inp, off_mat
+        k.PUSH(0); k.PUSH(0); k.PUSH(0x200); k.PUSH(0x100); k.PUSH(0); k.op(0xE5, 74);   // start_col, row, off_acc, off_inp, off_mat
         k.RET(0x200, 32);
         Res r = run(k, GAS_BIG); bool ok = r.st == EVMC_SUCCESS && r.out.size() == 32;
         if (ok) for (int j = 0; j < 8; ++j) { int32_t v; std::memcpy(&v, r.out.data() + 4 * j, 4); if (v != exp[j]) ok = false; }
@@ -101,7 +101,7 @@ int main() {
         int16_t w[8], x[8]; for (int j = 0; j < 8; ++j) { w[j] = -32768; x[j] = (j < 4) ? -32768 : 32767; }   // lanes 0..3: +2^30 per group, lanes 4..7: -(2^30-2^15)
         uint8_t ww[32], xw[32], accw[32]; lanes16(ww, w); lanes16(xw, x); std::memset(accw, 0, 32);
         Code k; for (int g = 0; g < 3; ++g) { k.W32(ww); k.PUSH(W + 32 * g); k.MSTORE(); k.W32(xw); k.PUSH(X + 32 * g); k.MSTORE(); }
-        k.W32(accw); k.PUSH(X); k.PUSH(W); k.PUSH(3); k.op(0xE6, 33); k.PUSH(OUT); k.MSTORE(); k.RET(OUT, 32);
+        k.W32(accw); k.PUSH(X); k.PUSH(W); k.PUSH(3); k.op(0xE6, 24 + 12 * 3); k.PUSH(OUT); k.MSTORE(); k.RET(OUT, 32);
         int32_t exp[8]; for (int j = 0; j < 8; ++j) exp[j] = (j < 4) ? MAXI : MINI;   // 3 * 2^30 clamps high; 3 * -(2^30-2^15) = -3221176320 clamps low
         Res r = run(k, GAS_BIG); bool ok = lanes_ok(r, exp); gascheck(k, r, OUT + 32);
         char d[160]; std::snprintf(d, sizeof d, "XMACC_N: 3 x (+2^30) -> 2^31-1 and 3 x -(2^30-2^15) -> -2^31: %s", ok ? "yes" : "no"); report("T3", ok, d); }
@@ -112,7 +112,7 @@ int main() {
         for (int j = 0; j < 16; ++j) { w[j] = -32768; x[j] = -32768; }                  // every product 2^30: pair sum 2^31 (would wrap in vpmaddwd)
         uint8_t ww[32], xw[32], accw[32]; lanes16(ww, w, 16); lanes16(xw, x, 16); std::memset(accw, 0, 32);
         Code k; k.W32(ww); k.PUSH(W); k.MSTORE(); k.W32(xw); k.PUSH(X); k.MSTORE();
-        k.W32(accw); k.PUSH(X); k.PUSH(W); k.PUSH(1); k.op(0xE7, 22); k.PUSH(OUT); k.MSTORE(); k.RET(OUT, 32);
+        k.W32(accw); k.PUSH(X); k.PUSH(W); k.PUSH(1); k.op(0xE7, 32 + 24); k.PUSH(OUT); k.MSTORE(); k.RET(OUT, 32);
         int32_t exp[8]; for (int j = 0; j < 8; ++j) exp[j] = MAXI;
         Res r = run(k, GAS_BIG); bool ok1 = lanes_ok(r, exp); gascheck(k, r, OUT + 32);
         // mixed pair from a clamped accumulator: lane k gets +2^30 then -(2^30-2^15): sat(sat(MAXI + 2^30) - (2^30-2^15)) = MAXI - 2^30 + 2^15
@@ -120,13 +120,13 @@ int main() {
         int32_t accv[8]; for (int j = 0; j < 8; ++j) accv[j] = MAXI;
         lanes16(ww, w, 16); lanes16(xw, x, 16); lanes32(accw, accv);
         Code k2; k2.W32(ww); k2.PUSH(W); k2.MSTORE(); k2.W32(xw); k2.PUSH(X); k2.MSTORE();
-        k2.W32(accw); k2.PUSH(X); k2.PUSH(W); k2.PUSH(1); k2.op(0xE7, 22); k2.PUSH(OUT); k2.MSTORE(); k2.RET(OUT, 32);
+        k2.W32(accw); k2.PUSH(X); k2.PUSH(W); k2.PUSH(1); k2.op(0xE7, 32 + 24); k2.PUSH(OUT); k2.MSTORE(); k2.RET(OUT, 32);
         int32_t exp2[8]; for (int j = 0; j < 8; ++j) exp2[j] = MAXI - (1 << 30) + (1 << 15);
         Res r2 = run(k2, GAS_BIG); bool ok2 = lanes_ok(r2, exp2); gascheck(k2, r2, OUT + 32);
         char d[200]; std::snprintf(d, sizeof d, "XMACC_N16: pair of 2^30 products -> 2^31-1: %s; products of a pair applied in turn to a clamped lane: %s", ok1 ? "yes" : "no", ok2 ? "yes" : "no"); report("T4", ok1 && ok2, d); }
 
     // ---------------- T5: XSUM32 ----------------
-    {   auto sum_of = [&](const int32_t* v, int32_t& got, Code& k) { uint8_t w[32]; lanes32(w, v); k.W32(w); k.op(0xCD, 6); k.PUSH(OUT); k.MSTORE(); k.RET(OUT, 32);
+    {   auto sum_of = [&](const int32_t* v, int32_t& got, Code& k) { uint8_t w[32]; lanes32(w, v); k.W32(w); k.op(0xCD, 14); k.PUSH(OUT); k.MSTORE(); k.RET(OUT, 32);
             Res r = run(k, GAS_BIG); gascheck(k, r, OUT + 32); if (r.st != EVMC_SUCCESS || r.out.size() != 32) return false;
             uint32_t u = 0; for (int i = 28; i < 32; ++i) u = (u << 8) | r.out[i]; got = (int32_t)u;
             for (int i = 0; i < 28; ++i) if (r.out[i] != 0) return false; return true; };
@@ -144,8 +144,8 @@ int main() {
         std::memset(accw, 0, 32);
         Code kn; for (int g = 0; g < 16; ++g) { kn.W32(ww[g]); kn.PUSH(W + 32 * g); kn.MSTORE(); kn.W32(xw[g]); kn.PUSH(X + 32 * g); kn.MSTORE(); }
         Code kb = kn;
-        kn.W32(accw); kn.PUSH(X); kn.PUSH(W); kn.PUSH(16); kn.op(0xE6, 11 * 16); kn.PUSH(OUT2); kn.MSTORE(); kn.RET(OUT2, 32);
-        kb.W32(accw); for (int g = 0; g < 16; ++g) { kb.PUSH(X + 32 * g); kb.MLOAD(); kb.PUSH(W + 32 * g); kb.MLOAD(); kb.op(0xCB, 11); } kb.PUSH(OUT2); kb.MSTORE(); kb.RET(OUT2, 32);
+        kn.W32(accw); kn.PUSH(X); kn.PUSH(W); kn.PUSH(16); kn.op(0xE6, 24 + 12 * 16); kn.PUSH(OUT2); kn.MSTORE(); kn.RET(OUT2, 32);
+        kb.W32(accw); for (int g = 0; g < 16; ++g) { kb.PUSH(X + 32 * g); kb.MLOAD(); kb.PUSH(W + 32 * g); kb.MLOAD(); kb.op(0xCB, 23); } kb.PUSH(OUT2); kb.MSTORE(); kb.RET(OUT2, 32);
         Res rn = run(kn, GAS_BIG), rb = run(kb, GAS_BIG); gascheck(kn, rn, OUT2 + 32); gascheck(kb, rb, OUT2 + 32);
         int32_t ref[8]; int clamped = 0; for (int j = 0; j < 8; ++j) { int32_t a = 0; for (int g = 0; g < 16; ++g) { int64_t s = (int64_t)a + (int32_t)wl[g][j] * (int32_t)xl[g][j]; a = s > MAXI ? MAXI : (s < MINI ? MINI : (int32_t)s); } ref[j] = a; if (a == MAXI || a == MINI) ++clamped; }
         bool ok = lanes_ok(rn, ref) && lanes_ok(rb, ref) && rn.out == rb.out;

@@ -1,6 +1,6 @@
 === XGATHER SMALL-N OVERFLOW TEST (S4/S5) ===
 -- ref: normal header, idx=[0,2,100,6] (100 out of bounds -> must return 0) --
-[REF idx=100 normal(rows=1,cols=8)       ] status=0 gas=155  RES=[10,30,0,70]
+[REF idx=100 normal(rows=1,cols=8)       ] status=0 gas=161  RES=[10,30,0,70]
 [S4a max_data_idx->8, idx=[0,2,4,6]      ] status=3 gas=2000000  (OOG = caught by check_memory)
 [S4b max_data_idx->8, idx=[6,7,5,4]      ] status=3 gas=2000000  (OOG = caught by check_memory)
 [S4c max_data_idx->4, idx=[5,6,7,3]      ] status=3 gas=2000000  (OOG = caught by check_memory)

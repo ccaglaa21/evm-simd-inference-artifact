@@ -41,8 +41,8 @@ static long long opGas(uint8_t op) {
         case 0x54: return 100;      // SLOAD, warm (the prediction is for the warm run)
         case 0x59: return 2;
         case 0xF3: return 0;
-        case 0xCB: return 11;       // XMACC
-        case 0xCC: case 0xCD: case 0xCE: return 6;
+        case 0xCB: return 23;       // XMACC
+        case 0xCC: case 0xCD: return 14; case 0xCE: return 15;
         case 0xE6: return 0;        // XMACC_N static part; the dynamic part is added by XN()
         default: std::fprintf(stderr, "opGas: unknown %02x\n", op); std::exit(2);
     }
@@ -56,7 +56,7 @@ struct Code {
     void P2(int v) { op(0x61); raw((v >> 8) & 0xFF); raw(v & 0xFF); }
     void PUSH(long long v) { if (v < 256) P1((uint8_t)v); else if (v < 65536) P2((int)v); else { op(0x62); raw((v >> 16) & 0xFF); raw((v >> 8) & 0xFF); raw(v & 0xFF); } }
     void W32(std::vector<uint8_t> b) { while (b.size() < 32) b.push_back(0); op(0x7F); for (int i = 0; i < 32; ++i) raw(b[i]); }
-    void XN(long long n) { op(0xE6); g += 11 * n; }   // XMACC_N: 11 gas per group
+    void XN(long long n) { op(0xE6); g += 24 + 12 * n; }   // XMACC_N: 24 gas per call and 12 per group
 };
 static long long memgas(long long bytes) { long long a = (bytes + 31) / 32; return 3 * a + (a * a) / 512; }
 
@@ -233,7 +233,7 @@ int main() {
     std::vector<uint8_t> codeD = code;
     std::vector<uint8_t> codeDm = codeD; { for (int t = 0; t < 13; ++t) codeDm.pop_back(); uint8_t t2[] = {0x59, 0x60, 0x00, 0x52, 0x60, 0x20, 0x60, 0x00, 0xF3}; for (uint8_t x : t2) codeDm.push_back(x); }
 
-    printf("Bytecode: N-UNROLLED=%zu B | N-DEPLOYABLE=%zu B | matWords=%d | XMACC_N priced at 11 gas per group\n", codeU.size(), codeD.size(), matWords);
+    printf("Bytecode: N-UNROLLED=%zu B | N-DEPLOYABLE=%zu B | matWords=%d | XMACC_N priced at 24 gas per call and 12 per group\n", codeU.size(), codeD.size(), matWords);
     printf("[NOTE] Static prediction of the N-unrolled warm run: %lld gas (loader %lld, expected MSIZE %lld)\n\n", predWarm, g_loader, predMS);
     auto imgWords = [&](int im, std::vector<uint8_t>& dst) {
         for (int gw = 0; gw < I / 8; ++gw) { std::vector<uint8_t> w(32, 0); for (int l = 0; l < 8; ++l) { int val = imgs[im][gw * 8 + l]; uint16_t u = (uint16_t)(int16_t)val; w[l * 2] = u & 0xFF; w[l * 2 + 1] = (u >> 8) & 0xFF; } for (int i = 0; i < 32; ++i) dst.push_back(w[31 - i]); }
@@ -333,12 +333,12 @@ int main() {
     printf("\n================ ROW-LEVEL INSTRUCTION (Path N) ================\n");
     printf("  N-unrolled pure compute (single image): %lld  (loader %lld, layer-1 share ~%lld)\n", hU_w, g_loader - (long long)matWords * 100, g_l1 - (long long)matWords * 100 - 3 - 3 - 3 - 3 - 3 * (CDIMG / 32));
     printf("  per multiply-accumulate (%lld MACs): %.2f gas including the loader | %.2f gas without the loader\n", MACS, (double)hU_w / MACS, (double)(hU_w - (g_loader - (long long)matWords * 100)) / MACS);
-    printf("  anchors (unrolled, single image): Path C 10,408,685 | Path B 446,833 | Path S 438,926\n");
-    printf("  RATIOS (unrolled): C/N = %.2fx | B/N = %.2fx | S/N = %.2fx\n", 10408685.0 / hU_w, 446833.0 / hU_w, 438926.0 / hU_w);
+    printf("  anchors (unrolled, single image): Path C 10,408,685 | Path B 612,633 | Path S 438,926\n");
+    printf("  RATIOS (unrolled): C/N = %.2fx | B/N = %.2fx | S/N = %.2fx\n", 10408685.0 / hU_w, 612633.0 / hU_w, 438926.0 / hU_w);
     printf("  N-deployable: code %zu B | single image cold %lld, warm %lld (looped loader; compute %lld)\n", codeD.size(), GD_c[0], GD_w[0], hD_w);
     printf("  N-deployable marginal per image (memory-stripped): %lld\n", m01);
-    printf("  anchors (deployable, marginal): Path B looped 1,992,849 | scalar looped 20,038,957\n");
-    printf("  RATIOS (deployable, marginal): B/N = %.2fx | scalar/N = %.2fx\n", 1992849.0 / m01, 20038957.0 / m01);
+    printf("  anchors (deployable, marginal): Path B looped 2,158,766 | scalar looped 20,038,957\n");
+    printf("  RATIOS (deployable, marginal): B/N = %.2fx | scalar/N = %.2fx\n", 2158766.0 / m01, 20038957.0 / m01);
     printf("  loop overhead of the deployable variant: marginal %lld / unrolled per-image compute %lld = %.2fx\n", m01, hU_w - (g_loader - (long long)matWords * 100), (double)m01 / (double)(hU_w - (g_loader - (long long)matWords * 100)));
     if (fail) printf("\n*** AT LEAST ONE CHECK FAILED -> numbers are UNRELIABLE, do NOT record ***\n");
     else printf("\n*** ALL CHECKS PASSED -> numbers are valid ***\n");

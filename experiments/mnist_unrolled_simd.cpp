@@ -2,11 +2,11 @@
 // ratio is loop overhead" into a measurement. The unrolled body is STRAIGHT-LINE (zero jumps), keeps the
 // accumulator on the stack (symmetric with the scalar baseline); argmax is branchless (deterministic
 // gas) -> a CLOSED-FORM prediction can be written, check: predicted==measured DIFF 0.
-// NOTE (revised expectation): the MNIST SIMD kernel is XMACC (pre-transposed, gas 11),
-// the A^Tv kernel is XMACC_S (gather, gas 14) — the ratio MAY EXCEED 18.4; let the measurement decide.
+// NOTE (revised expectation): the MNIST SIMD kernel is XMACC (pre-transposed, gas 23),
+// the A^Tv kernel is XMACC_S (gather, gas 74) — the ratio MAY EXCEED 18.4; let the measurement decide.
 // CHECKS: (1) 20 images three-way bit-exact (2) unrolled warm predicted==measured diff 0
 // (including MSIZE) (3) cold-warm==matWords*2000 x2 (4) compute_c==compute_w x2
-// (5) looped warm == 5,134,719 anchor (6) repeat run identical.
+// (5) looped warm == 5,300,636 anchor (6) repeat run identical.
 #include <evmc/evmc.h>
 #include <evmc/evmc.hpp>
 #include <evmc/mocked_host.hpp>
@@ -39,8 +39,8 @@ static long long opGas(uint8_t op){
         case 0x54: return 100;                          // SLOAD (WARM; prediction is for the warm run)
         case 0x59: return 2;                            // MSIZE
         case 0xF3: return 0;                            // RETURN
-        case 0xCB: return 11;                           // XMACC
-        case 0xCC: case 0xCD: case 0xCE: return 6;      // XRELU XSUM32 XPACK
+        case 0xCB: return 23;                           // XMACC
+        case 0xCC: case 0xCD: return 14; case 0xCE: return 15;      // XRELU XSUM32 XPACK
         default: std::fprintf(stderr,"opGas: unknown %02x\n",op); std::exit(2);
     }
 }
@@ -324,8 +324,8 @@ int main(){
     long long hU_c=cU1-(long long)matWords*2100-memU, hU_w=wU-(long long)matWords*100-memU;
     long long hL_w=wL-(long long)matWords*100-memL;
     printf("[CHECK 4] compute_cold==compute_warm (UNROLLED): %lld/%lld %s\n",hU_c,hU_w,hU_c==hU_w?"PASSED":"FAILED");
-    printf("[CHECK 5] LOOPED warm == 5,134,719 anchor: %lld %s (compute bucket: %lld, anchor 2,117,326 %s)\n",
-        wL,wL==5134719LL?"PASSED":"FAILED",hL_w,hL_w==2117326LL?"OK":"FAILED");
+    printf("[CHECK 5] LOOPED warm == 5,300,636 anchor: %lld %s (compute bucket: %lld, anchor 2,283,243 %s)\n",
+        wL,wL==5300636LL?"PASSED":"FAILED",hL_w,hL_w==2283243LL?"OK":"FAILED");
     printf("[CHECK 6] repeat run identical (UNROLLED cold): %s\n",cU1==cU2?"PASSED":"FAILED");
 
     long long SCALAR_COMPUTE=10408685LL; // constant verified three times (mnist_e2e_cb), not re-run here
@@ -339,7 +339,7 @@ int main(){
       printf("  per multiply-accumulate (%lld MACs): SCALAR unrolled %.2f gas | UNROLLED-SIMD %.2f gas | 8-way core block 23/8 = %.3f gas\n",
           nmac,(double)SCALAR_COMPUTE/nmac,(double)hU_w/nmac,23.0/8.0); }
     bool all= ok==20 && wU==predWarm && predMS==msU && (cU1-wU==(long long)matWords*2000)
-        && (cL1-wL==(long long)matWords*2000) && hU_c==hU_w && wL==5134719LL && cU1==cU2;
+        && (cL1-wL==(long long)matWords*2000) && hU_c==hU_w && wL==5300636LL && cU1==cU2;
     printf("\n%s\n", all?"*** ALL CHECKS PASSED ***":"*** AT LEAST ONE CHECK FAILED -> do NOT record ***");
     vm->destroy(vm); dlclose(h); return all?0:1;
 }

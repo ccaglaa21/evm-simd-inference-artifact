@@ -60,8 +60,10 @@ static evmc_vm* VM;
 static bool NOTIME = false;                    // set by NO_TIMING=1: execute and check only
 static const int64_t GAS = 200000000000LL;
 // gas of the added instructions; must equal the values in the interpreter
-static const long long P_CALL = 43, P_ENTRY = 10, P_UNIT = 8, P_STRIDED = 3;       // view instructions
-static const long long P_XMACC = 11, P_XMACC_S = 14, P_LANE = 6, P_XMUL = 8, P_XTRANSPOSE = 10, P_XBCAST = 8, P_XGATHER = 20, P_N_GROUP = 11, P_N16_WORD = 22;
+static const long long V_CALL = 50, V_GROUP = 10, V_STRIDED = 4;                   // XMACC_V
+static const long long M_CALL = 270, M_ENTRY = 5, M_GROUP = 9, M_PACKED = 6;       // XMATMUL
+static const long long N_CALL = 24, N_GROUP = 12, N16_CALL = 32, N16_WORD = 24;    // XMACC_N, XMACC_N16
+static const long long P_XMACC = 23, P_XMACC_S = 74, P_XRELU = 14, P_XSUM32 = 14, P_XPACK = 15, P_XGT = 19, P_XADD = 17, P_XSUB = 17, P_XMUL = 21, P_XTRANSPOSE = 22, P_XBCAST = 18, P_XGATHER = 22, P_XGATHER_INDEX = 1;
 struct Code {
     std::vector<uint8_t> c; long long sgas = 0;
     void b(uint8_t x, long long g) { c.push_back(x); sgas += g; }
@@ -148,16 +150,16 @@ static Case fixedCase(const std::string& name) {
     Code& k = c.k;
     if (name == "XMACC") { c.igas = P_XMACC; c.groups = 1; c.cd.assign(32, 0); k.CDCOPY(32); k.W32(A); k.W32(B); k.PUSH(0);
         for (long long q = 0; q < c.calls; ++q) { k.DUP(3); k.DUP(3); k.b(0xCB, P_XMACC); } accTail(c); }
-    else if (name == "XRELU") { c.igas = P_LANE; c.cd.assign(32, 0); k.CDCOPY(32); k.W32(V);
-        for (long long q = 0; q < c.calls; ++q) { k.IMM(0xCC, 0, P_LANE); }
+    else if (name == "XRELU") { c.igas = P_XRELU; c.cd.assign(32, 0); k.CDCOPY(32); k.W32(V);
+        for (long long q = 0; q < c.calls; ++q) { k.IMM(0xCC, 0, P_XRELU); }
         accTail(c); }
-    else if (name == "XSUM32") { c.igas = P_LANE; c.cd.assign(32, 0); k.CDCOPY(32); k.W32(V);
-        for (long long q = 0; q < c.calls; ++q) { k.DUP(1); k.b(0xCD, P_LANE); k.POP(); } accTail(c); }
-    else if (name == "XPACK") { c.igas = P_LANE; c.cd.assign(32, 0); k.CDCOPY(32); k.W32(V);
-        for (long long q = 0; q < c.calls; ++q) { k.b(0xCE, P_LANE); }
+    else if (name == "XSUM32") { c.igas = P_XSUM32; c.cd.assign(32, 0); k.CDCOPY(32); k.W32(V);
+        for (long long q = 0; q < c.calls; ++q) { k.DUP(1); k.b(0xCD, P_XSUM32); k.POP(); } accTail(c); }
+    else if (name == "XPACK") { c.igas = P_XPACK; c.cd.assign(32, 0); k.CDCOPY(32); k.W32(V);
+        for (long long q = 0; q < c.calls; ++q) { k.b(0xCE, P_XPACK); }
         accTail(c); }
     else if (name == "XGT_IMM" || name == "XADD_IMM" || name == "XSUB_IMM" || name == "XMUL_IMM") {
-        const uint8_t op = name == "XGT_IMM" ? 0xCA : name == "XADD_IMM" ? 0xC7 : name == "XSUB_IMM" ? 0xC9 : 0xC8; c.igas = name == "XMUL_IMM" ? P_XMUL : P_LANE;
+        const uint8_t op = name == "XGT_IMM" ? 0xCA : name == "XADD_IMM" ? 0xC7 : name == "XSUB_IMM" ? 0xC9 : 0xC8; c.igas = name == "XMUL_IMM" ? P_XMUL : name == "XGT_IMM" ? P_XGT : name == "XADD_IMM" ? P_XADD : P_XSUB;
         c.cd.assign(32, 0); k.CDCOPY(32); k.W32(A); k.W32(B);
         for (long long q = 0; q < c.calls; ++q) { k.DUP(2); k.IMM(op, 0x21, c.igas); } accTail(c); }     // 0x21: signed 16-bit lanes
     else if (name == "XTRANSPOSE") { c.igas = P_XTRANSPOSE; unitMatrix(c.cd, 0, 4, 12); k.CDCOPY(c.cd.size());
@@ -175,17 +177,17 @@ static Case fixedCase(const std::string& name) {
         finish(c, ACC, 32); }
     return c; }
 static Case gatherCase(long long n) {
-    Case c; c.instr = "XGATHER"; c.variant = "pseudo-random indices into 65536 elements"; c.n = n; c.igas = P_XGATHER; c.calls = reps(20000 + n * 1500, 64, 8192);
+    Case c; c.instr = "XGATHER"; c.variant = "pseudo-random indices into 65536 elements"; c.n = n; c.igas = P_XGATHER + P_XGATHER_INDEX * n; c.calls = reps(20000 + n * 1500, 64, 8192);
     const uint64_t DATA = 0, DB = unitMatrix(c.cd, DATA, 1, 65536), IND = DB, IB = pad32(32 + 2 * (uint64_t)n), RES = IND + IB;      // every 16-bit index is valid
     c.cd.resize(IND + IB, 0); hdr(c.cd, IND, 1, (uint64_t)n, (uint64_t)n, 1); for (long long i = 0; i < n; ++i) { uint16_t u = (uint16_t)(rnd32() >> 8); c.cd[IND + 32 + 2 * i] = (uint8_t)(u & 0xFF); c.cd[IND + 33 + 2 * i] = (uint8_t)(u >> 8); }
     c.k.CDCOPY(c.cd.size());
-    for (long long q = 0; q < c.calls; ++q) { c.k.PUSH(RES); c.k.PUSH(IND); c.k.PUSH(DATA); c.k.b(0xE3, P_XGATHER); c.k.POP(); c.k.POP(); c.k.POP(); }
+    for (long long q = 0; q < c.calls; ++q) { c.k.PUSH(RES); c.k.PUSH(IND); c.k.PUSH(DATA); c.k.b(0xE3, c.igas); c.k.POP(); c.k.POP(); c.k.POP(); }
     finish(c, RES, IB); return c; }
 
 // ---------- row-level instructions on contiguous words ----------
 static Case maccN(long long n, bool sixteen) {
     Case c; c.instr = sixteen ? "XMACC_N16" : "XMACC_N"; c.variant = sixteen ? "words of sixteen elements" : "groups of eight elements"; c.n = n;
-    c.groups = sixteen ? 2 * n : n; c.igas = n * (sixteen ? P_N16_WORD : P_N_GROUP); c.calls = reps(20000 + n * (sixteen ? 4000 : 2000), n > 1024 ? 12 : 256, 8192);
+    c.groups = sixteen ? 2 * n : n; c.igas = sixteen ? N16_CALL + N16_WORD * n : N_CALL + N_GROUP * n; c.calls = reps(20000 + n * (sixteen ? 4000 : 2000), n > 1024 ? 12 : 256, 8192);
     const int RW = n > 1024 ? 2 : 32; const uint64_t X = 0, W = (uint64_t)n * 32; c.cd.assign((size_t)(n + (long long)RW * n) * 32, 0);      // long rows: 1.5 MB in all
     for (size_t w = 0; w < c.cd.size() / 32; ++w) laneWord(&c.cd[w * 32], sixteen ? 16 : 8);
     c.k.CDCOPY(c.cd.size()); c.k.PUSH(0);
@@ -197,19 +199,19 @@ enum { UNIT = 0, TRANSPOSED = 1, HOSTILE2 = 2, HOSTILE1 = 3 };
 static Case maccV(long long n, int kind) {
     Case c; c.instr = "XMACC_V"; c.n = n; c.groups = g8(n); Code& k = c.k;
     if (kind == UNIT) { const long long RW = n > 8192 ? 3 : 64; c.variant = n > 8192 ? "two unit-stride rows of a 1.5 MB matrix" : "two unit-stride rows"; unitMatrix(c.cd, 0, (uint64_t)RW, (uint64_t)n);
-        c.calls = reps(25000 + n * 250, n > 8192 ? 12 : 256, 8192); c.igas = P_CALL + P_UNIT * g8(n);
+        c.calls = reps(25000 + n * 250, n > 8192 ? 12 : 256, 8192); c.igas = V_CALL + V_GROUP * g8(n);
         k.CDCOPY(c.cd.size()); k.PUSH(0);
         for (long long q = 0; q < c.calls; ++q) { k.PUSH((uint64_t)((7 * q + 13) % RW)); k.PUSH(0); k.PUSH((uint64_t)((7 * q) % RW)); k.PUSH(0); k.b(0xEA, c.igas); } }
     else if (kind == TRANSPOSED) { c.variant = "two rows of a transposed view (stride 128 bytes)"; unitMatrix(c.cd, 0, (uint64_t)n, 64);   // n x 64 stored row by row
-        c.calls = reps(25000 + n * 1500, 256, 8192); c.strided = 2 * n; c.igas = P_CALL + P_UNIT * g8(n) + P_STRIDED * 2 * n;
+        c.calls = reps(25000 + n * 1500, 256, 8192); c.strided = 2 * n; c.igas = V_CALL + V_GROUP * g8(n) + V_STRIDED * 2 * n;
         k.CDCOPY(c.cd.size()); k.PUSH(0); k.b(0xDD, P_XTRANSPOSE); k.POP(); k.PUSH(0);
         for (long long q = 0; q < c.calls; ++q) { k.PUSH((uint64_t)((7 * q + 13) % 64)); k.PUSH(0); k.PUSH((uint64_t)((7 * q) % 64)); k.PUSH(0); k.b(0xEA, c.igas); } }
     else if (kind == HOSTILE2) { c.variant = "two rows of the hostile view"; Hostile h = hostileView(c.cd, (uint64_t)n);
-        c.calls = std::max<long long>(2048, (long long)(4 * h.rows)); c.strided = 2 * n; c.igas = P_CALL + P_UNIT * g8(n) + P_STRIDED * 2 * n;
+        c.calls = std::max<long long>(2048, (long long)(4 * h.rows)); c.strided = 2 * n; c.igas = V_CALL + V_GROUP * g8(n) + V_STRIDED * 2 * n;
         k.CDCOPY(c.cd.size()); k.PUSH(0);
         for (long long q = 0; q < c.calls; ++q) { k.PUSH((uint64_t)((q + (long long)h.rows / 2) % (long long)h.rows)); k.PUSH(0); k.PUSH((uint64_t)(q % (long long)h.rows)); k.PUSH(0); k.b(0xEA, c.igas); } }
     else { c.variant = "one row of the hostile view and one unit-stride row"; Hostile h = hostileView(c.cd, (uint64_t)n); const uint64_t XA = h.bytes; unitMatrix(c.cd, XA, 1, (uint64_t)n);
-        c.calls = std::max<long long>(2048, (long long)(4 * h.rows)); c.strided = n; c.igas = P_CALL + P_UNIT * g8(n) + P_STRIDED * n;
+        c.calls = std::max<long long>(2048, (long long)(4 * h.rows)); c.strided = n; c.igas = V_CALL + V_GROUP * g8(n) + V_STRIDED * n;
         k.CDCOPY(c.cd.size()); k.PUSH(0);
         for (long long q = 0; q < c.calls; ++q) { k.PUSH((uint64_t)(q % (long long)h.rows)); k.PUSH(0); k.PUSH(0); k.PUSH(XA); k.b(0xEA, c.igas); } }
     accTail(c); return c; }
@@ -224,7 +226,7 @@ static Case matmul(long long ra, long long rb, long long n, int kind) {
     else if (kind == M_TRANSPOSED) { std::snprintf(v, sizeof v, "transposed view, %lld x %lld rows (one view)", ra, rb); dst = unitMatrix(c.cd, 0, (uint64_t)n, (uint64_t)ra); packed = ra * n; }   // n x C stored row by row; one view as both operands is packed once
     else if (kind == M_HOSTILE1) { std::snprintf(v, sizeof v, "1 unit-stride row x %lld rows of the hostile view", rb); Hostile h = hostileView(c.cd, (uint64_t)n); offA = h.bytes; offB = 0; dst = h.bytes + unitMatrix(c.cd, h.bytes, 1, (uint64_t)n); packed = rb * n; }
     else { std::snprintf(v, sizeof v, "hostile view, %lld x %lld rows (one view)", ra, rb); Hostile h = hostileView(c.cd, (uint64_t)n); dst = h.bytes; packed = ra * n; }
-    c.variant = v; c.strided = packed; c.igas = P_CALL + c.entries * (P_ENTRY + P_UNIT * g8(n)) + P_STRIDED * packed;
+    c.variant = v; c.strided = packed; c.igas = M_CALL + c.entries * (M_ENTRY + M_GROUP * g8(n)) + M_PACKED * packed;
     c.calls = reps(60000 + c.entries * (8000 + n * 250) + packed * 3000, 1, 4096);
     if (kind == M_HOSTILE1) { c.calls = 12; }                                                  // several passes over the hostile view in one program
     if (kind == M_HOSTILEG) { c.calls = 2; }

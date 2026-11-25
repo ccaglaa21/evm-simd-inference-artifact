@@ -5,17 +5,17 @@
 //   T1  n = 0            -> SUCCESS, accumulator unchanged, no memory expansion (MSIZE as expected), 3 gas charged
 //   T2  n = 2^31         -> clean OUT_OF_GAS (n limited to 31 bits, before any memory access)
 //   T3  n = 2^255        -> clean OUT_OF_GAS (high limbs non-zero)
-//   T4  gas < 11 n       -> clean OUT_OF_GAS (the per-group gas is charged before the memory check)
+//   T4  gas < 24 + 12 n  -> clean OUT_OF_GAS (the gas of the instruction is charged before the memory check)
 //   T5  off_w = 2^64 - 8 -> clean OUT_OF_GAS (offset + 32 n overflows the address space)
 //   T6  off_x = 2^200    -> clean OUT_OF_GAS (offset outside the 64-bit range)
 //   T7  n*32 beyond gas  -> clean OUT_OF_GAS from the memory-expansion charge, no host memory access
 //   T8  off_w == off_x   -> SUCCESS, lanes equal the squares (overlapping operands are legal)
 //   T9  cross-consistency -> XMACC_N over 40 groups of signed random data equals 40 XMACC steps
 //                            (same lane arithmetic, saturating accumulation included)
-//   T10 gas accounting   -> gas of T9 equals the static count (11 per group plus the other opcodes)
+//   T10 gas accounting   -> gas of T9 equals the static count (24 per call and 12 per group, plus the other opcodes)
 //   T11 XMACC_N16 n=2^31 -> clean OUT_OF_GAS (same guards as XMACC_N)
 //   T12 XMACC_N16 over 20 words equals the C++ reference (the two products of a pair added in turn, saturating)
-//       and its gas equals the static count (22 per 16-element group)
+//       and its gas equals the static count (32 per call and 24 per 16-element word)
 // A SUCCESS where OUT_OF_GAS is expected would mean a guard is missing. The program prints one line
 // per test and a summary; the output is deterministic and is compared between the two builds.
 #include <evmc/evmc.h>
@@ -37,8 +37,8 @@ struct Code {
         op((uint8_t)(0x5F + n), 3); for (int b = n - 1; b >= 0; --b) c.push_back((uint8_t)((v >> (8 * b)) & 0xFF)); }
     void W32(const uint8_t* w) { op(0x7F, 3); for (int i = 0; i < 32; ++i) c.push_back(w[i]); }
     void MSTORE() { op(0x52, 3); } void MLOAD() { op(0x51, 3); }
-    void XMACC_N(uint64_t n) { op(0xE6, 11 * (long long)n); }
-    void XMACC() { op(0xCB, 11); }
+    void XMACC_N(uint64_t n) { op(0xE6, 24 + 12 * (long long)n); }
+    void XMACC() { op(0xCB, 23); }
     void RET(uint64_t off, uint64_t size) { PUSH(size); PUSH(off); op(0xF3, 0); }
 };
 struct Res { evmc_status_code st; long long gas; std::vector<uint8_t> out; };
@@ -95,14 +95,14 @@ int main() {
       bool ok = r.st == EVMC_SUCCESS && r.out.size() == 64 && std::memcmp(r.out.data(), accw, 32) == 0;
       uint64_t ms = 0; if (r.out.size() == 64) for (int i = 24; i < 32; ++i) ms = (ms << 8) | r.out[32 + i];
       ok = ok && ms == (uint64_t)(OUT + 32);                     // MSIZE is read after the first store, before the second
-      long long memw0 = (OUT + 64 + 31) / 32; long long pred0 = k.sgas + 3 + 3 * memw0 + (memw0 * memw0) / 512;   // the zero count is charged G_verylow = 3
+      long long memw0 = (OUT + 64 + 31) / 32; long long pred0 = k.sgas + 3 * memw0 + (memw0 * memw0) / 512;   // a zero count pays the charge per call
       ok = ok && r.gas == pred0;
-      char d[200]; std::snprintf(d, sizeof d, "n=0: status=%d output words=%zu accumulator unchanged=%s MSIZE=%llu (expected %d) gas %lld == static count with 3 for the zero count %lld: %s", (int)r.st, r.out.size() / 32, (r.out.size() == 64 && std::memcmp(r.out.data(), accw, 32) == 0) ? "yes" : "no", (unsigned long long)ms, OUT + 32, r.gas, pred0, r.gas == pred0 ? "yes" : "no"); report("T1", ok, d); }
+      char d[200]; std::snprintf(d, sizeof d, "n=0: status=%d output words=%zu accumulator unchanged=%s MSIZE=%llu (expected %d) gas %lld == static count with the charge per call %lld: %s", (int)r.st, r.out.size() / 32, (r.out.size() == 64 && std::memcmp(r.out.data(), accw, 32) == 0) ? "yes" : "no", (unsigned long long)ms, OUT + 32, r.gas, pred0, r.gas == pred0 ? "yes" : "no"); report("T1", ok, d); }
     // T2: n = 2^31
     { Code k = one(0x80000000ULL, nullptr, W, nullptr, X, nullptr); Res r = run(k, GAS_BIG); char d[96]; std::snprintf(d, sizeof d, "n=2^31: status=%d (OUT_OF_GAS=3 expected)", (int)r.st); report("T2", r.st == EVMC_OUT_OF_GAS, d); }
     // T3: n = 2^255
     { Code k = one(0, bigword(255), W, nullptr, X, nullptr); Res r = run(k, GAS_BIG); char d[96]; std::snprintf(d, sizeof d, "n=2^255: status=%d (OUT_OF_GAS=3 expected)", (int)r.st); report("T3", r.st == EVMC_OUT_OF_GAS, d); }
-    // T4: gas smaller than 11 n (n = 10^8 groups -> 1.1e9 gas), budget 10^8
+    // T4: gas smaller than 24 + 12 n (n = 10^8 groups -> 1.2e9 gas), budget 10^8
     { Code k = one(100000000ULL, nullptr, W, nullptr, X, nullptr); Res r = run(k, 100000000LL); char d[128]; std::snprintf(d, sizeof d, "n=1e8 with 1e8 gas: status=%d gas used=%lld (OUT_OF_GAS=3 expected, no memory touched)", (int)r.st, r.gas); report("T4", r.st == EVMC_OUT_OF_GAS, d); }
     // T5: off_w = 2^64 - 8
     { Code k = one(4, nullptr, 0xFFFFFFFFFFFFFFF8ULL, nullptr, X, nullptr); Res r = run(k, GAS_BIG); char d[96]; std::snprintf(d, sizeof d, "off_w=2^64-8, n=4: status=%d (OUT_OF_GAS=3 expected)", (int)r.st); report("T5", r.st == EVMC_OUT_OF_GAS, d); }
@@ -122,11 +122,11 @@ int main() {
       bool okref = ok; if (ok) for (int j = 0; j < 8; ++j) { int32_t ref = j + 1; for (int g = 0; g < 40; ++g) ref = sat32(ref, (int32_t)wl[g][j] * (int32_t)xl[g][j]); if (lane32(rn.out.data(), j) != ref) okref = false; }
       char d[160]; std::snprintf(d, sizeof d, "40 groups: XMACC_N == 40 x XMACC: %s, == C++ reference (saturating): %s", ok ? "yes" : "no", okref ? "yes" : "no"); report("T9", ok && okref, d);
       long long memw = (OUT + 64 + 31) / 32; long long memgas = 3 * memw + (memw * memw) / 512;
-      long long pred = kn.sgas + memgas; char e[160]; std::snprintf(e, sizeof e, "gas measured %lld, static count %lld (11 gas x 40 groups included): %s", rn.gas, pred, rn.gas == pred ? "equal" : "DIFFERENT"); report("T10", rn.gas == pred, e); }
-    // T11, T12: the 16-lane variant XMACC_N16 (0xe7): guards and reference (pairwise sums, 22 gas per group)
+      long long pred = kn.sgas + memgas; char e[160]; std::snprintf(e, sizeof e, "gas measured %lld, static count %lld (24 + 12 x 40 gas of the instruction included): %s", rn.gas, pred, rn.gas == pred ? "equal" : "DIFFERENT"); report("T10", rn.gas == pred, e); }
+    // T11, T12: the 16-lane variant XMACC_N16 (0xe7): guards and reference (pairwise sums, 32 gas per call and 24 per word)
     { Code k; prelude(k); k.W32(accw); k.PUSH(X); k.PUSH(W); k.PUSH(0x80000000ULL); k.op(0xE7, 0); k.PUSH(OUT); k.MSTORE(); k.RET(OUT, 32);
       Res r = run(k, GAS_BIG); char d[96]; std::snprintf(d, sizeof d, "XMACC_N16 n=2^31: status=%d (OUT_OF_GAS=3 expected)", (int)r.st); report("T11", r.st == EVMC_OUT_OF_GAS, d); }
-    { Code k; prelude(k); k.W32(accw); k.PUSH(X); k.PUSH(W); k.PUSH(20); k.op(0xE7, 22 * 20); k.PUSH(OUT); k.MSTORE(); k.RET(OUT, 32);
+    { Code k; prelude(k); k.W32(accw); k.PUSH(X); k.PUSH(W); k.PUSH(20); k.op(0xE7, 32 + 24 * 20); k.PUSH(OUT); k.MSTORE(); k.RET(OUT, 32);
       Res r = run(k, GAS_BIG); bool ok = r.st == EVMC_SUCCESS && r.out.size() == 32;
       if (ok) for (int kk = 0; kk < 8; ++kk) { int32_t ref = kk + 1;
           for (int g = 0; g < 20; ++g) { for (int h = 0; h < 2; ++h) { int j = 2 * kk + h;

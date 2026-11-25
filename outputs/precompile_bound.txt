@@ -1,22 +1,21 @@
 network 784->128->64->10: 202 neurons (one CALL each), 109184 multiply-accumulates, 13648 groups of 8, 27296 input words
-row-level side (the part a precompile would replace): 202 XMACC_N at 11 gas per group = 150128 + 3 PUSH per neuron 1818 = 151946 gas
-  (for reference, the whole pure computation of Path N per image is 284875 gas, 160009 without the loader)
+row-level side (the part a precompile would replace): 202 XMACC_N at 24 gas per call = 4848 and 12 gas per group = 163776, + 3 PUSH per neuron 1818 = 170442 gas
+  (for reference, the whole pure computation of Path N per image is 305395 gas, 180529 without the loader)
 precompile side, fixed part: 202 x (CALL 100 + 7 PUSH 21 + base 15) + 3 x 27296 words = 109360 gas
 
 per-element price p (gas per MAC)    precompile total  ratio to row-level
-0.000                                          109360                0.72
-0.250                                          136656                0.90
-0.500                                          163952                1.08
-1.000                                          218544                1.44
-1.375                                          259488                1.71
-2.000                                          327728                2.16
+0.000                                          109360                0.64
+0.250                                          136656                0.80
+0.500                                          163952                0.96
+1.000                                          218544                1.28
+1.500                                          273136                1.60
+2.000                                          327728                1.92
 
-break-even per-element price of the precompile: p* = (151946 - 109360) / 109184 = 0.390 gas per multiply-accumulate
-(the row-level instruction charges 11 gas per group of 8, 1.375 gas per multiply-accumulate; at that price the precompile costs 1.71 times the row-level side)
+break-even per-element price of the precompile: p* = (170442 - 109360) / 109184 = 0.559 gas per multiply-accumulate
+(the row-level instruction charges 12 gas per group of 8, 1.500 gas per multiply-accumulate; at that price the precompile costs 1.60 times the row-level side)
 Reading: the precompile is cheaper only when its per-element price is below p*; the fixed call and
 input-word charges of one call per neuron are what the row-level instruction avoids.
 
 Layer-level precompile (one CALL per layer, three per image):
-   8 lanes per word: fixed part 3 x 136 + 3 x (13648 weight + 122 input words) = 41718 gas; p* = (151946 - 41718) / 109184 = 1.010 gas per multiply-accumulate; at 1.375 the precompile costs 1.26 times the row-level side
-  16 lanes per word: fixed part 3 x 136 + 3 x (6824 weight + 61 input words) = 21063 gas; p* = (151946 - 21063) / 109184 = 1.199 gas per multiply-accumulate; at 1.375 the precompile costs 1.13 times the row-level side
-(the row-level side is the same 151,946-gas quantity in both layouts, since XMACC_N16 charges the same per element)
+   8 lanes per word: fixed part 3 x 136 + 3 x (13648 weight + 122 input words) = 41718 gas; p* = (170442 - 41718) / 109184 = 1.179 gas per multiply-accumulate; at 1.500 the precompile costs 1.21 times the row-level side
+  16 lanes per word: fixed part 3 x 136 + 3 x (6824 weight + 61 input words) = 21063 gas; p* = (170442 - 21063) / 109184 = 1.368 gas per multiply-accumulate; at 1.500 the precompile costs 1.08 times the row-level side

@@ -12,7 +12,7 @@
 # value (one 32-bit score) is written to memory by the CALL. Overheads inside the precompile (argument
 # decoding, result encoding) are not charged, so the bound favours the precompile.
 # The row-level side is the part of Path N that the precompile would replace: the XMACC_N instructions at the
-# price read from mnist_rowmacc.txt (one per neuron, 11 gas per group of eight) and their three stack operands
+# price read from mnist_rowmacc.txt (one per neuron, a charge per call and a charge per group of eight) and their three stack operands
 # (3 x PUSH). Everything else of a neuron (bias word, lane sum, activation, packing) is the same work in both
 # designs and is left out on both sides, as is the weight loader. Reads $OUT/mnist_rowmacc.txt and
 # deep_meta.txt; the network's XMACC_N count and the ratio against Path N's whole pure computation are
@@ -25,7 +25,8 @@ if "ALL CHECKS PASSED" not in t:
     print("mnist_rowmacc checks did not pass; no derivation"); sys.exit(1)
 m = re.search(r"N-unrolled pure compute \(single image\): (\d+)\s+\(loader (\d+),", t)
 N_unr, loader = int(m.group(1)), int(m.group(2))
-price = int(re.search(r"XMACC_N priced at (\d+) gas per group", t).group(1))
+pm = re.search(r"XMACC_N priced at (\d+) gas per call and (\d+) per group", t)
+call_price, price = int(pm.group(1)), int(pm.group(2))
 
 meta = [int(x) for x in open("deep_meta.txt").read().split()]
 H1, H2 = meta[3], meta[4]
@@ -37,10 +38,10 @@ words = sum(n * 2 * (i // 8) for i, n in layers)      # input row + weight row, 
 
 groups = sum(n * (i // 8) for i, n in layers)
 CALL_WARM, PUSH, BASE, PER_WORD = 100, 3, 15, 3
-rowlevel = price * groups + neurons * 3 * PUSH
+rowlevel = price * groups + neurons * (call_price + 3 * PUSH)
 fixed = neurons * (CALL_WARM + 7 * PUSH + BASE) + PER_WORD * words
 print(f"network {I}->{H1}->{H2}->{O}: {neurons} neurons (one CALL each), {macs} multiply-accumulates, {groups} groups of 8, {words} input words")
-print(f"row-level side (the part a precompile would replace): {neurons} XMACC_N at {price} gas per group = {price * groups} + 3 PUSH per neuron {neurons * 3 * PUSH} = {rowlevel} gas")
+print(f"row-level side (the part a precompile would replace): {neurons} XMACC_N at {call_price} gas per call = {neurons * call_price} and {price} gas per group = {price * groups}, + 3 PUSH per neuron {neurons * 3 * PUSH} = {rowlevel} gas")
 print(f"  (for reference, the whole pure computation of Path N per image is {N_unr} gas, {N_unr - loader} without the loader)")
 print(f"precompile side, fixed part: {neurons} x (CALL {CALL_WARM} + 7 PUSH {7 * PUSH} + base {BASE}) + {PER_WORD} x {words} words = {fixed} gas")
 print()
@@ -58,7 +59,7 @@ print("input-word charges of one call per neuron are what the row-level instruct
 # Layer-level alternative: one CALL per layer (three per image) that receives the whole weight matrix of the
 # layer and the input vector once, instead of one call per neuron. The weight words are the same as above,
 # the input vector is passed once per layer instead of once per neuron. Under the sixteen-lane layout the
-# word counts halve, as for XMACC_N16, whose price per element is the same as that of XMACC_N (22 per 16).
+# word counts halve, as for XMACC_N16, whose price per group of eight is the same as that of XMACC_N.
 print()
 print("Layer-level precompile (one CALL per layer, three per image):")
 for lanes in (8, 16):
@@ -69,4 +70,3 @@ for lanes in (8, 16):
     at_prov = (fixed_l + price / 8 * macs) / rowlevel
     print(f"  {lanes:2d} lanes per word: fixed part {len(layers)} x {CALL_WARM + 7 * PUSH + BASE} + {PER_WORD} x ({wwords} weight + {xwords} input words) = {fixed_l} gas; "
           f"p* = ({rowlevel} - {fixed_l}) / {macs} = {pstar_l:.3f} gas per multiply-accumulate; at {price / 8:.3f} the precompile costs {at_prov:.2f} times the row-level side")
-print("(the row-level side is the same 151,946-gas quantity in both layouts, since XMACC_N16 charges the same per element)")

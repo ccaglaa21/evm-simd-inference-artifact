@@ -19,9 +19,9 @@
 //                                 eight 32-bit lanes per word, one 256-bit MUL multiplies eight elements by
 //                                 the scalar. The input reaches this path in its own packed layout, in the
 //                                 same row order.
-// GAS OF THE VIEW INSTRUCTIONS (provisional until the calibration): XMACC_V 43 per call, XMATMUL 43 per call
-// and 10 per entry; 8 per group of eight elements; 3 per strided element, which XMACC_V pays on every call
-// and XMATMUL pays once per packed element.
+// GAS OF THE VIEW INSTRUCTIONS (from the measured times of four builds, training/price_calibration.py):
+// XMACC_V 50 per call, 10 per group of eight elements and 4 per strided element on every call. XMATMUL 270
+// per call, 5 per entry, 9 per entry and group of eight elements and 6 per packed element.
 // DATA. (a) Pseudo-random signed elements in [-2048, 2047] with R <= 256: Path S stores them with an offset
 // of 2^11 and removes the offset with the column sums. (b) Real image data: A holds R images of MNIST or
 // Fashion-MNIST (the files of the network experiments), one image per row, and the C features are the pixels
@@ -64,7 +64,9 @@ static evmc::MockedHost g_host;
 static evmc_vm* VM;
 static bool NOTIME = false;                    // set by NO_TIMING=1: execute and check only
 static const int64_t GAS = 200000000000LL;
-static const long long P_CALL = 43, P_ENTRY = 10, P_UNIT = 8, P_STRIDED = 3;     // must equal the values in the interpreter
+static const long long V_CALL = 50, V_GROUP = 10, V_STRIDED = 4;                 // XMACC_V; must equal the values in the interpreter
+static const long long M_CALL = 270, M_ENTRY = 5, M_GROUP = 9, M_PACKED = 6;     // XMATMUL
+static const long long P_XSUM32 = 14, P_XTRANSPOSE = 22;
 struct Code {
     std::vector<uint8_t> c; long long sgas = 0;
     void b(uint8_t x, long long g) { c.push_back(x); sgas += g; }
@@ -111,18 +113,18 @@ static void build(const int R, const int C, const std::vector<std::vector<int>>*
     // ---- header layout: A at 0, outputs at MO, transposed copy (Paths K and MK) at MT ----
     const uint64_t MA = 0, MO = HB, MT = MO + OUTB; p.mend[PV] = p.mend[PMV] = MO + OUTB; p.mend[PK] = p.mend[PMK] = MT + HB; p.HEND = MO + OUTB;
     auto entries = [&](Code& k, uint64_t base) { for (int i = 0; i < C; ++i) for (int j = 0; j < C; ++j) {
-        k.PUSH(0); k.PUSH((uint64_t)j); k.PUSH(base); k.PUSH((uint64_t)i); k.PUSH(base); k.b(0xEA, 0); k.b(0xCD, 6); k.PUSH(MO + ((uint64_t)i * C + j) * 32); k.MSTORE(); } };
+        k.PUSH(0); k.PUSH((uint64_t)j); k.PUSH(base); k.PUSH((uint64_t)i); k.PUSH(base); k.b(0xEA, 0); k.b(0xCD, P_XSUM32); k.PUSH(MO + ((uint64_t)i * C + j) * 32); k.MSTORE(); } };
     auto copyT = [&](Code& k) { for (int c = 0; c < C; ++c) for (int t = 0; t < R; ++t) k.MCOPY2(MA + 32 + 2 * ((uint64_t)t * C + c), MT + 32 + 2 * ((uint64_t)c * R + t));
         uint8_t hw[32]; put64(hw, (uint64_t)C); put64(hw + 8, (uint64_t)R); put64(hw + 16, (uint64_t)R); put64(hw + 24, 1); k.W32(hw); k.PUSH(MT); k.MSTORE(); };
     const long long E = (long long)C * C;
-    Code& kV = p.k[PV]; kV.CDCOPY(0, MA, HB); kV.PUSH(MA); kV.b(0xDD, 10); kV.POP(); entries(kV, MA); kV.RET(MO, OUTB);
-    kV.sgas += E * (P_CALL + G8 * P_UNIT + 2 * (long long)R * P_STRIDED);                       // two strided rows of R elements per call
+    Code& kV = p.k[PV]; kV.CDCOPY(0, MA, HB); kV.PUSH(MA); kV.b(0xDD, P_XTRANSPOSE); kV.POP(); entries(kV, MA); kV.RET(MO, OUTB);
+    kV.sgas += E * (V_CALL + G8 * V_GROUP + 2 * (long long)R * V_STRIDED);                       // two strided rows of R elements per call
     Code& kK = p.k[PK]; kK.CDCOPY(0, MA, HB); copyT(kK); entries(kK, MT); kK.RET(MO, OUTB);
-    kK.sgas += E * (P_CALL + G8 * P_UNIT);
-    Code& kMV = p.k[PMV]; kMV.CDCOPY(0, MA, HB); kMV.PUSH(MA); kMV.b(0xDD, 10); kMV.POP(); kMV.PUSH(MO); kMV.PUSH(MA); kMV.PUSH(MA); kMV.b(0xE9, 0); kMV.RET(MO, OUTB);
-    kMV.sgas += P_CALL + E * (P_ENTRY + G8 * P_UNIT) + (long long)C * R * P_STRIDED;            // one view as both operands: its C rows of R elements are packed once
+    kK.sgas += E * (V_CALL + G8 * V_GROUP);
+    Code& kMV = p.k[PMV]; kMV.CDCOPY(0, MA, HB); kMV.PUSH(MA); kMV.b(0xDD, P_XTRANSPOSE); kMV.POP(); kMV.PUSH(MO); kMV.PUSH(MA); kMV.PUSH(MA); kMV.b(0xE9, 0); kMV.RET(MO, OUTB);
+    kMV.sgas += M_CALL + E * (M_ENTRY + G8 * M_GROUP) + (long long)C * R * M_PACKED;            // one view as both operands: its C rows of R elements are packed once
     Code& kMK = p.k[PMK]; kMK.CDCOPY(0, MA, HB); copyT(kMK); kMK.PUSH(MO); kMK.PUSH(MT); kMK.PUSH(MT); kMK.b(0xE9, 0); kMK.RET(MO, OUTB);
-    kMK.sgas += P_CALL + E * (P_ENTRY + G8 * P_UNIT);
+    kMK.sgas += M_CALL + E * (M_ENTRY + G8 * M_GROUP);
     p.kHh.CDCOPY(0, MA, HB); p.kHh.RET(MO, OUTB);
     // ---- Path S: packed rows at 0, outputs at SO, column sums at SCS, offset terms at SBC, scalar column at SSC ----
     const uint64_t SP = 0, SO = PB, SCS = SO + OUTB, SBC = SCS + (uint64_t)Cw * 32, SSC = B ? SBC + (uint64_t)C * 32 : SO + OUTB; p.mend[PS] = SSC + (uint64_t)R * 32; p.HSEND = SO + OUTB;

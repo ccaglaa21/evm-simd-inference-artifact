@@ -8,7 +8,7 @@
 [PASS] G5  stride_col = 2^62: status=3 (OUT_OF_GAS=3 expected)
 [PASS] G6  off_a = 2^200: status=3 (OUT_OF_GAS=3 expected)
 [PASS] G7  cols = 2^31-1 with 1e9 gas: status=3 (OUT_OF_GAS=3 expected from the group charge)
-[PASS] G8  cols = 0: status=0 accumulator unchanged, gas 205 == static count with 43 for the call 205: yes
-[PASS] G9  20 elements, unit stride: gas 229, static count 229 (43 + 8 x 3 groups) | one strided row: gas 289, static count 289 (43 + 8 x 3 groups + 3 x 20 strided elements): equal
+[PASS] G8  cols = 0: status=0 accumulator unchanged, gas 212 == static count with 50 for the call 212: yes
+[PASS] G9  20 elements, unit stride: gas 242, static count 242 (50 + 10 x 3 groups) | one strided row: gas 322, static count 322 (50 + 10 x 3 groups + 4 x 20 strided elements): equal
 
 --- SUMMARY --- 11/11 passed  *** ALL CHECKS PASSED ***

@@ -12,41 +12,36 @@ index eb307a99..bf36f46c 100644
                      t.fn = op_undefined;
                      t.gas_cost = 0;
 diff --git a/lib/evmone/instructions.hpp b/lib/evmone/instructions.hpp
-index c784293a..b0062411 100644
+index 63616b46..d5baa713 100644
 --- a/lib/evmone/instructions.hpp
 +++ b/lib/evmone/instructions.hpp
-@@ -645,9 +645,10 @@ inline void noop(StackTop /*stack*/) noexcept {}
+@@ -652,15 +652,20 @@ inline void noop(StackTop /*stack*/) noexcept {}
          return {EVMC_SUCCESS, gas_left};
      }
  
--    // Gas constants of the view instruction XMACC_V. A unit-stride group of eight elements costs
--    // XVIEW_UNIT_GROUP_GAS. An element that is read through a stride other than one costs
--    // XVIEW_STRIDED_ELEMENT_GAS in addition, on every call. The values are provisional until the
-+    // Gas constants of the two view instructions (XMACC_V and XMATMUL). A unit-stride group of eight
-+    // elements costs XVIEW_UNIT_GROUP_GAS. An element that is read through a stride other than one costs
-+    // XVIEW_STRIDED_ELEMENT_GAS in addition, wherever it is read: XMACC_V reads its strided rows on every
-+    // call, XMATMUL reads every strided element once and packs it. The values are provisional until the
-     // calibration against the measured times of the four builds (training/price_calibration.py).
- #ifndef XVIEW_UNIT_GROUP_GAS
- #define XVIEW_UNIT_GROUP_GAS 8
-@@ -657,9 +658,15 @@ inline void noop(StackTop /*stack*/) noexcept {}
- #endif
- #ifndef XMACC_V_CALL_GAS
- #define XMACC_V_CALL_GAS 43
-+#endif
-+#ifndef XMATMUL_CALL_GAS
-+#define XMATMUL_CALL_GAS 43
-+#endif
-+#ifndef XMATMUL_ENTRY_GAS
-+#define XMATMUL_ENTRY_GAS 10
- #endif
+-    // Gas constants of the view instruction XMACC_V: a charge per call, a charge per group of eight
+-    // elements, and a charge per element that is read through a stride other than one, on every call.
+-    // The values come from the measured times of four builds with the strided elements in the hostile
+-    // layout (training/price_calibration.py).
++    // Gas constants of the two view instructions (XMACC_V and XMATMUL): a charge per call, a charge per
++    // group of eight elements, for XMATMUL a charge per output entry, and a charge per element that is
++    // read through a stride other than one. XMACC_V reads its strided rows on every call, XMATMUL reads
++    // every strided element once and packs it. The values come from the measured times of four builds
++    // with the strided elements in the hostile layout (training/price_calibration.py).
+ #define XMACC_V_CALL_GAS 50
+ #define XMACC_V_GROUP_GAS 10
+ #define XMACC_V_STRIDED_GAS 4
++#define XMATMUL_CALL_GAS 270
++#define XMATMUL_ENTRY_GAS 5
++#define XMATMUL_GROUP_GAS 9
++#define XMATMUL_PACKED_GAS 6
  
 -    // Row kernel of XMACC_V: accumulates the element-wise products of two rows into the eight
 +    // Shared by XMACC_V and XMATMUL: accumulates the element-wise products of two rows into the eight
      // int32 lanes held in ab. da and db point at the first element of each row, sa and sb are the
      // byte distances between consecutive elements (2 for a unit-stride row), n is the element count.
      // The caller has bounds-checked both rows.
-@@ -831,6 +838,152 @@ inline void noop(StackTop /*stack*/) noexcept {}
+@@ -832,6 +837,152 @@ inline void noop(StackTop /*stack*/) noexcept {}
          return {EVMC_SUCCESS, gas_left};
      }
  
@@ -69,8 +64,8 @@ index c784293a..b0062411 100644
 +    // than the memory holds. One packed row of A (cols * 2 bytes) is never larger than the memory,
 +    // because B holds at least as many bytes: a unit-stride row of B occupies cols * 2 bytes of the
 +    // memory, and a strided B has passed the rule above.
-+    // Gas: XMATMUL_CALL_GAS per call, XMATMUL_ENTRY_GAS per output entry, XVIEW_UNIT_GROUP_GAS per entry
-+    // and group of eight elements, and XVIEW_STRIDED_ELEMENT_GAS per packed element (rows_B * cols for a
++    // Gas: XMATMUL_CALL_GAS per call, XMATMUL_ENTRY_GAS per output entry, XMATMUL_GROUP_GAS per entry
++    // and group of eight elements, and XMATMUL_PACKED_GAS per packed element (rows_B * cols for a
 +    // strided B, and rows_A * cols for a strided A that is not the same view as B). The charge is made
 +    // in 128-bit arithmetic before any element access; memory expansion of the output is charged by
 +    // check_memory.
@@ -99,8 +94,8 @@ index c784293a..b0062411 100644
 +        const unsigned __int128 packed = (strided_a && !same_view ? static_cast<unsigned __int128>(ra) * n : 0) +
 +                                         (strided_b ? static_cast<unsigned __int128>(rb) * n : 0);       // below 2^63
 +        const unsigned __int128 charge = XMATMUL_CALL_GAS +
-+            entries * (XMATMUL_ENTRY_GAS + static_cast<unsigned __int128>((n + 7) / 8) * XVIEW_UNIT_GROUP_GAS) +
-+            packed * XVIEW_STRIDED_ELEMENT_GAS;
++            entries * (XMATMUL_ENTRY_GAS + static_cast<unsigned __int128>((n + 7) / 8) * XMATMUL_GROUP_GAS) +
++            packed * XMATMUL_PACKED_GAS;
 +        if (charge > static_cast<unsigned __int128>(gas_left))
 +            return {EVMC_OUT_OF_GAS, gas_left};
 +        gas_left -= static_cast<int64_t>(charge);
@@ -212,12 +207,12 @@ index 0fb9d3f1..17864271 100644
  };
  }  // namespace evmone
 diff --git a/lib/evmone/instructions_traits.hpp b/lib/evmone/instructions_traits.hpp
-index 7b801564..13515048 100644
+index f9580f31..3bdb3dd2 100644
 --- a/lib/evmone/instructions_traits.hpp
 +++ b/lib/evmone/instructions_traits.hpp
 @@ -56,6 +56,7 @@ constexpr inline GasCostTable gas_costs = []() noexcept {
-     table[EVMC_FRONTIER][OP_XMACC_N] = 0;   // dynamic: 11 gas per group, charged in the handler
-     table[EVMC_FRONTIER][OP_XMACC_N16] = 0; // dynamic: 22 gas per 16-element group, charged in the handler
+     table[EVMC_FRONTIER][OP_XMACC_N] = 0;   // dynamic: per call and per group, charged in the handler
+     table[EVMC_FRONTIER][OP_XMACC_N16] = 0; // dynamic: per call and per 16-element word, charged in the handler
      table[EVMC_FRONTIER][OP_XMACC_V] = 0;   // dynamic: per call, per group of eight elements and per strided element, charged in the handler
 +    table[EVMC_FRONTIER][OP_XMATMUL] = 0;   // dynamic: per call, per output entry, per group of eight elements and per packed element, charged in the handler
      table[EVMC_FRONTIER][OP_MUL] = 5;

@@ -10,18 +10,18 @@ Bytecode: UNROLLED=538979 bytes (loader 538024) | LOOPED=1264 bytes (loader 316)
 [CHECK 1] three-way prediction (C++ == UNROLLED == LOOPED): 20/20 PASSED
 [CHECK 5] MSIZE U==L: 901152/901152 PASSED
 [CHECK 6] repeat run identical: U OK, L OK
-[CHECK 2] coldU == 32,814,719 (mnist_e2e_cb anchor): 32814719 PASSED
+[CHECK 2] coldU == 32,980,636 (mnist_e2e_cb anchor): 32980636 PASSED
 [CHECK 3] cold-warm==matWords*2000 (27680000): U 27680000 OK | L 27680000 OK
-[CHECK 4] compute_cold==compute_warm: U 2117326/2117326 OK | L 3280081/3280081 OK
+[CHECK 4] compute_cold==compute_warm: U 2283243/2283243 OK | L 3445998/3445998 OK
 
 ================ UNROLLED vs LOOPED LOADER ================
   variant  |  code size  |  cold TOTAL  |  warm TOTAL  |  compute
- UNROLLED  |     538979 |     32814719 |      5134719 |    2117326
-  LOOPED   |       1264 |     33977474 |      6297474 |    3280081
+ UNROLLED  |     538979 |     32980636 |      5300636 |    2283243
+  LOOPED   |       1264 |     34143391 |      6463391 |    3445998
   DIFF     |    -537715 |     +1162755 |     +1162755 |   +1162755  (loop overhead)
-  loop overhead per slot: 84.01 gas | share of the cold total: 3.42%
+  loop overhead per slot: 84.01 gas | share of the cold total: 3.41%
 
   TX LEVEL (image 0 calldata: 3020 zero + 116 non-zero bytes):
-  intrinsic 21,000 + calldata 13936 = 34936 extra; LOOPED tx total: cold 34012410 | warm 6332410
+  intrinsic 21,000 + calldata 13936 = 34936 extra; LOOPED tx total: cold 34178327 | warm 6498327
 
 *** ALL CHECKS PASSED ***

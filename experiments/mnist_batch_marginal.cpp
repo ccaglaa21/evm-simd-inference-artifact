@@ -333,11 +333,11 @@ int main(){
 
     long long margB=(GB_w[4]-GB_w[0])/15, margC=(GC_w[4]-GC_w[0])/15;
     printf("\n================ BATCH / MARGINAL COST (per image) ================\n");
-    printf("  N=1 warm:   SIMD %lld | SCALAR %lld  (previous anchors 5,134,719 / 12,317,165; diff=outer-loop overhead: %+lld / %+lld)\n",
-        GB_w[0],GC_w[0],GB_w[0]-5134719LL,GC_w[0]-12317165LL);
+    printf("  N=1 warm:   SIMD %lld | SCALAR %lld  (previous anchors 5,300,636 / 12,317,165; diff=outer-loop overhead: %+lld / %+lld)\n",
+        GB_w[0],GC_w[0],GB_w[0]-5300636LL,GC_w[0]-12317165LL);
     printf("  MARGINAL:   SIMD %lld | SCALAR %lld  ->  RATIO C/B = %.2fx\n",margB,margC,(double)margC/margB);
-    printf("  (pure-compute buckets: 2,117,326 / 10,408,685 -> marginal-minus-compute = per-image harness: %+lld / %+lld)\n",
-        margB-2117326LL,margC-10408685LL);
+    printf("  (pure-compute buckets: 2,283,243 / 10,408,685 -> marginal-minus-compute = per-image harness: %+lld / %+lld)\n",
+        margB-2283243LL,margC-10408685LL);
     printf("  N=16 amortized total/image: SIMD warm %lld | cold %lld  (cold weight load divided by 16)\n",
         GB_w[4]/16, GB_c[4]/16);
     printf("  N=16 end-to-end C/B: cold %lld/%lld = %.2fx | warm %lld/%lld = %.2fx\n",

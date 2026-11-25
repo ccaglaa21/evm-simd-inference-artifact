@@ -31,8 +31,8 @@ static long long opGas(uint8_t op){
         case 0x53: return 3;  // MSTORE8
         case 0x59: return 2;  // MSIZE
         case 0xF3: return 0;  // RETURN
-        case 0xDD: return 10; // XTRANSPOSE
-        case 0xE5: return 14; // XMACC_S
+        case 0xDD: return 22; // XTRANSPOSE
+        case 0xE5: return 74; // XMACC_S
         default: std::fprintf(stderr,"opGas: unknown opcode %02x\n",op); std::exit(2);
     }
 }
@@ -181,7 +181,7 @@ int main(){
         std::printf(" %5d | %16lld | %16lld | %6.2f | %12lld | %12lld | %11lld | %10lld\n",
             Ks[ki], pcC, pcB, (double)pcC/(double)pcB, memC, memB, PTOT[ki][0]-MTOT[ki][0], PTOT[ki][1]-MTOT[ki][1]);
     }
-    std::printf("(compare with the MSIZE-measured 18.39/18.67/18.74x of atv_cost_split: must agree in direction)\n");
+    std::printf("(compare with the MSIZE-measured ratios of atv_cost_split: must agree in direction)\n");
 
     if(fail) std::printf("\n*** AT LEAST ONE CHECK FAILED -> closed-form claim NOT DOCUMENTED, do NOT record ***\n");
     else     std::printf("\n*** ALL CHECKS PASSED -> closed form DOCUMENTED: gas = count + canonical memory, diff 0 ***\n");

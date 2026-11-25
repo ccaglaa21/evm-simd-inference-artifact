@@ -29,14 +29,10 @@
 #   RUN_SANITIZE=1  builds libevmone twice more with AddressSanitizer and UndefinedBehaviorSanitizer (AVX2 and
 #                   scalar, -O1) and runs the security programs and a set of deterministic experiment programs
 #                   against each; any report is fatal and counted in SANITIZE_SUMMARY.txt; about 2 x 10 minutes.
-#   RUN_PRICE=1     rebuilds libevmone with the XMACC_S price set to 26 and then 84 and reruns
-#                   atv_cost_split at each price (atv_cost_split_xmaccs26.txt, atv_cost_split_xmaccs84.txt);
-#                   about 2 x 2 minutes. Always the last stage, because it changes the gas table.
 #
-# price_neutral.py derives the time-neutral price of XMACC_N from rowmacc_wallclock.txt (AVX2 and fallback);
-# it runs after every other stage so that it reads the timing files of this run. break_even_price.py then
-# derives, from the same outputs, the price of XMACC_N at which the row-level path would cost the same gas
-# as the packed scalar baseline (kernel, full network, deployable contracts).
+# The prices of the added instructions come from the measured times of four builds: price_bench (run by
+# run_views.sh) measures the instructions, training/price_calibration.py derives the schedule from the committed
+# runs in outputs/price_calibration_runs.
 # A stage that is not requested leaves the output files of an earlier run untouched and notes this in
 # MANIFEST.txt. The remaining training scripts (train_deep*.py, seedchk_write.py, deep_reference.py)
 # regenerate the canonical files already shipped in data/ and are not run here.
@@ -300,35 +296,6 @@ else
   kept SANITIZE_SUMMARY.txt RUN_SANITIZE
 fi
 
-if [ "${RUN_PRICE:-0}" = "1" ]; then
-  for g in 26 84; do
-    echo "== price sensitivity: rebuilding libevmone with XMACC_S gas = $g =="
-    sed -i "s/\[OP_XMACC_S\] = [0-9]*;/[OP_XMACC_S] = $g;/" lib/evmone/instructions_traits.hpp
-    if grep -q "\[OP_XMACC_S\] = $g;" lib/evmone/instructions_traits.hpp; then
-      if cmake --build build --target evmone -j2 > "$OUT/rebuild_xmaccs$g.log" 2>&1; then
-        printf '%-28s ' "atv_cost_split (XMACC_S=$g)"
-        s=$(date +%s)
-        ./atv_cost_split > "$OUT/atv_cost_split_xmaccs$g.txt" 2>&1; rc=$?
-        e=$(date +%s)
-        echo "rc=$rc  $((e-s)) s"
-        printf '%-28s rc=%d  time=%ds  (libevmone rebuilt with XMACC_S=%s)\n' "atv_cost_split_xmaccs$g" "$rc" "$((e-s))" "$g" >> "$MAN"
-      else
-        echo "REBUILD FAIL (see rebuild_xmaccs$g.log)"
-        echo "atv_cost_split_xmaccs$g           REBUILD FAIL" >> "$MAN"
-      fi
-    else
-      echo "sed did not find the XMACC_S gas line; price stage skipped"
-      echo "atv_cost_split_xmaccs$g           SKIPPED (gas line not found)" >> "$MAN"
-    fi
-  done
-else
-  for g in 26 84; do kept "atv_cost_split_xmaccs$g.txt" RUN_PRICE; done
-fi
-
-echo "== time-neutral price (price_neutral.py reads rowmacc_wallclock.txt of the AVX2 and the fallback build, just produced or kept) =="
-run_py price_neutral
-echo "== break-even price (break_even_price.py reads rowmacc_wallclock, mnist_rowmacc, mnist_loops, mnist_codecopy16, price_neutral) =="
-run_py break_even_price
 echo "== analytic precompile bound (precompile_bound.py reads mnist_rowmacc.txt and deep_meta.txt) =="
 run_py precompile_bound
 

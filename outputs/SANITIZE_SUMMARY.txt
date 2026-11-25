@@ -6,6 +6,9 @@ Sanitized avx2 build (-march=native -mavx2 -mfma -DSIMDPP_ARCH_X86_AVX2 -O1 -g -
   sec_xgather2               sanitizer reports 0, identical to the plain run
   sec_xtranspose_big         sanitizer reports 0, identical to the plain run
   sec_xmacc_n                sanitizer reports 0, identical to the plain run
+  sec_xmacc_v                sanitizer reports 0, identical to the plain run
+  sec_xmatmul                sanitizer reports 0, identical to the plain run
+  sec_fuzz_views             sanitizer reports 0, identical to the plain run
   sec_jumpdest               sanitizer reports 0, identical to the plain run
   sec_fuzz                   sanitizer reports 0, identical to the plain run
   sec_fuzz_lanes             sanitizer reports 0, identical to the plain run
@@ -26,6 +29,9 @@ Sanitized scalar build (-fno-tree-vectorize -fno-tree-slp-vectorize -O1 -g -fsan
   sec_xgather2               sanitizer reports 0, identical to the plain run
   sec_xtranspose_big         sanitizer reports 0, identical to the plain run
   sec_xmacc_n                sanitizer reports 0, identical to the plain run
+  sec_xmacc_v                sanitizer reports 0, identical to the plain run
+  sec_xmatmul                sanitizer reports 0, identical to the plain run
+  sec_fuzz_views             sanitizer reports 0, identical to the plain run
   sec_jumpdest               sanitizer reports 0, identical to the plain run
   sec_fuzz                   sanitizer reports 0, identical to the plain run
   sec_fuzz_lanes             sanitizer reports 0, identical to the plain run

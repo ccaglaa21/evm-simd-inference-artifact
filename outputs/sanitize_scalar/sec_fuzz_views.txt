@@ -1,0 +1,13 @@
+=== DIFFERENTIAL FUZZ TEST OF XMACC_V, XMATMUL AND XTRANSPOSE AGAINST A REFERENCE MODEL ===
+Trials: 60000 (30000 per instruction). Well-formed start: 40301, of which mutated: 22143. Boundary-value trials: 19699. With XTRANSPOSE in front: about one in four.
+XMACC_V : 12812 SUCCESS, 17188 exceptional halts
+XMATMUL : 12978 SUCCESS, 17022 exceptional halts
+Successful trials in which the instruction expanded the memory: 13319 | trials with a strided view: 29413 | saturating steps in the model: 98971
+Successful XMATMUL trials with one strided view as both operands (packed once): 361
+Bytes of final memory compared in the random trials: 50699584 | digest of status, gas and memory of all trials and sweeps: 87e1702b9ac3c4fa
+Boundary sweep of the XMATMUL output range (every byte position): 914 trials, 162 SUCCESS, 752 halts
+Sweep of the packing rule of XMATMUL (strided views whose rows share elements): 1265 trials, 763 SUCCESS, 502 halts
+Boundary sweep of XMACC_V (row indices, header offsets, column counts 0 to 18): 3336 trials, 425 SUCCESS, 2911 halts
+Trials in which interpreter and model disagree: 0
+
+*** ALL CHECKS PASSED: interpreter and reference model agree in every trial ***

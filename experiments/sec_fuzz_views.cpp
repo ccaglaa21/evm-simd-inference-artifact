@@ -4,9 +4,9 @@
 // The reference model below is written from the specification of the instructions and shares no code with
 // the interpreter. It keeps its own memory image and its own gas counter, with the memory rules of the EVM
 // (offsets above 2^32 - 1 are rejected, expansion costs 3 w + floor(w^2 / 512) for w words) and with the gas
-// rule of the view instructions: a charge per call, 8 per group of eight elements, 3 per strided element
-// (XMACC_V on every call, XMATMUL once per packed element, where a view that is both operands is packed
-// once) and 10 per output entry of XMATMUL.
+// rule of the view instructions: XMACC_V pays 50 per call, 10 per group of eight elements and 4 per strided
+// element on every call. XMATMUL pays 270 per call, 5 per output entry, 9 per entry and group of eight
+// elements and 6 per packed element, where a view that is both operands is packed once.
 // Every trial builds a memory image, executes one instruction in the interpreter and in the model, and compares
 //   (1) the status (SUCCESS or exceptional halt),
 //   (2) on SUCCESS the gas used by the whole program,
@@ -62,7 +62,7 @@ static Hdr hdr(const Model& m, uint64_t off) { return {rd64(m, off), rd64(m, off
 static long long satcount = 0;
 // XTRANSPOSE: the offset stays on the stack. False on an exceptional halt.
 static bool m_xtranspose(Model& m, Val off) {
-    m.gas -= 10; if (m.gas < 0) return false;
+    m.gas -= 22; if (m.gas < 0) return false;
     if (!chk(m, off, 32)) return false;
     Hdr h = hdr(m, off.v); wr64(m, off.v, h.cols); wr64(m, off.v + 8, h.rows); wr64(m, off.v + 16, h.sc); wr64(m, off.v + 24, h.sr); return true;
 }
@@ -72,7 +72,7 @@ static bool m_xmacc_v(Model& m, Val offa, Val rowa, Val offb, Val rowb, int32_t*
     if (A.cols != B.cols || A.cols > 0x7fffffffULL) return false;
     if (rowa.huge || rowb.huge || rowa.v >= A.rows || rowb.v >= B.rows) return false;
     uint64_t n = A.cols; long long strided = (A.sc != 1 ? 1 : 0) + (B.sc != 1 ? 1 : 0);
-    m.gas -= 43 + (long long)((n + 7) / 8) * 8 + (long long)n * strided * 3; if (m.gas < 0) return false;
+    m.gas -= 50 + (long long)((n + 7) / 8) * 10 + (long long)n * strided * 4; if (m.gas < 0) return false;
     if (n == 0) return true;
     u128 ba = capmul(rowa.v, A.sr), bb = capmul(rowb.v, B.sr);
     u128 la = capadd(ba, capmul(n - 1, A.sc)), lb = capadd(bb, capmul(n - 1, B.sc));
@@ -91,7 +91,7 @@ static bool m_xmatmul(Model& m, Val offa, Val offb, Val dst) {
     uint64_t n = A.cols; u128 entries = (u128)A.rows * B.rows; const bool sA = A.sc != 1, sB = B.sc != 1;
     const bool sameView = offa.v == offb.v;                                  // one header: the view is packed once
     u128 packed = (sA && !sameView ? (u128)A.rows * n : 0) + (sB ? (u128)B.rows * n : 0);
-    u128 charge = 43 + entries * (10 + (u128)((n + 7) / 8) * 8) + packed * 3;
+    u128 charge = 270 + entries * (5 + (u128)((n + 7) / 8) * 9) + packed * 6;
     if (charge > (u128)m.gas) return false; m.gas -= (long long)charge;
     if (entries == 0) return true;
     u128 outb = entries * 32; if (outb > 0xffffffffULL) return false;

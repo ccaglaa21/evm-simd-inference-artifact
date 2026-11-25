@@ -6,7 +6,7 @@
 // sequences are copied from the verified bytes of e2e.
 // CHECKS: (1) 16 different images, both paths bit-exact (2) BOTH bytecodes < 24,576
 // (3) memory-stripped marginal EXACTLY constant (4) cold-warm==27,680,000 for every N
-// (5) MSIZE==PREDS+N*32 (6) SIMD marginal == 1,992,962 anchor (7) repeat run identical.
+// (5) MSIZE==PREDS+N*32 (6) SIMD marginal == 2,158,766 anchor (7) repeat run identical.
 #include <evmc/evmc.h>
 #include <evmc/evmc.hpp>
 #include <evmc/mocked_host.hpp>
@@ -394,8 +394,8 @@ int main(){
     bool l3=linCheck("SIMD   cold",GB_c,MSB,dB),    bool_l4; bool l4=linCheck("SCALAR cold",GC_c,MSC,dC); (void)bool_l4;
     if(!(l1&&l2&&l3&&l4)) fail=true;
     long long margBtx=margB, margCtx=margC;
-    printf("[CHECK 6] SIMD marginal(memory-stripped) == 1,992,849 (CHECK-2 value of the batch program): %lld %s\n",margBtx+0,margB==1992849LL?"PASSED":"FAILED");
-    if(margB!=1992849LL) fail=true;
+    printf("[CHECK 6] SIMD marginal(memory-stripped) == 2,158,766 (CHECK-2 value of the batch program): %lld %s\n",margBtx+0,margB==2158766LL?"PASSED":"FAILED");
+    if(margB!=2158766LL) fail=true;
 
     printf("\n================ DEPLOYABLE vs DEPLOYABLE ================\n");
     printf("  code: SIMD %zu B | SCALAR %zu B (both under EIP-170)\n",codeB.size(),codeC.size());

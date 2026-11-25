@@ -3,7 +3,7 @@
 // loader: does the code size drop below 24,576B (EIP-170), and what is the gas price?
 // Design: contiguous segments are DERIVED by scanning the WLOAD layout (not assumed);
 // the program stops unless there are exactly 5 contiguous segments. Counter=GCNT (reused) -> same MSIZE.
-// CHECKS: (1) 20/20 three-way prediction (both variants) (2) coldU==32,814,719 (mnist_e2e_cb anchor)
+// CHECKS: (1) 20/20 three-way prediction (both variants) (2) coldU==32,980,636 (mnist_e2e_cb anchor)
 //   (3) cold-warm==matWords*2000 (both variants; proof that the SLOAD COUNT is preserved)
 //   (4) compute_cold==compute_warm (5) MSIZE U==L (6) repeat run identical.
 // BONUS: tx-level accounting — intrinsic 21000 + calldata gas from the REAL bytes
@@ -272,7 +272,7 @@ int main(){
     setAcc(EVMC_ACCESS_COLD); cL2=run(codeL,cd0,dummy,w0);
     setAcc(EVMC_ACCESS_WARM); wL =run(codeL,cd0,dummy,w0);
     printf("[CHECK 6] repeat run identical: U %s, L %s\n",cU1==cU2?"OK":"MISMATCH",cL1==cL2?"OK":"MISMATCH");
-    printf("[CHECK 2] coldU == 32,814,719 (mnist_e2e_cb anchor): %lld %s\n",cU1,cU1==32814719LL?"PASSED":"FAILED");
+    printf("[CHECK 2] coldU == 32,980,636 (mnist_e2e_cb anchor): %lld %s\n",cU1,cU1==32980636LL?"PASSED":"FAILED");
     printf("[CHECK 3] cold-warm==matWords*2000 (%lld): U %lld %s | L %lld %s\n",
         (long long)matWords*2000, cU1-wU,(cU1-wU==(long long)matWords*2000)?"OK":"MISMATCH",
         cL1-wL,(cL1-wL==(long long)matWords*2000)?"OK":"MISMATCH");
@@ -295,7 +295,7 @@ int main(){
     printf("\n  TX LEVEL (image 0 calldata: %lld zero + %lld non-zero bytes):\n",zb,nzb);
     printf("  intrinsic 21,000 + calldata %lld = %lld extra; LOOPED tx total: cold %lld | warm %lld\n",
         cdgas, intr+cdgas, cL1+intr+cdgas, wL+intr+cdgas);
-    bool all = ok==20 && msU==msL && cU1==cU2 && cL1==cL2 && cU1==32814719LL
+    bool all = ok==20 && msU==msL && cU1==cU2 && cL1==cL2 && cU1==32980636LL
         && (cU1-wU==(long long)matWords*2000) && (cL1-wL==(long long)matWords*2000)
         && hU==hUw && hL==hLw;
     printf("\n%s\n", all?"*** ALL CHECKS PASSED ***":"*** AT LEAST ONE CHECK FAILED -> do NOT record ***");

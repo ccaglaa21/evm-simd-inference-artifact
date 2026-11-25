@@ -12,7 +12,7 @@ index 2a6bb248..e9b516b9 100644
                      t.fn = op_undefined;
                      t.gas_cost = 0;
 diff --git a/lib/evmone/instructions.hpp b/lib/evmone/instructions.hpp
-index c93f8a29..9d52c18b 100644
+index 2fbb0995..a2a7b4ed 100644
 --- a/lib/evmone/instructions.hpp
 +++ b/lib/evmone/instructions.hpp
 @@ -10,6 +10,8 @@
@@ -24,7 +24,7 @@ index c93f8a29..9d52c18b 100644
  #endif
  #include <evmone_precompiles/keccak.hpp>
  
-@@ -386,6 +388,16 @@ inline void noop(StackTop /*stack*/) noexcept {}
+@@ -391,6 +393,16 @@ inline void noop(StackTop /*stack*/) noexcept {}
          const __m256i acc = _mm256_loadu_si256(reinterpret_cast<const __m256i*>(cb));
          const __m256i res = sat_add32_v(acc, _mm256_mullo_epi32(a32, b32));
          _mm256_storeu_si256(reinterpret_cast<__m256i*>(cb), res);
@@ -41,7 +41,7 @@ index c93f8a29..9d52c18b 100644
  #else
          for (int j = 0; j < 8; ++j)
          {
-@@ -406,6 +418,233 @@ inline void noop(StackTop /*stack*/) noexcept {}
+@@ -411,6 +423,235 @@ inline void noop(StackTop /*stack*/) noexcept {}
          return pos + 1;
      }
  
@@ -51,8 +51,9 @@ index c93f8a29..9d52c18b 100644
 +    // For every group g the eight int16 lanes of the memory words at off_w+32g and off_x+32g are
 +    // multiplied and accumulated with the same lane arithmetic as XMACC (16->32 widening, saturating
 +    // 32-bit addition). The words are read exactly as MLOAD reads them, so the lane layout is that of XMACC.
-+    // Gas: XMACC_N_GROUP_GAS per group (the price of one XMACC), G_verylow for a zero count, charged before any memory access;
-+    // memory expansion is charged by check_memory as for every memory instruction.
++    // Gas: XMACC_N_CALL_GAS per call and XMACC_N_GROUP_GAS per group, charged before any memory access. The two
++    // values come from the measured times of four builds (training/price_calibration.py). Memory expansion is
++    // charged by check_memory as for every memory instruction.
 +    // SECURITY: n must fit in 31 bits; both regions are bounds-checked before any read.
 +    static inline Result xmacc_n(StackTop stack, int64_t gas_left, ExecutionState& state) noexcept
 +    {
@@ -63,10 +64,9 @@ index c93f8a29..9d52c18b 100644
 +        if (((n_u[3] | n_u[2] | n_u[1]) != 0) || (n_u[0] > 0x7fffffffULL))
 +            return {EVMC_OUT_OF_GAS, gas_left};
 +        const uint64_t n = n_u[0];
-+        constexpr int64_t XMACC_N_GROUP_GAS = 11;
-+        // A zero count is charged G_verylow (3), as every instruction dispatch is; the schedule's
-+        // variable-cost instructions never execute for free.
-+        const int64_t charge = n == 0 ? 3 : static_cast<int64_t>(n) * XMACC_N_GROUP_GAS;
++        constexpr int64_t XMACC_N_CALL_GAS = 24;
++        constexpr int64_t XMACC_N_GROUP_GAS = 12;
++        const int64_t charge = XMACC_N_CALL_GAS + static_cast<int64_t>(n) * XMACC_N_GROUP_GAS;       // n < 2^31
 +        if ((gas_left -= charge) < 0)
 +            return {EVMC_OUT_OF_GAS, gas_left};
 +        if (n == 0)
@@ -163,7 +163,8 @@ index c93f8a29..9d52c18b 100644
 +    // with the saturating 32-bit addition of the other accumulation instructions. Without saturation
 +    // the lane sum of the accumulator (XSUM32) is the dot product of all 16 n elements, as for
 +    // XMACC_N over 2 n groups of eight.
-+    // Gas: XMACC_N16_GROUP_GAS = 22 per 16-element group, the same price per element as XMACC_N.
++    // Gas: XMACC_N16_CALL_GAS per call and XMACC_N16_GROUP_GAS per 16-element word, from the measured times of
++    // four builds (training/price_calibration.py).
 +    static inline Result xmacc_n16(StackTop stack, int64_t gas_left, ExecutionState& state) noexcept
 +    {
 +        const auto n_u   = stack.pop();
@@ -173,8 +174,9 @@ index c93f8a29..9d52c18b 100644
 +        if (((n_u[3] | n_u[2] | n_u[1]) != 0) || (n_u[0] > 0x7fffffffULL))
 +            return {EVMC_OUT_OF_GAS, gas_left};
 +        const uint64_t n = n_u[0];
-+        constexpr int64_t XMACC_N16_GROUP_GAS = 22;
-+        const int64_t charge = n == 0 ? 3 : static_cast<int64_t>(n) * XMACC_N16_GROUP_GAS;   // G_verylow for n = 0
++        constexpr int64_t XMACC_N16_CALL_GAS = 32;
++        constexpr int64_t XMACC_N16_GROUP_GAS = 24;
++        const int64_t charge = XMACC_N16_CALL_GAS + static_cast<int64_t>(n) * XMACC_N16_GROUP_GAS;   // n < 2^31
 +        if ((gas_left -= charge) < 0)
 +            return {EVMC_OUT_OF_GAS, gas_left};
 +        if (n == 0)
@@ -290,15 +292,15 @@ index 968aec6a..0e1f2739 100644
  };
  }  // namespace evmone
 diff --git a/lib/evmone/instructions_traits.hpp b/lib/evmone/instructions_traits.hpp
-index 8ca727b3..e2cbe1d6 100644
+index 73bcf4b3..721aedd9 100644
 --- a/lib/evmone/instructions_traits.hpp
 +++ b/lib/evmone/instructions_traits.hpp
 @@ -53,6 +53,8 @@ constexpr inline GasCostTable gas_costs = []() noexcept {
-     table[EVMC_FRONTIER][OP_XGATHER] = 20;
-     table[EVMC_FRONTIER][OP_XBCAST] = 8;
-     table[EVMC_FRONTIER][OP_XMACC_S] = 14;
-+    table[EVMC_FRONTIER][OP_XMACC_N] = 0;   // dynamic: 11 gas per group, charged in the handler
-+    table[EVMC_FRONTIER][OP_XMACC_N16] = 0; // dynamic: 22 gas per 16-element group, charged in the handler
+     table[EVMC_FRONTIER][OP_XGATHER] = 22;
+     table[EVMC_FRONTIER][OP_XBCAST] = 18;
+     table[EVMC_FRONTIER][OP_XMACC_S] = 74;
++    table[EVMC_FRONTIER][OP_XMACC_N] = 0;   // dynamic: per call and per group, charged in the handler
++    table[EVMC_FRONTIER][OP_XMACC_N16] = 0; // dynamic: per call and per 16-element word, charged in the handler
      table[EVMC_FRONTIER][OP_MUL] = 5;
      table[EVMC_FRONTIER][OP_SUB] = 3;
      table[EVMC_FRONTIER][OP_DIV] = 5;

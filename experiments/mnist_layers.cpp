@@ -270,7 +270,7 @@ int main(){
     printf("\n========== MNIST PER-LAYER COMPUTE PROFILE (%d images, MSIZE-measured) ==========\n",N_MEASURE);
     stats(loadv,"Load-ovh"); stats(k1v,"Layer1(128x784)"); stats(k2v,"Layer2(64x128)"); stats(koutv,"Output+argmax");
     { double t=0; long long a=k1v[0]+k2v[0]+koutv[0]; for(size_t i=0;i<k1v.size();++i){} (void)t;
-      printf("  first image: k1+k2+kout=%lld | compute[P4]=%lld | mnist_sload ref ~2,117,326 (cross-check)\n", a, ref_p4);
+      printf("  first image: k1+k2+kout=%lld | compute[P4]=%lld | mnist_sload ref ~2,283,243 (cross-check)\n", a, ref_p4);
       printf("  share of compute[P4] (first image): load-ovh %.2f%% | layer1 %.2f%% | layer2 %.2f%% | output+argmax %.2f%%\n",
           100.0*loadv[0]/ref_p4, 100.0*k1v[0]/ref_p4, 100.0*k2v[0]/ref_p4, 100.0*koutv[0]/ref_p4); }
     if(hard_fail) printf("\n*** AT LEAST ONE CHECK FAILED -> profile UNRELIABLE ***\n");

@@ -120,7 +120,7 @@ struct Prog {
 enum Instr { T_XTRANSPOSE = 0, T_XBCAST, T_XGATHER, T_XMACC_S, T_XMACC_N, T_XMACC_N16, T_COUNT };
 static const char* NAMES[] = {"XTRANSPOSE", "XBCAST", "XGATHER", "XMACC_S", "XMACC_N", "XMACC_N16"};
 static const uint8_t OPC[] = {0xDD, 0xE4, 0xE3, 0xE5, 0xE6, 0xE7};
-static const int STATIC_GAS[] = {10, 8, 20, 14, 0, 0};
+static const int STATIC_GAS[] = {22, 18, 22, 74, 0, 0};
 
 static evmc_vm* VM;
 static evmc::MockedHost host;
@@ -210,6 +210,8 @@ static bool reference(const Trial& t, Ref& r, int64_t static_gas) {
             if (!r.check64(oi, 32)) return false;
             const uint64_t ir = r.rd64(oi.w[0]), ic = r.rd64(oi.w[0] + 8), dr = r.rd64(od.w[0]), dc = r.rd64(od.w[0] + 8);
             const U256 n_idx = mul64x64(ir, ic), n_data = mul64x64(dr, dc);
+            if ((n_idx.w[1] | n_idx.w[2] | n_idx.w[3]) != 0 || n_idx.w[0] > (uint64_t)r.gas) return false;   // 1 gas per index
+            r.gas -= (int64_t)n_idx.w[0];
             if (!r.check256(od, size_from_count(n_data))) return false;
             if (!r.check256(oi, size_from_count(n_idx))) return false;
             if (!r.check256(orr, size_from_count(n_idx))) return false;
@@ -255,7 +257,7 @@ static bool reference(const Trial& t, Ref& r, int64_t static_gas) {
             const U256 n = o[3], ow = o[2], ox = o[1];
             if (!high_zero(n) || n.w[0] > 0x7FFFFFFFULL) return false;
             const uint64_t nn = n.w[0];
-            if (!r.charge(nn == 0 ? 3 : (int64_t)nn * (t.ins == T_XMACC_N ? 11 : 22))) return false;   // G_verylow for n = 0
+            if (!r.charge(t.ins == T_XMACC_N ? 24 + 12 * (int64_t)nn : 32 + 24 * (int64_t)nn)) return false;   // per call and per group
             if (nn == 0) return true;
             const uint64_t bytes = nn * 32;
             if (!r.check64(ow, bytes)) return false;

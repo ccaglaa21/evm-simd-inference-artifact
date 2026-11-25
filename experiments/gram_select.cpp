@@ -8,11 +8,11 @@
 //             over unit-stride rows
 //   select    evaluates on-chain, from R and C, the gas difference of the two paths and takes the cheaper
 // Gas is deterministic, so the difference is a closed form in R and C:
-//   gas(K) - gas(V) = k0 + C * (co + R * cb) + mem(wK) - mem(wV) - 6 * R * C^2
+//   gas(K) - gas(V) = k0 + C * (co + R * cb) + mem(wK) - mem(wV) - 8 * R * C^2
 // where k0, co and cb are the gas of the once-only part, of one outer iteration and of one inner iteration of
 // the copy loop (counted by the generator from the emitted bytecode), mem(w) = 3 w + floor(w^2 / 512) is
-// the memory price of w words, wV and wK are the final memory sizes of the two paths, and 6 R is the charge
-// of the strided elements of one entry on the view (two rows of R elements at 3 gas each), which the copy
+// the memory price of w words, wV and wK are the final memory sizes of the two paths, and 8 R is the charge
+// of the strided elements of one entry on the view (two rows of R elements at 4 gas each), which the copy
 // does not pay. The contract takes Path K when this difference is negative.
 // CHECKS per shape: (1) the three contracts equal the C++ reference in all C*C entries (2) the gas of each
 // fixed contract equals the closed form of the generator (3) the measured difference of the two fixed
@@ -70,14 +70,14 @@ static Asm gen(int mode, long long K0, long long CO, long long CB, Seg& s) {
         a.SWAP(1); a.PUSH(3); a.MUL(); a.ADD();                                // + 3 Pw: mem(wK) - mem(wV)
         a.LDR(); a.PUSH((uint64_t)CB); a.MUL(); a.PUSH((uint64_t)CO); a.ADD(); a.LDC(); a.MUL(); a.ADD();   // + C (co + R cb)
         a.PUSH((uint64_t)K0); a.ADD();                                         // + k0: the extra gas of Path K
-        a.LDC(); a.DUP(1); a.MUL(); a.LDR(); a.MUL(); a.PUSH(6); a.MUL();                                         // 6 R C^2: its saving
+        a.LDC(); a.DUP(1); a.MUL(); a.LDR(); a.MUL(); a.PUSH(8); a.MUL();                                         // 8 R C^2: its saving
         a.GT();                                                                // saving > extra gas
         s.sel = a.g - m;
     } else { a.POP(); a.PUSH((uint64_t)mode); s.nosel = a.g - m; }
     a.PUSHL("K"); a.JUMPI();          // counted in the branch segments below
     // --- Path V: transposed view ---
     m = a.g;
-    a.PUSH(MA); a.b(0xDD, 10); a.POP(); a.PUSH(MA); a.PUSH(96); a.MSTORE(); a.PUSHL("E"); a.JUMP();
+    a.PUSH(MA); a.b(0xDD, 22); a.POP(); a.PUSH(MA); a.PUSH(96); a.MSTORE(); a.PUSHL("E"); a.JUMP();
     s.v = a.g - m;
     // --- Path K: transposed copy ---
     m = a.g;
@@ -111,7 +111,7 @@ static Asm gen(int mode, long long K0, long long CO, long long CB, Seg& s) {
     a.LABEL("Li"); a.PUSH(0);                                         // stack: ptr i j
     long long r1 = a.g - mr, me = a.g;
     a.LABEL("Lj");
-    a.PUSH(0); a.DUP(2); a.PUSH(96); a.MLOAD(); a.DUP(5); a.DUP(2); a.b(0xEA, 0); a.b(0xCD, 6);
+    a.PUSH(0); a.DUP(2); a.PUSH(96); a.MLOAD(); a.DUP(5); a.DUP(2); a.b(0xEA, 0); a.b(0xCD, 14);
     a.DUP(4); a.MSTORE(); a.SWAP(2); a.PUSH(32); a.ADD(); a.SWAP(2);
     a.PUSH(1); a.ADD(); a.DUP(1); a.LDC(); a.GT(); a.PUSHL("Lj"); a.JUMPI();
     s.eb = a.g - me; long long mr2 = a.g;
@@ -128,7 +128,7 @@ static const long long JI = 13;   // PUSH2 label + JUMPI after the choice
 static long long closed(const Seg& s, int path, long long R, long long C) {
     long long Pw = (2 * R * C + 63) / 32, G = (R + 7) / 8, wV = 4 + Pw + C * C, wK = wV + Pw;
     long long body = path ? s.k + C * (s.co + R * s.cb) : s.v;
-    long long entries = C * C * (s.eb + 43 + G * 8 + (path ? 0 : 6 * R)) + C * s.ro;
+    long long entries = C * C * (s.eb + 50 + G * 10 + (path ? 0 : 8 * R)) + C * s.ro;
     return s.common + 3 * Pw + JI + body + entries + s.tail + memgas(path ? wK : wV);
 }
 static uint32_t rnd = 2026u; static uint32_t rnd32() { rnd = rnd * 1664525u + 1013904223u; return rnd; }
@@ -154,7 +154,7 @@ int main() {
     std::printf("=== DEPLOYABLE GRAM CONTRACT WITH ON-CHAIN CHOICE OF THE PATH ===\n");
     std::printf("Bytecode: fixed V %zu bytes, fixed K %zu bytes, selecting %zu bytes (one bytecode for every shape)\n", cV.c.size(), cK.c.size(), cS.c.size());
     std::printf("Constants of the closed form, counted from the emitted bytecode: k0 = %lld, co = %lld, cb = %lld gas\n", K0, CO, CB);
-    std::printf("Gas per entry outside XMACC_V: %lld | per row of G: %lld | XMACC_V: 43 per call, 8 per group of eight, 3 per strided element\n", sV.eb, sV.ro);
+    std::printf("Gas per entry outside XMACC_V: %lld | per row of G: %lld | XMACC_V: 50 per call, 10 per group of eight, 4 per strided element\n", sV.eb, sV.ro);
     std::printf("Gas of the selection (evaluation of the closed form in place of a constant): %lld\n\n", OVHc);
     std::vector<std::vector<int>> mn;
     { std::ifstream bf("mnist_batch.txt"); int Nb = 0, wsc = 0; bf >> Nb >> wsc; if (Nb >= 500) { mn.assign(500, std::vector<int>(784));
@@ -178,7 +178,7 @@ int main() {
         Out o; o.gV = rV.gas; o.gK = rK.gas; o.gS = rS.gas;
         long long fV = closed(sV, 0, R, C) + sV.nosel, fK = closed(sK, 1, R, C) + sK.nosel;
         long long Pw = (2LL * R * C + 63) / 32, wV = 4 + Pw + (long long)C * C, wK = wV + Pw;
-        long long diff = K0 + (long long)C * (CO + (long long)R * CB) + memgas(wK) - memgas(wV) - 6LL * R * C * C;
+        long long diff = K0 + (long long)C * (CO + (long long)R * CB) + memgas(wK) - memgas(wV) - 8LL * R * C * C;
         o.pick = diff < 0 ? 1 : 0;
         long long best = o.pick ? o.gK : o.gV;
         o.ok = good(rV) && good(rK) && good(rS) && rV.gas == fV && rK.gas == fK && (rK.gas - rV.gas) == diff && rS.gas == best + OVHc && rS2.gas == rS.gas

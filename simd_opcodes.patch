@@ -189,7 +189,7 @@ index 6083fcea..bee43c4e 100644
              map.set(i);
      }
 diff --git a/lib/evmone/instructions.hpp b/lib/evmone/instructions.hpp
-index 0d8ee917..c93f8a29 100644
+index 0d8ee917..2fbb0995 100644
 --- a/lib/evmone/instructions.hpp
 +++ b/lib/evmone/instructions.hpp
 @@ -7,6 +7,10 @@
@@ -203,7 +203,7 @@ index 0d8ee917..c93f8a29 100644
  #include <evmone_precompiles/keccak.hpp>
  
  namespace evmone
-@@ -148,6 +152,417 @@ namespace instr::core
+@@ -148,6 +152,422 @@ namespace instr::core
  /// Moreover, these implementations _do not_ inform about new stack height
  /// after execution. The adjustment must be performed by the caller.
  inline void noop(StackTop /*stack*/) noexcept {}
@@ -251,6 +251,11 @@ index 0d8ee917..c93f8a29 100644
 +            const uint256 n_data = uint256(dr) * uint256(dc);
 +            const uint256 need_data = uint256(32) + n_data * uint256(2);
 +            const uint256 need_idx = uint256(32) + n_idx * uint256(2);
++            // Gas per index (XGATHER_INDEX_GAS = 1) on top of the constant charge of the instruction, before
++            // any index is read. Both values come from the measured times (training/price_calibration.py).
++            if (n_idx > uint256(static_cast<uint64_t>(gas_left)))
++                return {EVMC_OUT_OF_GAS, gas_left};
++            gas_left -= static_cast<int64_t>(static_cast<uint64_t>(n_idx));
 +            if (!check_memory(gas_left, state.memory, off_data, need_data)) return {EVMC_OUT_OF_GAS, gas_left};
 +            if (!check_memory(gas_left, state.memory, off_ind, need_idx)) return {EVMC_OUT_OF_GAS, gas_left};
 +            if (!check_memory(gas_left, state.memory, off_res, need_idx)) return {EVMC_OUT_OF_GAS, gas_left};
@@ -648,7 +653,7 @@ index f4ae262d..968aec6a 100644
  };
  }  // namespace evmone
 diff --git a/lib/evmone/instructions_traits.hpp b/lib/evmone/instructions_traits.hpp
-index a75a9614..8ca727b3 100644
+index a75a9614..73bcf4b3 100644
 --- a/lib/evmone/instructions_traits.hpp
 +++ b/lib/evmone/instructions_traits.hpp
 @@ -39,6 +39,20 @@ constexpr inline GasCostTable gas_costs = []() noexcept {
@@ -657,18 +662,18 @@ index a75a9614..8ca727b3 100644
      table[EVMC_FRONTIER][OP_ADD] = 3;
 +
 +    // --- SIMD opcode gas costs (EVMC_FRONTIER) ---
-+    table[EVMC_FRONTIER][OP_XADD_IMM] = 6;
-+    table[EVMC_FRONTIER][OP_XMUL_IMM] = 8;
-+    table[EVMC_FRONTIER][OP_XSUB_IMM] = 6;
-+    table[EVMC_FRONTIER][OP_XGT_IMM] = 6;
-+    table[EVMC_FRONTIER][OP_XMACC] = 11;
-+    table[EVMC_FRONTIER][OP_XRELU] = 6;
-+    table[EVMC_FRONTIER][OP_XSUM32] = 6;
-+    table[EVMC_FRONTIER][OP_XPACK] = 6;
-+    table[EVMC_FRONTIER][OP_XTRANSPOSE] = 10;
-+    table[EVMC_FRONTIER][OP_XGATHER] = 20;
-+    table[EVMC_FRONTIER][OP_XBCAST] = 8;
-+    table[EVMC_FRONTIER][OP_XMACC_S] = 14;
++    table[EVMC_FRONTIER][OP_XADD_IMM] = 17;
++    table[EVMC_FRONTIER][OP_XMUL_IMM] = 21;
++    table[EVMC_FRONTIER][OP_XSUB_IMM] = 17;
++    table[EVMC_FRONTIER][OP_XGT_IMM] = 19;
++    table[EVMC_FRONTIER][OP_XMACC] = 23;
++    table[EVMC_FRONTIER][OP_XRELU] = 14;
++    table[EVMC_FRONTIER][OP_XSUM32] = 14;
++    table[EVMC_FRONTIER][OP_XPACK] = 15;
++    table[EVMC_FRONTIER][OP_XTRANSPOSE] = 22;
++    table[EVMC_FRONTIER][OP_XGATHER] = 22;
++    table[EVMC_FRONTIER][OP_XBCAST] = 18;
++    table[EVMC_FRONTIER][OP_XMACC_S] = 74;
      table[EVMC_FRONTIER][OP_MUL] = 5;
      table[EVMC_FRONTIER][OP_SUB] = 3;
      table[EVMC_FRONTIER][OP_DIV] = 5;

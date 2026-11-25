@@ -1,5 +1,5 @@
 // mnist_codecopy16.cpp — the code-as-storage contract of mnist_codecopy with SIXTEEN 16-bit lanes per
-// word and the row-level instruction XMACC_N16 (pairwise multiply-accumulate, 22 gas per 16-element group,
+// word and the row-level instruction XMACC_N16 (pairwise multiply-accumulate, 32 gas per call and 24 per 16-element word,
 // the same price per element as XMACC_N). Weights, inputs and hidden activations occupy the whole 32-byte
 // word, so the weight data halves (7,016 words, 224,512 bytes, 10 data contracts), and with it the memory
 // expansion, the EXTCODECOPY copy cost and the number of cold account accesses. The accumulator keeps
@@ -43,8 +43,8 @@ static long long opGas(uint8_t op) {
         case 0x54: return 100;      // SLOAD, warm (the prediction is for the warm run)
         case 0x59: return 2;
         case 0xF3: return 0;
-        case 0xCB: return 11;       // XMACC
-        case 0xCC: case 0xCD: case 0xCE: return 6;
+        case 0xCB: return 23;       // XMACC
+        case 0xCC: case 0xCD: return 14; case 0xCE: return 15;
         case 0xE6: return 0;        // XMACC_N static part; the dynamic part is added by XN()
         default: std::fprintf(stderr, "opGas: unknown %02x\n", op); std::exit(2);
     }
@@ -58,7 +58,7 @@ struct Code {
     void P2(int v) { op(0x61); raw((v >> 8) & 0xFF); raw(v & 0xFF); }
     void PUSH(long long v) { if (v < 256) P1((uint8_t)v); else if (v < 65536) P2((int)v); else { op(0x62); raw((v >> 16) & 0xFF); raw((v >> 8) & 0xFF); raw(v & 0xFF); } }
     void W32(std::vector<uint8_t> b) { while (b.size() < 32) b.push_back(0); op(0x7F); for (int i = 0; i < 32; ++i) raw(b[i]); }
-    void XN(long long n) { op(0xE6); g += 11 * n; }   // XMACC_N: 11 gas per group
+    void XN(long long n) { op(0xE6); g += 24 + 12 * n; }   // XMACC_N: 24 gas per call and 12 per group
 };
 static long long memgas(long long bytes) { long long a = (bytes + 31) / 32; return 3 * a + (a * a) / 512; }
 
@@ -212,7 +212,7 @@ int main(int argc, char** argv) {
     std::vector<uint8_t> codeD = code;
     std::vector<uint8_t> codeDm = codeD; { for (int t = 0; t < 13; ++t) codeDm.pop_back(); uint8_t t2[] = {0x59, 0x60, 0x00, 0x52, 0x60, 0x20, 0x60, 0x00, 0xF3}; for (uint8_t x : t2) codeDm.push_back(x); }
 
-    printf("Bytecode: inference contract %zu B | %d data contracts of at most %d bytes (%zu data bytes, %d words of 16 lanes) | XMACC_N16 priced at 22 gas per 16-element group\n\n", codeD.size(), NDATA, CHUNK + 1, data.size(), matWords);
+    printf("Bytecode: inference contract %zu B | %d data contracts of at most %d bytes (%zu data bytes, %d words of 16 lanes) | XMACC_N16 priced at 32 gas per call and 24 per 16-element word\n\n", codeD.size(), NDATA, CHUNK + 1, data.size(), matWords);
     auto imgWords = [&](int im, std::vector<uint8_t>& dst) {
         for (int gw = 0; gw < I / L; ++gw) { std::vector<uint8_t> w(32, 0); for (int l = 0; l < L; ++l) { int val = imgs[im][gw * L + l]; uint16_t u = (uint16_t)(int16_t)val; w[l * 2] = u & 0xFF; w[l * 2 + 1] = (u >> 8) & 0xFF; } for (int i = 0; i < 32; ++i) dst.push_back(w[31 - i]); }
     };
@@ -304,9 +304,9 @@ int main(int argc, char** argv) {
     printf("  single image, cold: total %lld = weight read %lld (%d cold account accesses x 2,600 + %lld copied words x 3) + memory %lld (MSIZE %lld) + the rest %lld\n", GD_c[0], readCold, NDATA, copyWords, mem1, MSD[0], rest);
     printf("  single image, warm: total %lld (weight read %lld)\n", GD_w[0], readWarm);
     printf("  weight-read share of the cold total: %.2f%%\n", 100.0 * readCold / GD_c[0]);
-    printf("  MNIST anchors (mnist_codecopy, 8 lanes per word, XMACC_N): cold 715,664 | warm 668,164 | weight read 90,923 | memory 424,524 | marginal 199,911 | 19 data contracts\n");
-    printf("  MNIST anchors (mnist_rowmacc, SLOAD weights): cold 32,185,375 | marginal 199,911\n");
-    printf("  cold single-image ratios: 8-lane code-as-storage / 16-lane = %.2fx | SLOAD / 16-lane = %.2fx | marginal 8-lane / 16-lane = %.2fx\n", 715664.0 / GD_c[0], 32185375.0 / GD_c[0], 199911.0 / m01);
+    printf("  MNIST anchors (mnist_codecopy, 8 lanes per word, XMACC_N): cold 736,301 | warm 668,164 | weight read 90,923 | memory 424,524 | marginal 220,548 | 19 data contracts\n");
+    printf("  MNIST anchors (mnist_rowmacc, SLOAD weights): cold 32,206,012 | marginal 220,548\n");
+    printf("  cold single-image ratios: 8-lane code-as-storage / 16-lane = %.2fx | SLOAD / 16-lane = %.2fx | marginal 8-lane / 16-lane = %.2fx\n", 715664.0 / GD_c[0], 32206012.0 / GD_c[0], 220548.0 / m01);
     printf("  EIP-7825 cap %lld: single image %s (%.1f%% of the cap) | batch of 16 cold %lld %s\n", CAP, GD_c[0] < CAP ? "FITS in one transaction" : "does NOT fit", 100.0 * GD_c[0] / CAP, GD_c[4], GD_c[4] < CAP ? "fits" : "does not fit");
     printf("  marginal per image %lld | code %zu B | memory map compact (data at %d..%d, scratch to %d)\n", m01, codeD.size(), W1M, DATA_END, PREDS);
     // deployment, from the gas schedule (not measured): code deposit 200 gas per byte + 32,000 per creation

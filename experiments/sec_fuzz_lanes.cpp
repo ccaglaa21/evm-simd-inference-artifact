@@ -47,7 +47,7 @@ static void set_lane(Word w, int lanebytes, int j, uint64_t v) { for (int b = 0;
 enum Instr { T_XADD = 0, T_XSUB, T_XMUL, T_XGT, T_XRELU, T_XSUM32, T_XPACK, T_XMACC, T_COUNT };
 static const char* NAMES[] = {"XADD_IMM", "XSUB_IMM", "XMUL_IMM", "XGT_IMM", "XRELU", "XSUM32", "XPACK", "XMACC"};
 static const uint8_t OPC[] = {0xC7, 0xC9, 0xC8, 0xCA, 0xCC, 0xCD, 0xCE, 0xCB};
-static const int GAS[] = {6, 6, 8, 6, 6, 6, 6, 11};
+static const int GAS[] = {17, 17, 21, 19, 14, 14, 15, 23};
 static const int NOPER[] = {2, 2, 2, 2, 1, 1, 1, 3};
 static const bool HASIMM[] = {true, true, true, true, true, false, false, false};
 

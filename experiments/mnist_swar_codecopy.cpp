@@ -250,12 +250,12 @@ int main() {
     long long rest = Gc[0] - readCold - mem1;
     const long long CAP = 16777216;
     // anchors measured by mnist_codecopy and mnist_codecopy16 (Path N, weights as code) and by mnist_rowmacc (Path N, weights in storage)
-    const double N8 = 715664.0, N16 = 368032.0, NSTORE = 32185375.0;
+    const double N8 = 715664.0, N16 = 368032.0, NSTORE = 32206012.0;
     printf("\n================ PATH S WITH THE WEIGHTS AS CONTRACT CODE (EXTCODECOPY loader, S2 body) ================\n");
     printf("  single image, cold: total %lld = weight read %lld (%d cold account accesses x 2,600 + %lld copied words x 3) + memory %lld (MSIZE %lld) + the rest %lld\n", Gc[0], readCold, NDATA, copyWords, mem1, MS[0], rest);
     printf("  single image, warm: %lld | batch of 16, cold: %lld | marginal per image %lld | code %zu B\n", Gw[0], Gc[4], m01, codeS.size());
     printf("  share of the EIP-7825 per-transaction cap (16,777,216): %.1f%%\n", 100.0 * Gc[0] / CAP);
-    printf("  anchors, Path N cold single image: weights in storage 32,185,375 | weights as code, 8 lanes 715,664 | weights as code, 16 lanes 368,032\n");
+    printf("  anchors, Path N cold single image: weights in storage 32,206,012 | weights as code, 8 lanes 736,301 | weights as code, 16 lanes 390,285\n");
     printf("  RATIOS (cold single image, weights as code): Path S / Path N (8 lanes) = %.2fx | Path S / Path N (16 lanes) = %.2fx\n", Gc[0] / N8, Gc[0] / N16);
     printf("  RATIOS (storage pattern alone): Path N in storage / Path S as code = %.2fx | Path N in storage / Path N as code (8 lanes) = %.2fx\n", NSTORE / Gc[0], NSTORE / N8);
     if (fail) printf("\n*** AT LEAST ONE CHECK FAILED -> numbers are UNRELIABLE, do NOT record ***\n");
