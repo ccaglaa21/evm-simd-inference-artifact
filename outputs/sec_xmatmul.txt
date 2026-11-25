@@ -10,6 +10,9 @@
 [PASS] G6  2^30 x 2^30 entries with 1e9 gas: status=3 (OUT_OF_GAS=3 expected from the charge)
 [PASS] G7  stride_row = 2^62 with two rows: status=3 (OUT_OF_GAS=3 expected)
 [PASS] G8  rows of B = 0: status=0, output word untouched: yes, gas 193 == static count with 43 for the call 193: yes
-[PASS] G9  3 x 4 entries of 20 elements, unit stride: gas 635, static count 635 | one strided operand: gas 851, static count 851: equal
+[PASS] G9  3 x 4 entries of 20 elements, unit stride: gas 635, static count 635 | one strided operand: gas 815, static count 815: equal
+[PASS] G10 B with rows that share 400 elements: accepted up to 3 rows, halted from 4 rows (packed form above the memory size): as the rule says
+[PASS] G11 one strided view as both operands: gas 631, static count 631 (60 packed elements) | two copies of the view: gas 871, static count 871 (120 packed elements) | both outputs equal the reference: yes
+[PASS] R4  3 x 4 entries of rows without elements: twelve zero words written over non-zero words: yes
 
---- SUMMARY --- 12/12 passed  *** ALL CHECKS PASSED ***
+--- SUMMARY --- 15/15 passed  *** ALL CHECKS PASSED ***

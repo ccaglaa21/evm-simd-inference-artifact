@@ -1,4 +1,4 @@
-// sec_xmacc_v.cpp — TESTS for the view-based row-level instruction XMACC_V (0xe8).
+// sec_xmacc_v.cpp — TESTS for the view-based row-level instruction XMACC_V (0xea).
 //
 // XMACC_V pops off_a, row_a, off_b, row_b and accumulates the element-wise products of row_a of
 // view A and row_b of view B into the accumulator word that stays on the stack. A view is a
@@ -15,8 +15,8 @@
 //   G6  off_a = 2^200                  -> clean OUT_OF_GAS
 //   G7  gas below the group charge     -> clean OUT_OF_GAS
 //   G8  cols = 0                       -> SUCCESS, accumulator unchanged, only the charge per call (43 gas)
-//   G9  gas accounting                 -> measured gas equals the static count: 43 per call, plus 8 per group of eight for two
-//                                         unit-stride rows or 14 per group when a row is strided (partial group included)
+//   G9  gas accounting                 -> measured gas equals the static count: 43 per call, 8 per group of eight (partial group
+//                                         included) and 3 per element of a strided row
 // The output is deterministic and is compared between the builds.
 #include <evmc/evmc.h>
 #include <evmc/mocked_host.hpp>
@@ -82,7 +82,7 @@ int main() {
         if (rb_w) k.W32(rb_w); else k.PUSH(rb);
         k.PUSH(offb); k.PUSH(ra);
         if (offa_w) k.W32(offa_w); else k.PUSH(offa);
-        k.op(0xE8, vgas); size_t out = mem.size(); k.PUSH(out); k.MSTORE(); k.RET(out, 32);
+        k.op(0xEA, vgas); size_t out = mem.size(); k.PUSH(out); k.MSTORE(); k.RET(out, 32);
         if (keep) *keep = k; return run(k, gas); };
     auto bigword = [](int bit) { static uint8_t w[32]; std::memset(w, 0, 32); w[31 - bit / 8] = (uint8_t)(1u << (bit % 8)); return (const uint8_t*)w; };
 
@@ -104,7 +104,7 @@ int main() {
     { Mat S; S.rows = 5; S.cols = 12; S.sr = 12; S.sc = 1; S.d.resize(60); for (auto& v : S.d) v = rnd16(); Mat X = mk(1, 5, false);
       std::vector<uint8_t> mem; size_t os = place(mem, S), ox = place(mem, X); int32_t acc0[8] = {0, 0, 0, 0, 0, 0, 0, 0}; bool ok = true;
       for (uint64_t c = 0; c < 12; ++c) { Code k; load(k, mem); uint8_t aw[32]; accword(aw, acc0); k.W32(aw); k.PUSH(0); k.PUSH(ox); k.PUSH(c); k.PUSH(os);
-          k.op(0xDD, 10);   /* XTRANSPOSE rewrites the header in place and leaves the offset on the stack */ k.op(0xE8, 14); size_t out = mem.size(); k.PUSH(out); k.MSTORE(); k.RET(out, 32); Res r = run(k, GAS_BIG);
+          k.op(0xDD, 10);   /* XTRANSPOSE rewrites the header in place and leaves the offset on the stack */ k.op(0xEA, 14); size_t out = mem.size(); k.PUSH(out); k.MSTORE(); k.RET(out, 32); Res r = run(k, GAS_BIG);
           int32_t ref[8] = {0, 0, 0, 0, 0, 0, 0, 0}; for (int e = 0; e < 5; ++e) ref[e] = (int32_t)S.d[e * 12 + c] * (int32_t)X.d[e];
           if (r.st != EVMC_SUCCESS || r.out.size() != 32) ok = false; else for (int j = 0; j < 8; ++j) if (lane32(r.out.data(), j) != ref[j]) ok = false; }
       report("R2", ok, ok ? "XTRANSPOSE + XMACC_V reads each of the 12 stored columns without a copy: yes" : "XTRANSPOSE + XMACC_V column read: NO"); }
@@ -130,9 +130,9 @@ int main() {
       std::snprintf(d, sizeof d, "cols = 0: status=%d accumulator unchanged, gas %lld == static count with 43 for the call %lld: %s", (int)r.st, r.gas, pred, r.gas == pred ? "yes" : "no"); report("G8", ok, d); }
     { std::vector<uint8_t> mem; size_t oa = place(mem, A), ob = place(mem, B); Code k; Res r = exec(mem, z, oa, 2, ob, 3, nullptr, nullptr, 43 + 8 * 3, GAS_BIG, &k);
       long long mw = (long long)(mem.size() + 32) / 32; long long pred = k.sgas + 3 * mw + mw * mw / 512;
-      Mat T = mk(20, 3, true); std::vector<uint8_t> mem2; size_t ot = place(mem2, T), ob2 = place(mem2, B); Code k2; Res r2 = exec(mem2, z, ot, 2, ob2, 3, nullptr, nullptr, 43 + 14 * 3, GAS_BIG, &k2);
+      Mat T = mk(20, 3, true); std::vector<uint8_t> mem2; size_t ot = place(mem2, T), ob2 = place(mem2, B); Code k2; Res r2 = exec(mem2, z, ot, 2, ob2, 3, nullptr, nullptr, 43 + 8 * 3 + 3 * 20, GAS_BIG, &k2);
       long long mw2 = (long long)(mem2.size() + 32) / 32; long long pred2 = k2.sgas + 3 * mw2 + mw2 * mw2 / 512;
-      std::snprintf(d, sizeof d, "20 elements, unit stride: gas %lld, static count %lld (43 + 8 x 3 groups) | one strided row: gas %lld, static count %lld (43 + 14 x 3 groups): %s", r.gas, pred, r2.gas, pred2, (r.gas == pred && r2.gas == pred2) ? "equal" : "DIFFERENT"); report("G9", r.st == EVMC_SUCCESS && r2.st == EVMC_SUCCESS && r.gas == pred && r2.gas == pred2, d); }
+      std::snprintf(d, sizeof d, "20 elements, unit stride: gas %lld, static count %lld (43 + 8 x 3 groups) | one strided row: gas %lld, static count %lld (43 + 8 x 3 groups + 3 x 20 strided elements): %s", r.gas, pred, r2.gas, pred2, (r.gas == pred && r2.gas == pred2) ? "equal" : "DIFFERENT"); report("G9", r.st == EVMC_SUCCESS && r2.st == EVMC_SUCCESS && r.gas == pred && r2.gas == pred2, d); }
     std::printf("\n--- SUMMARY --- %d/%d passed%s\n", pass, total, pass == total ? "  *** ALL CHECKS PASSED ***" : "  *** INSPECT ***");
     VM->destroy(VM); dlclose(h);
     return pass == total ? 0 : 1;

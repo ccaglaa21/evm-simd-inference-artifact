@@ -2,15 +2,16 @@
 # vector library (NEON) and the scalar fallback library, compares every gas and security output with the x86-64
 # reference outputs committed in outputs/, and compares the two builds with each other. When the workflow is
 # started by hand (Run workflow), the outputs of the three runs are committed to outputs/arm64 and
-# outputs/scaling_runs. The view experiments (run_views.sh: gram_views, three runs on each build) run in every
-# case. A run started by hand has a scope: "views" (the default) runs and commits only the view experiments and
-# leaves the committed outputs of the other programs as they are, "all" runs and commits everything.
+# outputs/scaling_runs. The timed experiments (run_views.sh: price_bench, gram_views and rowmacc_scaling, three
+# runs on each build) run in every case. A run started by hand has a scope: "views" (the default) runs and
+# commits only the timed experiments and leaves the committed outputs of the other programs as they are, "all"
+# runs and commits everything.
 name: arm64-equivalence
 on:
   workflow_dispatch:
     inputs:
       scope:
-        description: "views = only the view experiments (gram_views); all = every program"
+        description: "views = only the timed experiments (price_bench, gram_views, rowmacc_scaling); all = every program"
         type: choice
         options: [views, all]
         default: views
@@ -21,7 +22,7 @@ permissions:
 jobs:
   arm64:
     runs-on: ubuntu-24.04-arm
-    timeout-minutes: 180
+    timeout-minutes: 240
     steps:
       - uses: actions/checkout@v4
       - name: Machine
@@ -53,48 +54,43 @@ jobs:
           for r in 1 2 3; do
             echo "======== run $r ========"
             grep -E "sqadd|fallback library|fallback comparison" out_arm64_$r/MANIFEST.txt
-            echo "---- vector build, timing table ----"
-            sed -n '/^TIME/,$p' out_arm64_$r/rowmacc_scaling.txt
-            echo "---- fallback build, timing table ----"
-            sed -n '/^TIME/,$p' out_arm64_$r/fallback/rowmacc_scaling.txt
           done
-      - name: View experiments, three runs on both builds
+      - name: Timed experiments, three runs on both builds
         run: |
           mkdir -p out_views
-          docker run --rm -v "$PWD/out_views:/out" evmone-simd sh /work/evmone/run_views.sh > run_views.log 2>&1 || { tail -n 30 run_views.log; exit 1; }
-          tail -n 12 run_views.log
+          docker run --rm -v "$PWD/out_views:/out" evmone-simd sh /work/evmone/run_views.sh > run_views.log 2>&1 || { tail -n 40 run_views.log; exit 1; }
+          tail -n 30 run_views.log
           det() { awk '/^TIME/{s=1} /^$/{s=0} !s' "$1" | grep -v 'med='; }
-          if [ -f outputs/scaling_runs/x86_run1_gram_avx2.txt ]; then
-            if [ "$(det out_views/arm64_run1_gram_neon.txt)" = "$(det outputs/scaling_runs/x86_run1_gram_avx2.txt)" ]; then
-              echo "identical to the x86-64 reference (gas tables and check lines of gram_views)"
+          BAD=0
+          for t in price_ gram_ ""; do
+            a=out_views/arm64_run1_${t}neon.txt; x=outputs/scaling_runs/x86_run1_${t}avx2.txt
+            if [ -f "$x" ]; then
+              if [ "$(det "$a")" = "$(det "$x")" ]; then
+                echo "identical to the x86-64 reference (gas tables and check lines): $(basename "$a")"
+              else
+                echo "DIFFERENT from the x86-64 reference (gas tables or check lines): $(basename "$a")"; BAD=1
+              fi
             else
-              echo "DIFFERENT from the x86-64 reference (gas tables or check lines of gram_views)"; exit 1
+              echo "no x86-64 reference for $(basename "$a") in outputs/scaling_runs yet; comparison skipped"
             fi
-          else
-            echo "no x86-64 reference of gram_views in outputs/scaling_runs yet; comparison skipped"
-          fi
-          for b in neon scalar; do
-            echo "---- $b build, timing table of run 1 ----"
-            sed -n '/^TIME (median/,/^$/p' out_views/arm64_run1_gram_$b.txt
           done
-      - name: Collect the outputs of the view experiments
+          [ "$BAD" = "0" ]
+      - name: Collect the outputs of the timed experiments
         run: |
           mkdir -p outputs/scaling_runs
-          cp out_views/arm64_run*_gram_*.txt outputs/scaling_runs/
+          cp out_views/arm64_run*.txt outputs/scaling_runs/
           ls -la outputs/scaling_runs
       - name: Collect the outputs
         if: github.event_name != 'workflow_dispatch' || inputs.scope == 'all'
         run: |
-          mkdir -p outputs/arm64 outputs/scaling_runs
+          mkdir -p outputs/arm64
           for r in 1 2 3; do
-            cp out_arm64_$r/rowmacc_scaling.txt outputs/scaling_runs/arm64_run${r}_neon.txt
-            cp out_arm64_$r/fallback/rowmacc_scaling.txt outputs/scaling_runs/arm64_run${r}_scalar.txt
             cp ARM64_COMPARISON_$r.txt outputs/arm64/ARM64_COMPARISON_run$r.txt
             cp out_arm64_$r/FALLBACK_COMPARISON.txt outputs/arm64/FALLBACK_COMPARISON_run$r.txt
             cp out_arm64_$r/MANIFEST.txt outputs/arm64/MANIFEST_run$r.txt
           done
           { uname -m; lscpu; } > outputs/arm64/MACHINE.txt
-          ls -la outputs/arm64 outputs/scaling_runs
+          ls -la outputs/arm64
       - name: Commit the outputs (only when started by hand)
         if: github.event_name == 'workflow_dispatch'
         run: |
@@ -103,7 +99,7 @@ jobs:
           if [ "${{ inputs.scope }}" = "all" ]; then
             git add outputs/arm64 outputs/scaling_runs
           else
-            git add outputs/scaling_runs/arm64_run*_gram_*.txt
+            git add outputs/scaling_runs/arm64_run*.txt
           fi
           git commit -m "Outputs of the 64-bit ARM runner (NEON build and scalar fallback build, scope: ${{ inputs.scope }}), written by the arm64-equivalence workflow"
           git push

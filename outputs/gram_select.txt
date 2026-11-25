@@ -1,45 +1,45 @@
 === DEPLOYABLE GRAM CONTRACT WITH ON-CHAIN CHOICE OF THE PATH ===
-Bytecode: fixed V 292 bytes, fixed K 292 bytes, selecting 356 bytes (one bytecode for every shape)
+Bytecode: fixed V 292 bytes, fixed K 292 bytes, selecting 350 bytes (one bytecode for every shape)
 Constants of the closed form, counted from the emitted bytecode: k0 = 173, co = 83, cb = 65 gas
-Gas per entry outside XMACC_V: 74 | per row of G: 37 | XMACC_V: 43 + 14 (strided) or 8 (unit stride) per group of eight
-Gas of the selection (evaluation of the closed form in place of a constant): 169
+Gas per entry outside XMACC_V: 74 | per row of G: 37 | XMACC_V: 43 per call, 8 per group of eight, 3 per strided element
+Gas of the selection (evaluation of the closed form in place of a constant): 157
 
 SHAPES (gas of the whole call; 'chosen' is the path that the selecting contract takes)
     data |    R |   C |      fixed V |      fixed K |    selecting | chosen | cheaper fixed | selecting - cheaper | K - V measured | checks
-  random |   16 |   8 |        10035 |        18454 |        10204 |      V |             V |                 169 |           8419 | PASSED
-  random |   16 |  32 |       155334 |       179393 |       155503 |      V |             V |                 169 |          24059 | PASSED
-  random |   16 |  64 |       643049 |       667203 |       643218 |      V |             V |                 169 |          24154 | PASSED
-  random |   64 |   8 |        15563 |        46723 |        15732 |      V |             V |                 169 |          31160 | PASSED
-  random |   64 |  16 |        60782 |       116841 |        60951 |      V |             V |                 169 |          56059 | PASSED
-  random |   64 |  32 |       242342 |       330142 |       242511 |      V |             V |                 169 |          87800 | PASSED
-  random |   64 |  64 |       991461 |      1071852 |       991630 |      V |             V |                 169 |          80391 | PASSED
-  random |  128 |   8 |        22938 |        84428 |        23107 |      V |             V |                 169 |          61490 | PASSED
-  random |  128 |  16 |        89927 |       200588 |        90096 |      V |             V |                 169 |         110661 | PASSED
-  random |  128 |  32 |       358409 |       531364 |       358578 |      V |             V |                 169 |         172955 | PASSED
-  random |  128 |  64 |      1456234 |      1612280 |      1456403 |      V |             V |                 169 |         156046 | PASSED
-  random |  128 |  80 |      2305545 |      2383924 |      2305714 |      V |             V |                 169 |          78379 | PASSED
-  random |  128 |  88 |      2811181 |      2833758 |      2811350 |      V |             V |                 169 |          22577 | PASSED
-  random |  128 |  96 |      3373555 |      3329148 |      3329317 |      K |             K |                 169 |         -44407 | PASSED
-  random |  128 | 128 |      6239396 |      5817136 |      5817305 |      K |             K |                 169 |        -422260 | PASSED
-  random |  128 | 192 |     15578494 |     13892904 |     13893073 |      K |             K |                 169 |       -1685590 | PASSED
-  random |  256 |   8 |        37699 |       159887 |        37868 |      V |             V |                 169 |         122188 | PASSED
-  random |  256 |  32 |       590734 |       934576 |       590903 |      V |             V |                 169 |         343842 | PASSED
-  random |  256 |  64 |      2386548 |      2696208 |      2386717 |      V |             V |                 169 |         309660 | PASSED
-  random |  256 | 128 |      9987256 |      9144160 |      9144329 |      K |             K |                 169 |        -843096 | PASSED
-   MNIST |   64 |  64 |       991461 |      1071852 |       991630 |      V |             V |                 169 |          80391 | PASSED
-   MNIST |  128 |  64 |      1456234 |      1612280 |      1456403 |      V |             V |                 169 |         156046 | PASSED
-   MNIST |  500 |  64 |      4191467 |      4790175 |      4191636 |      V |             V |                 169 |         598708 | PASSED
-   MNIST |  128 | 100 |      3676731 |      3594668 |      3594837 |      K |             K |                 169 |         -82063 | PASSED
-   MNIST |  128 | 256 |     31488760 |     27903968 |     27904137 |      K |             K |                 169 |       -3584792 | PASSED
+  random |   16 |   8 |        15411 |        18454 |        15568 |      V |             V |                 157 |           3043 | PASSED
+  random |   16 |  32 |       241350 |       179393 |       179550 |      K |             K |                 157 |         -61957 | PASSED
+  random |   16 |  64 |       987113 |       667203 |       667360 |      K |             K |                 157 |        -319910 | PASSED
+  random |   64 |   8 |        37067 |        46723 |        37224 |      V |             V |                 157 |           9656 | PASSED
+  random |   64 |  16 |       146798 |       116841 |       116998 |      K |             K |                 157 |         -29957 | PASSED
+  random |   64 |  32 |       586406 |       330142 |       330299 |      K |             K |                 157 |        -256264 | PASSED
+  random |   64 |  64 |      2367717 |      1071852 |      1072009 |      K |             K |                 157 |       -1295865 | PASSED
+  random |  128 |   8 |        65946 |        84428 |        66103 |      V |             V |                 157 |          18482 | PASSED
+  random |  128 |  16 |       261959 |       200588 |       200745 |      K |             K |                 157 |         -61371 | PASSED
+  random |  128 |  32 |      1046537 |       531364 |       531521 |      K |             K |                 157 |        -515173 | PASSED
+  random |  128 |  64 |      4208746 |      1612280 |      1612437 |      K |             K |                 157 |       -2596466 | PASSED
+  random |  128 |  80 |      6606345 |      2383924 |      2384081 |      K |             K |                 157 |       -4222421 | PASSED
+  random |  128 |  88 |      8015149 |      2833758 |      2833915 |      K |             K |                 157 |       -5181391 | PASSED
+  random |  128 |  96 |      9566707 |      3329148 |      3329305 |      K |             K |                 157 |       -6237559 | PASSED
+  random |  128 | 128 |     17249444 |      5817136 |      5817293 |      K |             K |                 157 |      -11432308 | PASSED
+  random |  128 | 192 |     40351102 |     13892904 |     13893061 |      K |             K |                 157 |      -26458198 | PASSED
+  random |  256 |   8 |       123715 |       159887 |       123872 |      V |             V |                 157 |          36172 | PASSED
+  random |  256 |  32 |      1966990 |       934576 |       934733 |      K |             K |                 157 |       -1032414 | PASSED
+  random |  256 |  64 |      7891572 |      2696208 |      2696365 |      K |             K |                 157 |       -5195364 | PASSED
+  random |  256 | 128 |     32007352 |      9144160 |      9144317 |      K |             K |                 157 |      -22863192 | PASSED
+   MNIST |   64 |  64 |      2367717 |      1071852 |      1072009 |      K |             K |                 157 |       -1295865 | PASSED
+   MNIST |  128 |  64 |      4208746 |      1612280 |      1612437 |      K |             K |                 157 |       -2596466 | PASSED
+   MNIST |  500 |  64 |     14931179 |      4790175 |      4790332 |      K |             K |                 157 |      -10141004 | PASSED
+   MNIST |  128 | 100 |     10396731 |      3594668 |      3594825 |      K |             K |                 157 |       -6802063 | PASSED
+   MNIST |  128 | 256 |     75528952 |     27903968 |     27904125 |      K |             K |                 157 |      -47624984 | PASSED
 
 CROSSOVER (every feature count from 2 to 128 is executed with the three contracts; random data)
     R | smallest C at which Path K is chosen | K - V at that C | K - V at C - 1 | shapes executed | all checks
-    8 |                                  105 |            -156 |            405 |             127 | PASSED
-   16 |                                   98 |            -951 |            150 |             127 | PASSED
-   32 |                                   94 |           -1266 |            842 |             127 | PASSED
-   64 |                                   92 |           -1632 |           2486 |             127 | PASSED
-  128 |                                   91 |           -1236 |           6876 |             127 | PASSED
-  256 |                                   91 |           -4023 |          12149 |             127 | PASSED
-  500 |                                   91 |          -16958 |          14764 |             127 | PASSED
+    8 |                                   13 |             -70 |            523 |             127 | PASSED
+   16 |                                   12 |            -127 |            953 |             127 | PASSED
+   32 |                                   12 |           -1426 |            818 |             127 | PASSED
+   64 |                                   12 |           -4017 |            551 |             127 | PASSED
+  128 |                                   12 |           -9181 |             35 |             127 | PASSED
+  256 |                                   11 |            -929 |          14503 |             127 | PASSED
+  500 |                                   11 |           -2513 |          27650 |             127 | PASSED
 
 *** ALL CHECKS PASSED ***

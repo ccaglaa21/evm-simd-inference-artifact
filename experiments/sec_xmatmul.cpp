@@ -14,7 +14,12 @@
 //   G6  2^30 x 2^30 entries with 1e9 gas       -> clean OUT_OF_GAS from the charge, before any work
 //   G7  stride_row = 2^62 with two rows        -> clean OUT_OF_GAS (the last row is outside the memory)
 //   G8  rows of B = 0                          -> SUCCESS, nothing written, only the charge per call
-//   G9  gas accounting                         -> measured gas equals the static count for unit-stride rows and for strided rows
+//   G9  gas accounting                         -> measured gas equals the static count for unit-stride views and for a strided view
+//   G10 packing rule                           -> a strided B whose rows share their elements is accepted while its packed form
+//                                                 fits in the memory and halts when it is one row larger
+//   G11 one view as both operands             -> the view is packed once: its elements are charged once, twice for two
+//                                                 copies of the view, and the output is the same
+//   R4  rows without elements (cols = 0)       -> every output word is zero
 // The output is deterministic and is compared between the builds.
 #include <evmc/evmc.h>
 #include <evmc/mocked_host.hpp>
@@ -65,7 +70,7 @@ static Mat mk(uint64_t R, uint64_t C, bool transposed) { Mat m; m.d.resize(R * C
     if (transposed) { m.rows = C; m.cols = R; m.sr = 1; m.sc = C; } else { m.rows = R; m.cols = C; m.sr = C; m.sc = 1; } return m; }
 static int16_t el(const Mat& m, uint64_t r, uint64_t t) { return m.d[r * m.sr + t * m.sc]; }
 
-static const long long P_CALL = 43, P_ENTRY = 10, P_UNIT = 8, P_STRIDED = 14;   // must equal the values in the interpreter
+static const long long P_CALL = 43, P_ENTRY = 10, P_UNIT = 8, P_PACK = 3;   // must equal the values in the interpreter
 static uint32_t refEntry(const Mat& A, uint64_t i, const Mat& B, uint64_t j, int* sat) {
     int32_t acc[8] = {0, 0, 0, 0, 0, 0, 0, 0};
     for (uint64_t e = 0; e < A.cols; ++e) { int64_t s = (int64_t)acc[e % 8] + (int32_t)el(A, i, e) * (int32_t)el(B, j, e); if ((s > INT32_MAX || s < INT32_MIN) && sat) ++*sat; acc[e % 8] = sat32(acc[e % 8], (int32_t)el(A, i, e) * (int32_t)el(B, j, e)); }
@@ -102,7 +107,7 @@ int main() {
           Mat A = ta ? mk(n, Ra, true) : mk(Ra, n, false); Mat B = tb ? mk(n, Rb, true) : mk(Rb, n, false);
           std::vector<uint8_t> mem; size_t oa = place(mem, A), ob = place(mem, B); uint64_t dst = mem.size(), nb = 32 * Ra * Rb;
           Res r1 = exec(mem, oa, ob, dst, nullptr, nb, 0, GAS_BIG, nullptr);
-          Code k; load(k, mem); for (uint64_t i = 0; i < Ra; ++i) for (uint64_t j = 0; j < Rb; ++j) { k.PUSH(0); k.PUSH(j); k.PUSH(ob); k.PUSH(i); k.PUSH(oa); k.op(0xE8, 0); k.op(0xCD, 6); k.PUSH(dst + 32 * (i * Rb + j)); k.MSTORE(); }
+          Code k; load(k, mem); for (uint64_t i = 0; i < Ra; ++i) for (uint64_t j = 0; j < Rb; ++j) { k.PUSH(0); k.PUSH(j); k.PUSH(ob); k.PUSH(i); k.PUSH(oa); k.op(0xEA, 0); k.op(0xCD, 6); k.PUSH(dst + 32 * (i * Rb + j)); k.MSTORE(); }
           k.RET(dst, nb); Res r2 = run(k, GAS_BIG);
           ok += (r1.st == EVMC_SUCCESS && r2.st == EVMC_SUCCESS && r1.out == r2.out && r1.out.size() == nb); }
       std::snprintf(d, sizeof d, "%d/%d shapes: XMATMUL equals the loop of XMACC_V, XSUM32 and MSTORE byte for byte", ok, T); report("R2", ok == T, d); }
@@ -136,10 +141,36 @@ int main() {
       std::snprintf(d, sizeof d, "rows of B = 0: status=%d, output word untouched: %s, gas %lld == static count with %lld for the call %lld: %s", (int)r.st, z ? "yes" : "no", r.gas, P_CALL, pred, r.gas == pred ? "yes" : "no"); report("G8", r.st == EVMC_SUCCESS && z && r.gas == pred, d); }
     { std::vector<uint8_t> mem; size_t oa = place(mem, A), ob = place(mem, B); uint64_t dst = mem.size(); Code k; long long c1 = P_CALL + 12 * (P_ENTRY + 3 * P_UNIT); Res r = exec(mem, oa, ob, dst, nullptr, 32 * 12, c1, GAS_BIG, &k);
       long long mw = (long long)(dst + 32 * 12) / 32, pred = k.sgas + 3 * mw + mw * mw / 512;
-      Mat T = mk(20, 3, true); std::vector<uint8_t> m2; size_t ot = place(m2, T), ob2 = place(m2, B); uint64_t d2 = m2.size(); Code k2; long long c2 = P_CALL + 12 * (P_ENTRY + 3 * P_STRIDED); Res r2 = exec(m2, ot, ob2, d2, nullptr, 32 * 12, c2, GAS_BIG, &k2);
+      Mat T = mk(20, 3, true); std::vector<uint8_t> m2; size_t ot = place(m2, T), ob2 = place(m2, B); uint64_t d2 = m2.size(); Code k2; long long c2 = P_CALL + 12 * (P_ENTRY + 3 * P_UNIT) + 3 * 20 * P_PACK; Res r2 = exec(m2, ot, ob2, d2, nullptr, 32 * 12, c2, GAS_BIG, &k2);
       long long mw2 = (long long)(d2 + 32 * 12) / 32, pred2 = k2.sgas + 3 * mw2 + mw2 * mw2 / 512;
       std::snprintf(d, sizeof d, "3 x 4 entries of 20 elements, unit stride: gas %lld, static count %lld | one strided operand: gas %lld, static count %lld: %s", r.gas, pred, r2.gas, pred2, (r.gas == pred && r2.gas == pred2) ? "equal" : "DIFFERENT");
       report("G9", r.st == EVMC_SUCCESS && r2.st == EVMC_SUCCESS && r.gas == pred && r2.gas == pred2, d); }
+    { // G10: B has column stride 2 and row stride 0, so all of its rows are the same 400 elements. Its packed form has rows * 800 bytes.
+      // The output grows the memory by 32 bytes per row only, so the packed form passes the memory size after a few rows.
+      Mat A2 = mk(1, 400, false); std::vector<uint8_t> mb; size_t oa2 = place(mb, A2); Mat B2; B2.rows = 1; B2.cols = 400; B2.sr = 0; B2.sc = 2; B2.d.resize(799); for (auto& v : B2.d) v = rnd16(); size_t ob2 = place(mb, B2); uint64_t d2 = mb.size();
+      uint64_t lastOk = 0, firstBad = 0; bool cons = true;
+      for (uint64_t r = 1; r <= 8; ++r) { std::vector<uint8_t> m2 = mb; for (int k = 0; k < 8; ++k) m2[ob2 + k] = (uint8_t)(r >> (8 * k));
+          Code k; load(k, m2); k.PUSH(d2); k.PUSH(ob2); k.PUSH(oa2); k.op(0xE9, 0); k.RET(d2, 32 * r); Res q = run(k, GAS_BIG);
+          const uint64_t memsize = d2 + 32 * r, packed = r * 400 * 2; const bool expect_ok = packed <= memsize;
+          if ((q.st == EVMC_SUCCESS) != expect_ok) cons = false;
+          if (q.st == EVMC_SUCCESS) { lastOk = r; for (uint64_t j = 0; j < r; ++j) if (word32(&q.out[32 * j], nullptr) != refEntry(A2, 0, B2, 0, nullptr)) cons = false; } else if (!firstBad) firstBad = r; }
+      std::snprintf(d, sizeof d, "B with rows that share 400 elements: accepted up to %llu rows, halted from %llu rows (packed form above the memory size): %s", (unsigned long long)lastOk, (unsigned long long)firstBad, cons ? "as the rule says" : "NOT as the rule says");
+      report("G10", cons && firstBad != 0 && lastOk + 1 == firstBad, d); }
+    { // G11: the transposed view of a stored 20 x 3 matrix (3 rows of 20 strided elements) as both operands, and two copies of it
+      Mat T = mk(20, 3, true); std::vector<uint8_t> m1; size_t o1 = place(m1, T); uint64_t d1 = m1.size();
+      Code k1; long long c1 = P_CALL + 9 * (P_ENTRY + 3 * P_UNIT) + 3 * 20 * P_PACK; Res r1 = exec(m1, o1, o1, d1, nullptr, 32 * 9, c1, GAS_BIG, &k1);
+      std::vector<uint8_t> m2; size_t oa2 = place(m2, T), ob2 = place(m2, T); uint64_t d2 = m2.size();
+      Code k2; long long c2 = P_CALL + 9 * (P_ENTRY + 3 * P_UNIT) + 2 * 3 * 20 * P_PACK; Res r2 = exec(m2, oa2, ob2, d2, nullptr, 32 * 9, c2, GAS_BIG, &k2);
+      long long w1 = (long long)(d1 + 32 * 9) / 32, p1 = k1.sgas + 3 * w1 + w1 * w1 / 512, w2 = (long long)(d2 + 32 * 9) / 32, p2 = k2.sgas + 3 * w2 + w2 * w2 / 512;
+      bool ok = r1.st == EVMC_SUCCESS && r2.st == EVMC_SUCCESS && r1.out.size() == 32 * 9 && r2.out.size() == 32 * 9 && r1.gas == p1 && r2.gas == p2;
+      if (ok) for (uint64_t i = 0; i < 3; ++i) for (uint64_t j = 0; j < 3; ++j) { const uint32_t e = refEntry(T, i, T, j, nullptr); if (word32(&r1.out[32 * (i * 3 + j)], nullptr) != e || word32(&r2.out[32 * (i * 3 + j)], nullptr) != e) ok = false; }
+      std::snprintf(d, sizeof d, "one strided view as both operands: gas %lld, static count %lld (60 packed elements) | two copies of the view: gas %lld, static count %lld (120 packed elements) | both outputs equal the reference: %s", r1.gas, p1, r2.gas, p2, ok ? "yes" : "NO");
+      report("G11", ok, d); }
+    { // R4: 3 x 0 against 4 x 0
+      Mat A0 = mk(3, 5, false), B0 = mk(4, 5, false); A0.cols = B0.cols = 0; std::vector<uint8_t> mem; size_t oa = place(mem, A0), ob = place(mem, B0); uint64_t dst = mem.size();
+      Code k; load(k, mem); for (int w = 0; w < 12; ++w) { k.PUSH(0xFFFFFFFFFFFFFFFFULL); k.PUSH(dst + 32 * w); k.MSTORE(); }      // the output range holds non-zero words first
+      k.PUSH(dst); k.PUSH(ob); k.PUSH(oa); k.op(0xE9, 0); k.RET(dst, 32 * 12); Res q = run(k, GAS_BIG); bool z = q.st == EVMC_SUCCESS && q.out.size() == 32 * 12; if (z) for (uint8_t x : q.out) if (x) z = false;
+      report("R4", z, z ? "3 x 4 entries of rows without elements: twelve zero words written over non-zero words: yes" : "rows without elements: NO"); }
     std::printf("\n--- SUMMARY --- %d/%d passed%s\n", pass, total, pass == total ? "  *** ALL CHECKS PASSED ***" : "  *** INSPECT ***");
     VM->destroy(VM); dlclose(h);
     return pass == total ? 0 : 1;
