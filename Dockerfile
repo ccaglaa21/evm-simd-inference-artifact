@@ -24,5 +24,5 @@ RUN cd /work/evmone && mkdir -p build && cd build && \
 COPY experiments/ /work/evmone/
 COPY data/ /work/evmone/
 COPY training/ /work/evmone/training/
-COPY run_selftest.sh run_all.sh /work/evmone/
+COPY run_selftest.sh run_all.sh run_views.sh /work/evmone/
 CMD ["/work/evmone/run_selftest.sh"]

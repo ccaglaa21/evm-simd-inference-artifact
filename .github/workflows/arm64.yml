@@ -2,10 +2,18 @@
 # vector library (NEON) and the scalar fallback library, compares every gas and security output with the x86-64
 # reference outputs committed in outputs/, and compares the two builds with each other. When the workflow is
 # started by hand (Run workflow), the outputs of the three runs are committed to outputs/arm64 and
-# outputs/scaling_runs.
+# outputs/scaling_runs. The view experiments (run_views.sh: gram_views, three runs on each build) run in every
+# case. A run started by hand has a scope: "views" (the default) runs and commits only the view experiments and
+# leaves the committed outputs of the other programs as they are, "all" runs and commits everything.
 name: arm64-equivalence
 on:
   workflow_dispatch:
+    inputs:
+      scope:
+        description: "views = only the view experiments (gram_views); all = every program"
+        type: choice
+        options: [views, all]
+        default: views
   push:
     branches: [main]
 permissions:
@@ -23,6 +31,7 @@ jobs:
       - name: Build the image
         run: docker build -t evmone-simd .
       - name: Run the gas and security programs on both builds, three times
+        if: github.event_name != 'workflow_dispatch' || inputs.scope == 'all'
         run: |
           for r in 1 2 3; do
             mkdir -p out_arm64_$r
@@ -31,6 +40,7 @@ jobs:
             grep -c "rc=[1-9]" out_arm64_$r/MANIFEST.txt || true
           done
       - name: Compare with the x86-64 reference outputs
+        if: github.event_name != 'workflow_dispatch' || inputs.scope == 'all'
         run: |
           for r in 1 2 3; do
             sh compare_outputs.sh outputs out_arm64_$r ARM64_COMPARISON_$r.txt | tail -n 1
@@ -38,6 +48,7 @@ jobs:
           grep -c "^identical" ARM64_COMPARISON_1.txt ARM64_COMPARISON_2.txt ARM64_COMPARISON_3.txt
           ! grep -E "^(DIFFERENT|MISSING)" ARM64_COMPARISON_1.txt ARM64_COMPARISON_2.txt ARM64_COMPARISON_3.txt
       - name: Vector build and fallback build on this machine
+        if: github.event_name != 'workflow_dispatch' || inputs.scope == 'all'
         run: |
           for r in 1 2 3; do
             echo "======== run $r ========"
@@ -47,7 +58,32 @@ jobs:
             echo "---- fallback build, timing table ----"
             sed -n '/^TIME/,$p' out_arm64_$r/fallback/rowmacc_scaling.txt
           done
+      - name: View experiments, three runs on both builds
+        run: |
+          mkdir -p out_views
+          docker run --rm -v "$PWD/out_views:/out" evmone-simd sh /work/evmone/run_views.sh > run_views.log 2>&1 || { tail -n 30 run_views.log; exit 1; }
+          tail -n 12 run_views.log
+          det() { awk '/^TIME/{s=1} /^$/{s=0} !s' "$1" | grep -v 'med='; }
+          if [ -f outputs/scaling_runs/x86_run1_gram_avx2.txt ]; then
+            if [ "$(det out_views/arm64_run1_gram_neon.txt)" = "$(det outputs/scaling_runs/x86_run1_gram_avx2.txt)" ]; then
+              echo "identical to the x86-64 reference (gas tables and check lines of gram_views)"
+            else
+              echo "DIFFERENT from the x86-64 reference (gas tables or check lines of gram_views)"; exit 1
+            fi
+          else
+            echo "no x86-64 reference of gram_views in outputs/scaling_runs yet; comparison skipped"
+          fi
+          for b in neon scalar; do
+            echo "---- $b build, timing table of run 1 ----"
+            sed -n '/^TIME (median/,/^$/p' out_views/arm64_run1_gram_$b.txt
+          done
+      - name: Collect the outputs of the view experiments
+        run: |
+          mkdir -p outputs/scaling_runs
+          cp out_views/arm64_run*_gram_*.txt outputs/scaling_runs/
+          ls -la outputs/scaling_runs
       - name: Collect the outputs
+        if: github.event_name != 'workflow_dispatch' || inputs.scope == 'all'
         run: |
           mkdir -p outputs/arm64 outputs/scaling_runs
           for r in 1 2 3; do
@@ -64,8 +100,12 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add outputs/arm64 outputs/scaling_runs
-          git commit -m "Outputs of three runs on the 64-bit ARM runner (NEON build and scalar fallback build), written by the arm64-equivalence workflow"
+          if [ "${{ inputs.scope }}" = "all" ]; then
+            git add outputs/arm64 outputs/scaling_runs
+          else
+            git add outputs/scaling_runs/arm64_run*_gram_*.txt
+          fi
+          git commit -m "Outputs of the 64-bit ARM runner (NEON build and scalar fallback build, scope: ${{ inputs.scope }}), written by the arm64-equivalence workflow"
           git push
       - name: Upload the outputs
         if: always()
