@@ -32,12 +32,12 @@ def det_part(text):
 
 
 def time_rows(text):
-    # random data: R | C | V ms | K ms | S ms | S/V | S/K | K/V | faster | ns V | ns K | ns S | strided price | unit price
+    # random data: R | C | V ms | K ms | S ms | S/V | S/K | K/V | faster | ns/MAC V, K, S | ns/gas V, K, S | V rel. S | K rel. S
     rows = {}
     a = text.index("\nTIME (median"); b = text.index("\n\n", a) if "\n\n" in text[a:] else len(text)
-    for m in re.finditer(r"^\s*(\d+) \|\s*(\d+) \|" + r"\s*([\d.]+) \|" * 6 + r"\s*\w \|" + r"\s*([\d.]+) \|" * 4 + r"\s*(-?[\d.]+)\s*$", text[a:b], re.M):
+    for m in re.finditer(r"^\s*(\d+) \|\s*(\d+) \|" + r"\s*([\d.]+) \|" * 6 + r"\s*\w \|" + r"\s*([\d.]+) \|" * 7 + r"\s*([\d.]+)\s*$", text[a:b], re.M):
         g = m.groups(); v = [float(x) for x in g[2:]]
-        rows[("random", int(g[0]), int(g[1]))] = dict(V=v[0], K=v[1], S=v[2], nsV=v[6], nsK=v[7], nsS=v[8], pV=v[9], pK=v[10])
+        rows[("random", int(g[0]), int(g[1]))] = dict(V=v[0], K=v[1], S=v[2], nsV=v[6], nsK=v[7], nsS=v[8], gV=v[9], gK=v[10], gS=v[11])
     # image data: data | R | C | V ms | K ms | S ms | S/V | S/K | K/V
     a = text.index("\nTIME ON REAL IMAGE DATA")
     for m in re.finditer(r"^\s*([\w-]+) \|\s*(\d+) \|\s*(\d+) \|" + r"\s*([\d.]+) \|" * 5 + r"\s*([\d.]+)\s*$", text[a:], re.M):
@@ -90,13 +90,13 @@ def main():
             sv = [x["S"] / x["V"] for x in rr]; sk = [x["S"] / x["K"] for x in rr]; kv = [x["K"] / x["V"] for x in rr]
             nv = [x["V"] * 1e6 / mac for x in rr]; nk = [x["K"] * 1e6 / mac for x in rr]; ns = [x["S"] * 1e6 / mac for x in rr]
             w(f"{k[0]:>14} | {k[1]:4d} | {k[2]:3d} | {fmt(sv):<19} | {fmt(sk):<19} | {fmt(kv):<19} | {fmt(nv):<19} | {fmt(nk):<19} | {fmt(ns):<19} | {'V' if statistics.median(kv) > 1 else 'K'}")
-        w(f"TIME-NEUTRAL PRICES PER GROUP OF EIGHT, {label} (the price at which the path has the nanoseconds per gas of Path S; provisional prices: 14 strided, 11 unit)")
-        w("    R |   C | strided (Path V)        | unit stride (Path K)")
+        w(f"NANOSECONDS PER GAS, {label} (compute gas; a path below 1.00 relative to Path S is charged more gas per nanosecond than the standard instructions)")
+        w("    R |   C | ns/gas V            | ns/gas K            | ns/gas S            | V relative to S     | K relative to S")
         for k in keys:
             if k[0] != "random":
                 continue
             rr = [rows[(plat, build, r)][k] for r in RUNS]
-            w(f"{k[1]:5d} | {k[2]:3d} | {fmt([x['pV'] for x in rr]):<23} | {fmt([x['pK'] for x in rr])}")
+            w(f"{k[1]:5d} | {k[2]:3d} | {fmt([x['gV'] for x in rr], 3):<19} | {fmt([x['gK'] for x in rr], 3):<19} | {fmt([x['gS'] for x in rr], 3):<19} | {fmt([x['gV'] / x['gS'] for x in rr]):<19} | {fmt([x['gK'] / x['gS'] for x in rr])}")
     w("")
     w("*** SUMMARY COMPLETE ***" if same and allpass else "*** INSPECT: files differ or a check failed ***")
     open("outputs/gram_summary.txt", "w").write("\n".join(out) + "\n")

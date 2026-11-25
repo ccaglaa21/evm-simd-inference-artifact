@@ -14,9 +14,9 @@
 //   G5  stride_col = 2^62              -> clean OUT_OF_GAS (the highest element is outside the memory)
 //   G6  off_a = 2^200                  -> clean OUT_OF_GAS
 //   G7  gas below the group charge     -> clean OUT_OF_GAS
-//   G8  cols = 0                       -> SUCCESS, accumulator unchanged, 3 gas charged
-//   G9  gas accounting                 -> measured gas equals the static count: 11 per group of eight for two unit-stride rows,
-//                                         14 per group when a row is strided (partial group included)
+//   G8  cols = 0                       -> SUCCESS, accumulator unchanged, only the charge per call (43 gas)
+//   G9  gas accounting                 -> measured gas equals the static count: 43 per call, plus 8 per group of eight for two
+//                                         unit-stride rows or 14 per group when a row is strided (partial group included)
 // The output is deterministic and is compared between the builds.
 #include <evmc/evmc.h>
 #include <evmc/mocked_host.hpp>
@@ -124,15 +124,15 @@ int main() {
       std::snprintf(d, sizeof d, "off_a = 2^200: status=%d (OUT_OF_GAS=3 expected)", (int)r.st); report("G6", r.st == EVMC_OUT_OF_GAS, d); }
     { Mat A2 = A, B2 = B; A2.cols = B2.cols = 0x7fffffffULL; std::vector<uint8_t> mem; size_t oa = place(mem, A2), ob = place(mem, B2); Res r = exec(mem, z, oa, 0, ob, 0, nullptr, nullptr, 0, 1000000000LL, nullptr);
       std::snprintf(d, sizeof d, "cols = 2^31-1 with 1e9 gas: status=%d (OUT_OF_GAS=3 expected from the group charge)", (int)r.st); report("G7", r.st == EVMC_OUT_OF_GAS, d); }
-    { Mat A2 = A, B2 = B; A2.cols = B2.cols = 0; std::vector<uint8_t> mem; size_t oa = place(mem, A2), ob = place(mem, B2); Code k; Res r = exec(mem, z, oa, 0, ob, 0, nullptr, nullptr, 3, GAS_BIG, &k);
+    { Mat A2 = A, B2 = B; A2.cols = B2.cols = 0; std::vector<uint8_t> mem; size_t oa = place(mem, A2), ob = place(mem, B2); Code k; Res r = exec(mem, z, oa, 0, ob, 0, nullptr, nullptr, 43, GAS_BIG, &k);
       uint8_t aw[32]; accword(aw, z); long long mw = (long long)(mem.size() + 32) / 32; long long pred = k.sgas + 3 * mw + mw * mw / 512;
       bool ok = r.st == EVMC_SUCCESS && r.out.size() == 32 && std::memcmp(r.out.data(), aw, 32) == 0 && r.gas == pred;
-      std::snprintf(d, sizeof d, "cols = 0: status=%d accumulator unchanged, gas %lld == static count with 3 for the empty row %lld: %s", (int)r.st, r.gas, pred, r.gas == pred ? "yes" : "no"); report("G8", ok, d); }
-    { std::vector<uint8_t> mem; size_t oa = place(mem, A), ob = place(mem, B); Code k; Res r = exec(mem, z, oa, 2, ob, 3, nullptr, nullptr, 11 * 3, GAS_BIG, &k);
+      std::snprintf(d, sizeof d, "cols = 0: status=%d accumulator unchanged, gas %lld == static count with 43 for the call %lld: %s", (int)r.st, r.gas, pred, r.gas == pred ? "yes" : "no"); report("G8", ok, d); }
+    { std::vector<uint8_t> mem; size_t oa = place(mem, A), ob = place(mem, B); Code k; Res r = exec(mem, z, oa, 2, ob, 3, nullptr, nullptr, 43 + 8 * 3, GAS_BIG, &k);
       long long mw = (long long)(mem.size() + 32) / 32; long long pred = k.sgas + 3 * mw + mw * mw / 512;
-      Mat T = mk(20, 3, true); std::vector<uint8_t> mem2; size_t ot = place(mem2, T), ob2 = place(mem2, B); Code k2; Res r2 = exec(mem2, z, ot, 2, ob2, 3, nullptr, nullptr, 14 * 3, GAS_BIG, &k2);
+      Mat T = mk(20, 3, true); std::vector<uint8_t> mem2; size_t ot = place(mem2, T), ob2 = place(mem2, B); Code k2; Res r2 = exec(mem2, z, ot, 2, ob2, 3, nullptr, nullptr, 43 + 14 * 3, GAS_BIG, &k2);
       long long mw2 = (long long)(mem2.size() + 32) / 32; long long pred2 = k2.sgas + 3 * mw2 + mw2 * mw2 / 512;
-      std::snprintf(d, sizeof d, "20 elements, unit stride: gas %lld, static count %lld (11 x 3 groups) | one strided row: gas %lld, static count %lld (14 x 3 groups): %s", r.gas, pred, r2.gas, pred2, (r.gas == pred && r2.gas == pred2) ? "equal" : "DIFFERENT"); report("G9", r.st == EVMC_SUCCESS && r2.st == EVMC_SUCCESS && r.gas == pred && r2.gas == pred2, d); }
+      std::snprintf(d, sizeof d, "20 elements, unit stride: gas %lld, static count %lld (43 + 8 x 3 groups) | one strided row: gas %lld, static count %lld (43 + 14 x 3 groups): %s", r.gas, pred, r2.gas, pred2, (r.gas == pred && r2.gas == pred2) ? "equal" : "DIFFERENT"); report("G9", r.st == EVMC_SUCCESS && r2.st == EVMC_SUCCESS && r.gas == pred && r2.gas == pred2, d); }
     std::printf("\n--- SUMMARY --- %d/%d passed%s\n", pass, total, pass == total ? "  *** ALL CHECKS PASSED ***" : "  *** INSPECT ***");
     VM->destroy(VM); dlclose(h);
     return pass == total ? 0 : 1;

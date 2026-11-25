@@ -6,10 +6,10 @@
 // straight-line programs compute the same C x C result, one 256-bit word per entry:
 //   Path V (view)   XTRANSPOSE turns the header of A into a transposed view (no element is moved). Every
 //                   entry is one XMACC_V over rows i and j of the view, which reads the stored columns
-//                   with the stride of the header (strided price, 14 gas per group of eight).
+//                   with the stride of the header (43 gas per call and 14 gas per strided group of eight).
 //   Path K (copy)   The transpose is materialised once with one MCOPY per element (standard instruction),
 //                   a header is written for the copy, and every entry is one XMACC_V over two unit-stride
-//                   rows of the copy (unit price, 11 gas per group of eight).
+//                   rows of the copy (43 gas per call and 8 gas per unit-stride group of eight).
 //   Path S (scalar) Standard instructions only, in the row-oriented form that needs no column access:
 //                   G[i][:] = sum over t of A[t][i] * A[t][:]. A row is packed as eight 32-bit lanes per
 //                   word with an offset of 2^11, one 256-bit MUL multiplies eight elements by the scalar,
@@ -87,12 +87,12 @@ static void build(const int R, const int C, const std::vector<std::vector<int>>*
     auto entries = [&](Code& k, uint64_t base) { for (int i = 0; i < C; ++i) for (int j = 0; j < C; ++j) {
         k.PUSH(0); k.PUSH((uint64_t)j); k.PUSH(base); k.PUSH((uint64_t)i); k.PUSH(base); k.b(0xE8, 0); k.b(0xCD, 6); k.PUSH(MO + ((uint64_t)i * C + j) * 32); k.MSTORE(); } };
     Code& kV = p.kV; kV.CDCOPY(0, MA, HB); kV.PUSH(MA); kV.b(0xDD, 10); kV.POP(); entries(kV, MA); kV.RET(MO, OUTB);
-    kV.sgas += (long long)C * C * (long long)G8 * 14;
+    kV.sgas += (long long)C * C * (43 + (long long)G8 * 14);
     Code& kK = p.kK; kK.CDCOPY(0, MA, HB);
     for (int c = 0; c < C; ++c) for (int t = 0; t < R; ++t) kK.MCOPY2(MA + 32 + 2 * ((uint64_t)t * C + c), MT + 32 + 2 * ((uint64_t)c * R + t));
     { uint8_t hw[32]; put64(hw, (uint64_t)C); put64(hw + 8, (uint64_t)R); put64(hw + 16, (uint64_t)R); put64(hw + 24, 1); kK.W32(hw); kK.PUSH(MT); kK.MSTORE(); }
     entries(kK, MT); kK.RET(MO, OUTB);
-    kK.sgas += (long long)C * C * (long long)G8 * 11;
+    kK.sgas += (long long)C * C * (43 + (long long)G8 * 8);
     p.kHh.CDCOPY(0, MA, HB); p.kHh.RET(MO, OUTB);
     // ---- Path S: packed rows at 0, outputs at SO, column sums at SCS, offset terms at SBC, scalar column at SSC ----
     const uint64_t SP = 0, SO = PB, SCS = SO + OUTB, SBC = SCS + (uint64_t)Cw * 32, SSC = B ? SBC + (uint64_t)C * 32 : SO + OUTB; p.SEND = SSC + (uint64_t)R * 32; p.HSEND = SO + OUTB;
@@ -194,12 +194,12 @@ int main() {
     std::printf(" path | largest C | entries of G |   mult-acc | total gas at C | total gas at C + 8 | confirmed by execution\n");
     for (int pth = 0; pth < 3; ++pth) std::printf("    %s | %9d | %12d | %10lld | %14lld | %18lld | %s\n", PN[pth], cmax[pth], cmax[pth] * cmax[pth], (long long)cmax[pth] * cmax[pth] * 128, gin[pth], gout[pth], (gin[pth] <= CAP && gout[pth] > CAP) ? "yes" : "NO");
     std::printf("TIME (median, machine and build dependent)\n");
-    std::printf("    R |   C |     V ms |     K ms |     S ms |   S/V |   S/K |   K/V | faster | ns/MAC V | ns/MAC K | ns/MAC S | time-neutral strided price | time-neutral unit price\n");
+    std::printf("    R |   C |     V ms |     K ms |     S ms |   S/V |   S/K |   K/V | faster | ns/MAC V | ns/MAC K | ns/MAC S | ns/gas V | ns/gas K | ns/gas S | V rel. S | K rel. S\n");
     for (auto& r : T) { double m = (double)r.C * r.C * r.R; long long cV = r.gV - r.gHh, cK = r.gK - r.gHh, cS = r.gS - r.gHs;
-        // price per group at which the path has the nanoseconds per gas of Path S: (t_path / t_S) * computeS = compute_path - groups*price_now + groups*p
-        double pv = ((r.tV / r.tS) * cS - (cV - 14.0 * r.grp)) / r.grp, pk = ((r.tK / r.tS) * cS - (cK - 11.0 * r.grp)) / r.grp;
-        std::printf("%5d | %3d | %8.4f | %8.4f | %8.4f | %5.2f | %5.2f | %5.2f | %6s | %8.2f | %8.2f | %8.2f | %26.2f | %23.2f\n", r.R, r.C, r.tV * 1e3, r.tK * 1e3, r.tS * 1e3, r.tS / r.tV, r.tS / r.tK, r.tK / r.tV, r.tV <= r.tK ? "V" : "K",
-            r.tV * 1e9 / m, r.tK * 1e9 / m, r.tS * 1e9 / m, pv, pk); }
+        // nanoseconds per unit of compute gas; below 1 relative to Path S means the path is charged more gas per nanosecond than Path S
+        double gv = r.tV * 1e9 / cV, gk = r.tK * 1e9 / cK, gs = r.tS * 1e9 / cS;
+        std::printf("%5d | %3d | %8.4f | %8.4f | %8.4f | %5.2f | %5.2f | %5.2f | %6s | %8.2f | %8.2f | %8.2f | %8.3f | %8.3f | %8.3f | %8.2f | %8.2f\n", r.R, r.C, r.tV * 1e3, r.tK * 1e3, r.tS * 1e3, r.tS / r.tV, r.tS / r.tK, r.tK / r.tV, r.tV <= r.tK ? "V" : "K",
+            r.tV * 1e9 / m, r.tK * 1e9 / m, r.tS * 1e9 / m, gv, gk, gs, gv / gs, gk / gs); }
     if (okd) {
         std::printf("\n================ REAL IMAGE DATA (R images, central w x w window, C = w * w pixels) ================\n");
         std::printf("COMPUTE GAS (identical on every build) and trace of G (sum of the squared pixels, from the reference that all three programs equal)\n");

@@ -1,0 +1,29 @@
+PRICE OF XMACC_V FROM THE MEASURED TIMES OF FOUR BUILDS
+Source: outputs/price_calibration_runs/ (gram_views with the provisional price: 14 per strided group, 11 per unit-stride group, no charge per call)
+Gas tables identical in all 12 files: yes
+Fit: C = 32, R = 16, 32, 64, 128, 256 (groups per call: 2, 4, 8, 16, 32), median times of three runs
+
+TIME-NEUTRAL CHARGE OF ONE CALL (gas), by row length
+                         build | rows    | R=16    | R=32    | R=64    | R=128   | R=256   |
+            x86-64, AVX2 build | strided |    57.9 |    74.3 |   108.6 |   180.9 |   311.8 |
+            x86-64, AVX2 build | unit    |    41.1 |    43.8 |    51.4 |    71.9 |    96.5 |
+ x86-64, scalar fallback build | strided |    69.3 |    94.9 |   149.2 |   258.8 |   471.5 |
+ x86-64, scalar fallback build | unit    |    54.8 |    68.6 |    99.3 |   160.2 |   275.3 |
+           AArch64, NEON build | strided |    40.2 |    52.5 |    80.4 |   130.2 |   227.2 |
+           AArch64, NEON build | unit    |    26.1 |    28.2 |    33.2 |    41.5 |    57.7 |
+AArch64, scalar fallback build | strided |    48.9 |    70.0 |   116.5 |   198.7 |   364.0 |
+AArch64, scalar fallback build | unit    |    38.7 |    52.1 |    78.3 |   129.0 |   231.6 |
+
+LEAST-SQUARES FIT: charge per call = base + per_group * groups
+                         build | strided: base | per group | largest deviation | unit: base | per group | largest deviation
+            x86-64, AVX2 build |         41.29 |      8.50 |              2.0% |      37.43 |      1.90 |              5.8%
+ x86-64, scalar fallback build |         42.06 |     13.44 |              1.0% |      40.22 |      7.37 |              1.5%
+           AArch64, NEON build |         28.85 |      6.23 |              2.7% |      24.28 |      1.05 |              1.4%
+AArch64, scalar fallback build |         29.62 |     10.48 |              3.4% |      26.39 |      6.42 |              1.3%
+
+PRICE (smallest whole numbers not below the fitted value of any build)
+charge per call:                   43 gas
+per group of eight, strided row:   14 gas
+per group of eight, unit stride:   8 gas
+
+*** CALIBRATION COMPLETE ***

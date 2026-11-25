@@ -12,10 +12,10 @@ index e9b516b9..eb307a99 100644
                      t.fn = op_undefined;
                      t.gas_cost = 0;
 diff --git a/lib/evmone/instructions.hpp b/lib/evmone/instructions.hpp
-index 9d52c18b..f7213814 100644
+index 9d52c18b..a0d555f0 100644
 --- a/lib/evmone/instructions.hpp
 +++ b/lib/evmone/instructions.hpp
-@@ -645,6 +645,175 @@ inline void noop(StackTop /*stack*/) noexcept {}
+@@ -645,6 +645,179 @@ inline void noop(StackTop /*stack*/) noexcept {}
          return {EVMC_SUCCESS, gas_left};
      }
  
@@ -31,10 +31,11 @@ index 9d52c18b..f7213814 100644
 +    // 32-bit addition). Without saturation the lane sum (XSUM32) is the dot product of the two rows.
 +    // The element count is not an operand. It is the column count of the views, and the two views
 +    // must agree on it, otherwise the instruction halts (a shape error).
-+    // Gas per group of eight elements (the last group may be partial): XMACC_V_UNIT_GROUP_GAS when both
-+    // rows have unit stride (the work of XMACC_N, same price), XMACC_V_STRIDED_GROUP_GAS when at least
-+    // one row is strided (the price of XMACC_S). G_verylow for an empty row. The charge is made before
-+    // any element access; memory expansion is charged by check_memory.
++    // Gas: XMACC_V_CALL_GAS per call, plus, per group of eight elements (the last group may be partial),
++    // XMACC_V_UNIT_GROUP_GAS when both rows have unit stride and XMACC_V_STRIDED_GROUP_GAS when at least
++    // one row is strided. The three values come from the measured times of four builds
++    // (training/price_calibration.py, outputs/price_calibration.txt). The charge is made before any
++    // element access; memory expansion is charged by check_memory.
 +    // SECURITY: the row indices are checked against the row counts, the column count must fit in 31
 +    // bits, and the highest element of each row is bounds-checked in uint256 before any read.
 +    // The instruction writes no memory.
@@ -57,14 +58,17 @@ index 9d52c18b..f7213814 100644
 +        if (!(row_a < uint256(ha.rows)) || !(row_b < uint256(hb.rows)))
 +            return {EVMC_OUT_OF_GAS, gas_left};
 +        const uint64_t n = ha.cols;
++#ifndef XMACC_V_CALL_GAS
++#define XMACC_V_CALL_GAS 43
++#endif
 +#ifndef XMACC_V_UNIT_GROUP_GAS
-+#define XMACC_V_UNIT_GROUP_GAS 11
++#define XMACC_V_UNIT_GROUP_GAS 8
 +#endif
 +#ifndef XMACC_V_STRIDED_GROUP_GAS
 +#define XMACC_V_STRIDED_GROUP_GAS 14
 +#endif
 +        const int64_t group_gas = (ha.stride_col == 1 && hb.stride_col == 1) ? XMACC_V_UNIT_GROUP_GAS : XMACC_V_STRIDED_GROUP_GAS;
-+        const int64_t charge = n == 0 ? 3 : static_cast<int64_t>((n + 7) / 8) * group_gas;
++        const int64_t charge = XMACC_V_CALL_GAS + static_cast<int64_t>((n + 7) / 8) * group_gas;
 +        if ((gas_left -= charge) < 0)
 +            return {EVMC_OUT_OF_GAS, gas_left};
 +        if (n == 0)
@@ -205,14 +209,14 @@ index 0e1f2739..3549f101 100644
  };
  }  // namespace evmone
 diff --git a/lib/evmone/instructions_traits.hpp b/lib/evmone/instructions_traits.hpp
-index e2cbe1d6..ea17e2ee 100644
+index e2cbe1d6..74de2393 100644
 --- a/lib/evmone/instructions_traits.hpp
 +++ b/lib/evmone/instructions_traits.hpp
 @@ -55,6 +55,7 @@ constexpr inline GasCostTable gas_costs = []() noexcept {
      table[EVMC_FRONTIER][OP_XMACC_S] = 14;
      table[EVMC_FRONTIER][OP_XMACC_N] = 0;   // dynamic: 11 gas per group, charged in the handler
      table[EVMC_FRONTIER][OP_XMACC_N16] = 0; // dynamic: 22 gas per 16-element group, charged in the handler
-+    table[EVMC_FRONTIER][OP_XMACC_V] = 0;   // dynamic: 11 gas per unit-stride group of eight elements, 14 per strided group, charged in the handler
++    table[EVMC_FRONTIER][OP_XMACC_V] = 0;   // dynamic: 43 gas per call, 8 per unit-stride group of eight elements, 14 per strided group, charged in the handler
      table[EVMC_FRONTIER][OP_MUL] = 5;
      table[EVMC_FRONTIER][OP_SUB] = 3;
      table[EVMC_FRONTIER][OP_DIV] = 5;
