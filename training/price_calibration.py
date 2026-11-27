@@ -117,4 +117,5 @@ def main():
     print(text, end="")
 
 
-main()
+if __name__ == "__main__":
+    main()
