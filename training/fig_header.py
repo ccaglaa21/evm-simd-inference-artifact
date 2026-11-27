@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # fig_header.py -- two schematic figures: the MatrixHeader descriptor (fig_header.pdf) and the two-layer
 # memory check (fig_safety.pdf). No measured number is drawn; the only constant is the schedule price of
-# XTRANSPOSE (10 gas). Usage: python3 fig_header.py   (writes the two PDFs into the current directory)
+# XTRANSPOSE (22 gas). Usage: python3 fig_header.py   (writes the two PDFs into the current directory)
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
@@ -56,7 +56,7 @@ matrix(ax, 0, 61, [["$a_0$","$a_1$","$a_2$","$a_3$"],["$a_4$","$a_5$","$a_6$","$
 ax.text(46, 61, r"element $(i,j)$ is lane $i \cdot s_r + j \cdot s_c$", fontsize=6.5, va="center", color=GREY)
 
 # block 2: the transpose (same gap above as between the other blocks)
-ax.text(0, 45, "XTRANSPOSE operation, 10 gas, zero-copy", fontsize=7, weight="bold")
+ax.text(0, 45, "XTRANSPOSE operation, 22 gas, zero-copy", fontsize=7, weight="bold")
 ax.text(X0 - 2, 30.5, "MatrixHeader:", ha="right", va="center", color=GREY)
 header_row(27, ["rows: 4", "cols: 2", "$s_r$: 1", "$s_c$: 4"])
 for x0, x1 in ((X0 + 0.5 * CW, X0 + 1.5 * CW), (X0 + 2.5 * CW, X0 + 3.5 * CW)):
