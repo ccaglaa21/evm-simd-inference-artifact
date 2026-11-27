@@ -2,227 +2,227 @@
 Bytecode: S=4682 B=2959 N=1938 N16=1936 M=31 bytes | calldata 24832 bytes | 128 neurons x 16 inputs = 2048 multiply-accumulates
   [H] harness (copies and return only): PASSED | gas 2253 (8-lane map) | gas 1317 (16-lane map) | gas 1331 (matrix-view map)
   [S] bit-exact against the C++ reference (128 outputs): PASSED | gas 11661
-  [S total] med=0.0000101 s  min=0.0000101  max=0.0000102  CV=0.2%  (samples=31, inner-reps=975)
-  [S analysis] med=0.0000041 s  min=0.0000040  max=0.0000041  CV=0.1%  (samples=31, inner-reps=2337)
+  [S total] med=0.0000101 s  min=0.0000101  max=0.0000101  CV=0.1%  (samples=31, inner-reps=979)
+  [S analysis] med=0.0000041 s  min=0.0000041  max=0.0000041  CV=0.2%  (samples=31, inner-reps=2290)
   [B] bit-exact against the C++ reference (128 outputs): PASSED | gas 14157
-  [B total] med=0.0000098 s  min=0.0000098  max=0.0000098  CV=0.0%  (samples=31, inner-reps=1012)
-  [B analysis] med=0.0000026 s  min=0.0000026  max=0.0000026  CV=0.1%  (samples=31, inner-reps=3542)
+  [B total] med=0.0000099 s  min=0.0000099  max=0.0000100  CV=0.1%  (samples=31, inner-reps=1002)
+  [B analysis] med=0.0000026 s  min=0.0000026  max=0.0000026  CV=0.0%  (samples=31, inner-reps=3532)
   [N] bit-exact against the C++ reference (128 outputs): PASSED | gas 12493
-  [N total] med=0.0000075 s  min=0.0000075  max=0.0000076  CV=0.2%  (samples=31, inner-reps=1316)
-  [N analysis] med=0.0000018 s  min=0.0000018  max=0.0000018  CV=0.1%  (samples=31, inner-reps=5103)
+  [N total] med=0.0000076 s  min=0.0000076  max=0.0000076  CV=0.1%  (samples=31, inner-reps=1311)
+  [N analysis] med=0.0000018 s  min=0.0000018  max=0.0000018  CV=0.1%  (samples=31, inner-reps=4827)
   [N16] bit-exact against the C++ reference (128 outputs): PASSED | gas 12581
-  [N16 total] med=0.0000077 s  min=0.0000077  max=0.0000078  CV=0.1%  (samples=31, inner-reps=1281)
-  [N16 analysis] med=0.0000018 s  min=0.0000018  max=0.0000018  CV=0.0%  (samples=31, inner-reps=5145)
+  [N16 total] med=0.0000078 s  min=0.0000077  max=0.0000078  CV=0.0%  (samples=31, inner-reps=1284)
+  [N16 analysis] med=0.0000018 s  min=0.0000018  max=0.0000018  CV=0.1%  (samples=31, inner-reps=5187)
   [M] bit-exact against the C++ reference (128 outputs): PASSED | gas 4554
-  [M total] med=0.0000026 s  min=0.0000026  max=0.0000026  CV=0.1%  (samples=31, inner-reps=3743)
+  [M total] med=0.0000026 s  min=0.0000026  max=0.0000026  CV=0.1%  (samples=31, inner-reps=3721)
   [M analysis] med=0.0000001 s  min=0.0000001  max=0.0000001  CV=0.2%  (samples=31, inner-reps=20000)
   [M] static gas count of the program (copies, one XMATMUL, memory): 4554 | measured 4554: equal
-  [H total] med=0.0000004 s  min=0.0000004  max=0.0000004  CV=0.5%  (samples=31, inner-reps=7143)
-  [H analysis] med=0.0000001 s  min=0.0000001  max=0.0000001  CV=0.2%  (samples=31, inner-reps=20000)
-  [H16 total] med=0.0000003 s  min=0.0000003  max=0.0000003  CV=0.3%  (samples=31, inner-reps=11683)
+  [H total] med=0.0000004 s  min=0.0000004  max=0.0000005  CV=0.4%  (samples=31, inner-reps=6685)
+  [H analysis] med=0.0000001 s  min=0.0000001  max=0.0000001  CV=0.3%  (samples=31, inner-reps=20000)
+  [H16 total] med=0.0000003 s  min=0.0000003  max=0.0000003  CV=0.2%  (samples=31, inner-reps=11062)
   [H16 analysis] med=0.0000001 s  min=0.0000001  max=0.0000001  CV=0.2%  (samples=31, inner-reps=20000)
-  [Hm total] med=0.0000003 s  min=0.0000003  max=0.0000003  CV=0.6%  (samples=31, inner-reps=19231)
-  [Hm analysis] med=0.0000001 s  min=0.0000001  max=0.0000001  CV=0.2%  (samples=31, inner-reps=20000)
+  [Hm total] med=0.0000003 s  min=0.0000003  max=0.0000003  CV=0.1%  (samples=31, inner-reps=19231)
+  [Hm analysis] med=0.0000001 s  min=0.0000001  max=0.0000001  CV=1.1%  (samples=31, inner-reps=20000)
 ---- I = 32 ----
 Bytecode: S=7000 B=5010 N=1941 N16=1940 M=31 bytes | calldata 49600 bytes | 128 neurons x 32 inputs = 4096 multiply-accumulates
   [H] harness (copies and return only): PASSED | gas 4320 (8-lane map) | gas 2253 (16-lane map) | gas 2268 (matrix-view map)
   [S] bit-exact against the C++ reference (128 outputs): PASSED | gas 18883
-  [S total] med=0.0000157 s  min=0.0000157  max=0.0000157  CV=0.1%  (samples=31, inner-reps=630)
-  [S analysis] med=0.0000060 s  min=0.0000060  max=0.0000060  CV=0.1%  (samples=31, inner-reps=1628)
+  [S total] med=0.0000157 s  min=0.0000157  max=0.0000158  CV=0.1%  (samples=31, inner-reps=611)
+  [S analysis] med=0.0000060 s  min=0.0000060  max=0.0000060  CV=0.1%  (samples=31, inner-reps=1585)
   [B] bit-exact against the C++ reference (128 outputs): PASSED | gas 25184
-  [B total] med=0.0000173 s  min=0.0000172  max=0.0000173  CV=0.1%  (samples=31, inner-reps=580)
-  [B analysis] med=0.0000043 s  min=0.0000043  max=0.0000043  CV=0.1%  (samples=31, inner-reps=2190)
+  [B total] med=0.0000174 s  min=0.0000174  max=0.0000174  CV=0.0%  (samples=31, inner-reps=573)
+  [B analysis] med=0.0000043 s  min=0.0000043  max=0.0000043  CV=0.0%  (samples=31, inner-reps=2245)
   [N] bit-exact against the C++ reference (128 outputs): PASSED | gas 17632
-  [N total] med=0.0000098 s  min=0.0000098  max=0.0000099  CV=0.1%  (samples=31, inner-reps=1011)
-  [N analysis] med=0.0000018 s  min=0.0000018  max=0.0000018  CV=0.2%  (samples=31, inner-reps=5021)
+  [N total] med=0.0000099 s  min=0.0000098  max=0.0000099  CV=0.0%  (samples=31, inner-reps=1012)
+  [N analysis] med=0.0000018 s  min=0.0000018  max=0.0000018  CV=0.1%  (samples=31, inner-reps=5166)
   [N16] bit-exact against the C++ reference (128 outputs): PASSED | gas 16589
-  [N16 total] med=0.0000103 s  min=0.0000103  max=0.0000104  CV=0.1%  (samples=31, inner-reps=961)
-  [N16 analysis] med=0.0000018 s  min=0.0000018  max=0.0000018  CV=0.1%  (samples=31, inner-reps=4883)
+  [N16 total] med=0.0000103 s  min=0.0000103  max=0.0000103  CV=0.0%  (samples=31, inner-reps=957)
+  [N16 analysis] med=0.0000018 s  min=0.0000018  max=0.0000018  CV=0.1%  (samples=31, inner-reps=5187)
   [M] bit-exact against the C++ reference (128 outputs): PASSED | gas 7795
-  [M total] med=0.0000041 s  min=0.0000041  max=0.0000041  CV=0.1%  (samples=31, inner-reps=2395)
-  [M analysis] med=0.0000001 s  min=0.0000001  max=0.0000001  CV=0.2%  (samples=31, inner-reps=20000)
+  [M total] med=0.0000041 s  min=0.0000041  max=0.0000042  CV=0.1%  (samples=31, inner-reps=2391)
+  [M analysis] med=0.0000001 s  min=0.0000001  max=0.0000001  CV=0.4%  (samples=31, inner-reps=20000)
   [M] static gas count of the program (copies, one XMATMUL, memory): 7795 | measured 7795: equal
-  [H total] med=0.0000007 s  min=0.0000007  max=0.0000007  CV=0.5%  (samples=31, inner-reps=3777)
+  [H total] med=0.0000007 s  min=0.0000007  max=0.0000007  CV=1.1%  (samples=31, inner-reps=3362)
   [H analysis] med=0.0000001 s  min=0.0000001  max=0.0000001  CV=0.2%  (samples=31, inner-reps=20000)
-  [H16 total] med=0.0000004 s  min=0.0000004  max=0.0000004  CV=0.8%  (samples=31, inner-reps=7531)
-  [H16 analysis] med=0.0000001 s  min=0.0000001  max=0.0000001  CV=0.2%  (samples=31, inner-reps=20000)
-  [Hm total] med=0.0000004 s  min=0.0000004  max=0.0000004  CV=0.4%  (samples=31, inner-reps=8993)
-  [Hm analysis] med=0.0000001 s  min=0.0000001  max=0.0000001  CV=0.2%  (samples=31, inner-reps=20000)
+  [H16 total] med=0.0000004 s  min=0.0000004  max=0.0000004  CV=0.9%  (samples=31, inner-reps=5872)
+  [H16 analysis] med=0.0000001 s  min=0.0000001  max=0.0000001  CV=0.3%  (samples=31, inner-reps=20000)
+  [Hm total] med=0.0000004 s  min=0.0000004  max=0.0000004  CV=0.4%  (samples=31, inner-reps=8866)
+  [Hm analysis] med=0.0000001 s  min=0.0000001  max=0.0000001  CV=0.3%  (samples=31, inner-reps=20000)
 ---- I = 64 ----
 Bytecode: S=11639 B=9112 N=1944 N16=1944 M=33 bytes | calldata 99136 bytes | 128 neurons x 64 inputs = 8192 multiply-accumulates
   [H] harness (copies and return only): PASSED | gas 9234 (8-lane map) | gas 4320 (16-lane map) | gas 4337 (matrix-view map)
   [S] bit-exact against the C++ reference (128 outputs): PASSED | gas 34107
-  [S total] med=0.0000279 s  min=0.0000277  max=0.0000282  CV=0.3%  (samples=31, inner-reps=361)
-  [S analysis] med=0.0000105 s  min=0.0000104  max=0.0000105  CV=0.4%  (samples=31, inner-reps=886)
+  [S total] med=0.0000279 s  min=0.0000278  max=0.0000283  CV=0.3%  (samples=31, inner-reps=361)
+  [S analysis] med=0.0000104 s  min=0.0000104  max=0.0000105  CV=0.6%  (samples=31, inner-reps=907)
   [B] bit-exact against the C++ reference (128 outputs): PASSED | gas 48018
-  [B total] med=0.0000327 s  min=0.0000326  max=0.0000329  CV=0.2%  (samples=31, inner-reps=307)
-  [B analysis] med=0.0000077 s  min=0.0000077  max=0.0000077  CV=0.1%  (samples=31, inner-reps=1262)
+  [B total] med=0.0000330 s  min=0.0000329  max=0.0000330  CV=0.1%  (samples=31, inner-reps=302)
+  [B analysis] med=0.0000077 s  min=0.0000077  max=0.0000077  CV=0.1%  (samples=31, inner-reps=1273)
   [N] bit-exact against the C++ reference (128 outputs): PASSED | gas 28690
-  [N total] med=0.0000147 s  min=0.0000147  max=0.0000147  CV=0.0%  (samples=31, inner-reps=681)
-  [N analysis] med=0.0000018 s  min=0.0000018  max=0.0000018  CV=0.1%  (samples=31, inner-reps=4981)
+  [N total] med=0.0000147 s  min=0.0000147  max=0.0000148  CV=0.1%  (samples=31, inner-reps=682)
+  [N analysis] med=0.0000018 s  min=0.0000018  max=0.0000018  CV=0.0%  (samples=31, inner-reps=4827)
   [N16] bit-exact against the C++ reference (128 outputs): PASSED | gas 24800
-  [N16 total] med=0.0000150 s  min=0.0000150  max=0.0000150  CV=0.0%  (samples=31, inner-reps=664)
-  [N16 analysis] med=0.0000018 s  min=0.0000018  max=0.0000018  CV=0.1%  (samples=31, inner-reps=4630)
+  [N16 total] med=0.0000150 s  min=0.0000150  max=0.0000151  CV=0.1%  (samples=31, inner-reps=665)
+  [N16 analysis] med=0.0000018 s  min=0.0000018  max=0.0000018  CV=0.1%  (samples=31, inner-reps=4845)
   [M] bit-exact against the C++ reference (128 outputs): PASSED | gas 14472
-  [M total] med=0.0000073 s  min=0.0000073  max=0.0000074  CV=0.1%  (samples=31, inner-reps=1365)
-  [M analysis] med=0.0000001 s  min=0.0000001  max=0.0000001  CV=0.5%  (samples=31, inner-reps=20000)
+  [M total] med=0.0000073 s  min=0.0000073  max=0.0000073  CV=0.0%  (samples=31, inner-reps=1367)
+  [M analysis] med=0.0000001 s  min=0.0000001  max=0.0000001  CV=0.2%  (samples=31, inner-reps=20000)
   [M] static gas count of the program (copies, one XMATMUL, memory): 14472 | measured 14472: equal
-  [H total] med=0.0000014 s  min=0.0000014  max=0.0000015  CV=0.3%  (samples=31, inner-reps=2070)
-  [H analysis] med=0.0000001 s  min=0.0000001  max=0.0000001  CV=0.2%  (samples=31, inner-reps=20000)
-  [H16 total] med=0.0000007 s  min=0.0000007  max=0.0000007  CV=1.0%  (samples=31, inner-reps=4007)
+  [H total] med=0.0000015 s  min=0.0000015  max=0.0000015  CV=0.1%  (samples=31, inner-reps=2372)
+  [H analysis] med=0.0000001 s  min=0.0000001  max=0.0000001  CV=0.4%  (samples=31, inner-reps=20000)
+  [H16 total] med=0.0000007 s  min=0.0000007  max=0.0000007  CV=0.7%  (samples=31, inner-reps=5981)
   [H16 analysis] med=0.0000001 s  min=0.0000001  max=0.0000001  CV=0.3%  (samples=31, inner-reps=20000)
-  [Hm total] med=0.0000007 s  min=0.0000007  max=0.0000007  CV=0.7%  (samples=31, inner-reps=4790)
+  [Hm total] med=0.0000007 s  min=0.0000007  max=0.0000007  CV=1.0%  (samples=31, inner-reps=5412)
   [Hm analysis] med=0.0000001 s  min=0.0000001  max=0.0000001  CV=0.3%  (samples=31, inner-reps=20000)
 ---- I = 128 ----
 Bytecode: S=22211 B=18474 N=2075 N16=1947 M=36 bytes | calldata 198208 bytes | 128 neurons x 128 inputs = 16384 multiply-accumulates
   [H] harness (copies and return only): PASSED | gas 22182 (8-lane map) | gas 9234 (16-lane map) | gas 9255 (matrix-view map)
   [S] bit-exact against the C++ reference (128 outputs): PASSED | gas 67676
-  [S total] med=0.0000510 s  min=0.0000509  max=0.0000519  CV=0.4%  (samples=31, inner-reps=198)
-  [S analysis] med=0.0000183 s  min=0.0000183  max=0.0000184  CV=0.2%  (samples=31, inner-reps=524)
+  [S total] med=0.0000508 s  min=0.0000508  max=0.0000509  CV=0.1%  (samples=31, inner-reps=198)
+  [S analysis] med=0.0000182 s  min=0.0000182  max=0.0000183  CV=0.2%  (samples=31, inner-reps=532)
   [B] bit-exact against the C++ reference (128 outputs): PASSED | gas 96806
-  [B total] med=0.0000632 s  min=0.0000631  max=0.0000635  CV=0.1%  (samples=31, inner-reps=158)
-  [B analysis] med=0.0000150 s  min=0.0000150  max=0.0000151  CV=0.1%  (samples=31, inner-reps=624)
+  [B total] med=0.0000635 s  min=0.0000635  max=0.0000637  CV=0.1%  (samples=31, inner-reps=158)
+  [B analysis] med=0.0000150 s  min=0.0000150  max=0.0000151  CV=0.2%  (samples=31, inner-reps=635)
   [N] bit-exact against the C++ reference (128 outputs): PASSED | gas 53926
-  [N total] med=0.0000241 s  min=0.0000241  max=0.0000244  CV=0.2%  (samples=31, inner-reps=414)
-  [N analysis] med=0.0000018 s  min=0.0000018  max=0.0000019  CV=0.2%  (samples=31, inner-reps=4735)
+  [N total] med=0.0000242 s  min=0.0000242  max=0.0000242  CV=0.0%  (samples=31, inner-reps=414)
+  [N analysis] med=0.0000018 s  min=0.0000018  max=0.0000018  CV=0.1%  (samples=31, inner-reps=4717)
   [N16] bit-exact against the C++ reference (128 outputs): PASSED | gas 42002
-  [N16 total] med=0.0000243 s  min=0.0000243  max=0.0000244  CV=0.0%  (samples=31, inner-reps=408)
-  [N16 analysis] med=0.0000018 s  min=0.0000018  max=0.0000018  CV=0.1%  (samples=31, inner-reps=4630)
+  [N16 total] med=0.0000244 s  min=0.0000243  max=0.0000244  CV=0.1%  (samples=31, inner-reps=412)
+  [N16 analysis] med=0.0000018 s  min=0.0000018  max=0.0000018  CV=0.1%  (samples=31, inner-reps=4941)
   [M] bit-exact against the C++ reference (128 outputs): PASSED | gas 28606
-  [M total] med=0.0000138 s  min=0.0000138  max=0.0000139  CV=0.1%  (samples=31, inner-reps=724)
-  [M analysis] med=0.0000001 s  min=0.0000001  max=0.0000001  CV=0.2%  (samples=31, inner-reps=20000)
+  [M total] med=0.0000138 s  min=0.0000138  max=0.0000138  CV=0.0%  (samples=31, inner-reps=724)
+  [M analysis] med=0.0000001 s  min=0.0000001  max=0.0000001  CV=0.3%  (samples=31, inner-reps=20000)
   [M] static gas count of the program (copies, one XMATMUL, memory): 28606 | measured 28606: equal
-  [H total] med=0.0000029 s  min=0.0000029  max=0.0000029  CV=0.1%  (samples=31, inner-reps=1117)
-  [H analysis] med=0.0000001 s  min=0.0000001  max=0.0000001  CV=0.8%  (samples=31, inner-reps=20000)
-  [H16 total] med=0.0000014 s  min=0.0000014  max=0.0000014  CV=0.1%  (samples=31, inner-reps=2471)
+  [H total] med=0.0000029 s  min=0.0000029  max=0.0000029  CV=0.1%  (samples=31, inner-reps=1452)
+  [H analysis] med=0.0000001 s  min=0.0000001  max=0.0000001  CV=0.2%  (samples=31, inner-reps=20000)
+  [H16 total] med=0.0000015 s  min=0.0000015  max=0.0000015  CV=0.1%  (samples=31, inner-reps=2666)
   [H16 analysis] med=0.0000001 s  min=0.0000001  max=0.0000001  CV=0.2%  (samples=31, inner-reps=20000)
-  [Hm total] med=0.0000014 s  min=0.0000014  max=0.0000015  CV=0.1%  (samples=31, inner-reps=2901)
-  [Hm analysis] med=0.0000001 s  min=0.0000001  max=0.0000001  CV=0.2%  (samples=31, inner-reps=20000)
+  [Hm total] med=0.0000015 s  min=0.0000015  max=0.0000015  CV=0.1%  (samples=31, inner-reps=2921)
+  [Hm analysis] med=0.0000001 s  min=0.0000001  max=0.0000001  CV=0.8%  (samples=31, inner-reps=20000)
 ---- I = 256 ----
 Bytecode: S=44867 B=38970 N=2139 N16=2078 M=39 bytes | calldata 396352 bytes | 128 neurons x 256 inputs = 32768 multiply-accumulates
   [H] harness (copies and return only): PASSED | gas 60560 (8-lane map) | gas 22182 (16-lane map) | gas 22211 (matrix-view map)
   [S] bit-exact against the C++ reference (128 outputs): PASSED | gas 147293
-  [S total] med=0.0000975 s  min=0.0000974  max=0.0000977  CV=0.1%  (samples=31, inner-reps=103)
-  [S analysis] med=0.0000338 s  min=0.0000337  max=0.0000340  CV=0.1%  (samples=31, inner-reps=292)
+  [S total] med=0.0000977 s  min=0.0000975  max=0.0000983  CV=0.2%  (samples=31, inner-reps=103)
+  [S analysis] med=0.0000337 s  min=0.0000337  max=0.0000340  CV=0.2%  (samples=31, inner-reps=293)
   [B] bit-exact against the C++ reference (128 outputs): PASSED | gas 206864
-  [B total] med=0.0001237 s  min=0.0001236  max=0.0001239  CV=0.1%  (samples=31, inner-reps=81)
-  [B analysis] med=0.0000287 s  min=0.0000287  max=0.0000290  CV=0.1%  (samples=31, inner-reps=344)
+  [B total] med=0.0001243 s  min=0.0001241  max=0.0001251  CV=0.2%  (samples=31, inner-reps=81)
+  [B analysis] med=0.0000287 s  min=0.0000287  max=0.0000289  CV=0.1%  (samples=31, inner-reps=343)
   [N] bit-exact against the C++ reference (128 outputs): PASSED | gas 116880
-  [N total] med=0.0000432 s  min=0.0000432  max=0.0000436  CV=0.2%  (samples=31, inner-reps=229)
-  [N analysis] med=0.0000018 s  min=0.0000018  max=0.0000019  CV=0.1%  (samples=31, inner-reps=4922)
+  [N total] med=0.0000432 s  min=0.0000431  max=0.0000432  CV=0.1%  (samples=31, inner-reps=228)
+  [N analysis] med=0.0000018 s  min=0.0000018  max=0.0000018  CV=0.0%  (samples=31, inner-reps=4481)
   [N16] bit-exact against the C++ reference (128 outputs): PASSED | gas 79526
-  [N16 total] med=0.0000428 s  min=0.0000428  max=0.0000429  CV=0.0%  (samples=31, inner-reps=231)
-  [N16 analysis] med=0.0000018 s  min=0.0000018  max=0.0000018  CV=0.1%  (samples=31, inner-reps=5082)
+  [N16 total] med=0.0000428 s  min=0.0000428  max=0.0000428  CV=0.0%  (samples=31, inner-reps=234)
+  [N16 analysis] med=0.0000018 s  min=0.0000018  max=0.0000018  CV=0.1%  (samples=31, inner-reps=5103)
   [M] bit-exact against the C++ reference (128 outputs): PASSED | gas 59994
-  [M total] med=0.0000268 s  min=0.0000267  max=0.0000269  CV=0.1%  (samples=31, inner-reps=373)
+  [M total] med=0.0000268 s  min=0.0000268  max=0.0000268  CV=0.1%  (samples=31, inner-reps=371)
   [M analysis] med=0.0000001 s  min=0.0000001  max=0.0000001  CV=0.2%  (samples=31, inner-reps=20000)
   [M] static gas count of the program (copies, one XMATMUL, memory): 59994 | measured 59994: equal
-  [H total] med=0.0000053 s  min=0.0000053  max=0.0000053  CV=0.1%  (samples=31, inner-reps=777)
-  [H analysis] med=0.0000001 s  min=0.0000001  max=0.0000001  CV=0.2%  (samples=31, inner-reps=20000)
-  [H16 total] med=0.0000029 s  min=0.0000029  max=0.0000029  CV=0.1%  (samples=31, inner-reps=1530)
+  [H total] med=0.0000053 s  min=0.0000053  max=0.0000053  CV=0.1%  (samples=31, inner-reps=767)
+  [H analysis] med=0.0000001 s  min=0.0000001  max=0.0000001  CV=0.3%  (samples=31, inner-reps=18657)
+  [H16 total] med=0.0000029 s  min=0.0000029  max=0.0000029  CV=0.2%  (samples=31, inner-reps=1508)
   [H16 analysis] med=0.0000001 s  min=0.0000001  max=0.0000001  CV=0.2%  (samples=31, inner-reps=20000)
-  [Hm total] med=0.0000029 s  min=0.0000029  max=0.0000029  CV=0.1%  (samples=31, inner-reps=1774)
-  [Hm analysis] med=0.0000001 s  min=0.0000001  max=0.0000001  CV=0.2%  (samples=31, inner-reps=20000)
+  [Hm total] med=0.0000029 s  min=0.0000029  max=0.0000029  CV=0.2%  (samples=31, inner-reps=1641)
+  [Hm analysis] med=0.0000001 s  min=0.0000001  max=0.0000001  CV=0.3%  (samples=31, inner-reps=20000)
 ---- I = 512 ----
 Bytecode: S=90947 B=79962 N=2171 N16=2142 M=39 bytes | calldata 792640 bytes | 128 neurons x 512 inputs = 65536 multiply-accumulates
   [H] harness (copies and return only): PASSED | gas 187238 (8-lane map) | gas 60560 (16-lane map) | gas 60605 (matrix-view map)
   [S] bit-exact against the C++ reference (128 outputs): PASSED | gas 357987
-  [S total] med=0.0001995 s  min=0.0001981  max=0.0002012  CV=0.4%  (samples=31, inner-reps=51)
-  [S analysis] med=0.0000676 s  min=0.0000674  max=0.0000679  CV=0.2%  (samples=31, inner-reps=147)
+  [S total] med=0.0001991 s  min=0.0001987  max=0.0002005  CV=0.2%  (samples=31, inner-reps=49)
+  [S analysis] med=0.0000671 s  min=0.0000671  max=0.0000675  CV=0.2%  (samples=31, inner-reps=146)
   [B] bit-exact against the C++ reference (128 outputs): PASSED | gas 476902
-  [B total] med=0.0002492 s  min=0.0002478  max=0.0002516  CV=0.4%  (samples=31, inner-reps=40)
-  [B analysis] med=0.0000567 s  min=0.0000566  max=0.0000573  CV=0.3%  (samples=31, inner-reps=172)
+  [B total] med=0.0002500 s  min=0.0002490  max=0.0002506  CV=0.1%  (samples=31, inner-reps=41)
+  [B analysis] med=0.0000567 s  min=0.0000567  max=0.0000567  CV=0.0%  (samples=31, inner-reps=152)
   [N] bit-exact against the C++ reference (128 outputs): PASSED | gas 292710
-  [N total] med=0.0000831 s  min=0.0000828  max=0.0000838  CV=0.2%  (samples=31, inner-reps=119)
-  [N analysis] med=0.0000018 s  min=0.0000018  max=0.0000018  CV=0.1%  (samples=31, inner-reps=4416)
+  [N total] med=0.0000836 s  min=0.0000834  max=0.0000839  CV=0.1%  (samples=31, inner-reps=120)
+  [N analysis] med=0.0000018 s  min=0.0000018  max=0.0000019  CV=0.1%  (samples=31, inner-reps=4195)
   [N16] bit-exact against the C++ reference (128 outputs): PASSED | gas 167056
-  [N16 total] med=0.0000801 s  min=0.0000800  max=0.0000802  CV=0.1%  (samples=31, inner-reps=125)
-  [N16 analysis] med=0.0000018 s  min=0.0000018  max=0.0000019  CV=0.2%  (samples=31, inner-reps=4647)
+  [N16 total] med=0.0000800 s  min=0.0000799  max=0.0000803  CV=0.1%  (samples=31, inner-reps=125)
+  [N16 analysis] med=0.0000018 s  min=0.0000018  max=0.0000018  CV=0.1%  (samples=31, inner-reps=3870)
   [M] bit-exact against the C++ reference (128 outputs): PASSED | gas 135252
-  [M total] med=0.0000528 s  min=0.0000528  max=0.0000529  CV=0.1%  (samples=31, inner-reps=178)
+  [M total] med=0.0000528 s  min=0.0000528  max=0.0000535  CV=0.3%  (samples=31, inner-reps=189)
   [M analysis] med=0.0000001 s  min=0.0000001  max=0.0000001  CV=0.3%  (samples=31, inner-reps=20000)
   [M] static gas count of the program (copies, one XMATMUL, memory): 135252 | measured 135252: equal
-  [H total] med=0.0000122 s  min=0.0000120  max=0.0000125  CV=1.2%  (samples=31, inner-reps=304)
-  [H analysis] med=0.0000001 s  min=0.0000001  max=0.0000001  CV=0.3%  (samples=31, inner-reps=20000)
-  [H16 total] med=0.0000053 s  min=0.0000052  max=0.0000054  CV=0.5%  (samples=31, inner-reps=624)
+  [H total] med=0.0000125 s  min=0.0000125  max=0.0000126  CV=0.2%  (samples=31, inner-reps=383)
+  [H analysis] med=0.0000001 s  min=0.0000001  max=0.0000001  CV=0.4%  (samples=31, inner-reps=17124)
+  [H16 total] med=0.0000053 s  min=0.0000053  max=0.0000053  CV=0.2%  (samples=31, inner-reps=666)
   [H16 analysis] med=0.0000001 s  min=0.0000001  max=0.0000001  CV=0.2%  (samples=31, inner-reps=20000)
-  [Hm total] med=0.0000053 s  min=0.0000053  max=0.0000053  CV=0.2%  (samples=31, inner-reps=741)
-  [Hm analysis] med=0.0000001 s  min=0.0000001  max=0.0000001  CV=0.3%  (samples=31, inner-reps=20000)
+  [Hm total] med=0.0000053 s  min=0.0000053  max=0.0000054  CV=0.1%  (samples=31, inner-reps=854)
+  [Hm analysis] med=0.0000001 s  min=0.0000001  max=0.0000001  CV=0.2%  (samples=31, inner-reps=20000)
 ---- I = 784 ----
 Bytecode: S=140627 B=123516 N=2182 N16=2164 M=39 bytes | calldata 1213696 bytes | 128 neurons x 784 inputs = 100352 multiply-accumulates
   [H] harness (copies and return only): PASSED | gas 394767 (8-lane map) | gas 119569 (16-lane map) | gas 119632 (matrix-view map)
   [S] bit-exact against the C++ reference (128 outputs): PASSED | gas 656224
-  [S total] med=0.0003108 s  min=0.0003075  max=0.0003177  CV=0.8%  (samples=31, inner-reps=32)
-  [S analysis] med=0.0001029 s  min=0.0001028  max=0.0001039  CV=0.2%  (samples=31, inner-reps=96)
+  [S total] med=0.0003068 s  min=0.0003058  max=0.0003079  CV=0.2%  (samples=31, inner-reps=32)
+  [S analysis] med=0.0001028 s  min=0.0001027  max=0.0001029  CV=0.1%  (samples=31, inner-reps=97)
   [B] bit-exact against the C++ reference (128 outputs): PASSED | gas 836751
-  [B total] med=0.0003860 s  min=0.0003829  max=0.0004256  CV=1.9%  (samples=31, inner-reps=27)
-  [B analysis] med=0.0000861 s  min=0.0000861  max=0.0000869  CV=0.2%  (samples=31, inner-reps=115)
+  [B total] med=0.0003817 s  min=0.0003802  max=0.0003853  CV=0.3%  (samples=31, inner-reps=26)
+  [B analysis] med=0.0000860 s  min=0.0000859  max=0.0000862  CV=0.1%  (samples=31, inner-reps=100)
   [N] bit-exact against the C++ reference (128 outputs): PASSED | gas 552463
-  [N total] med=0.0001280 s  min=0.0001267  max=0.0001300  CV=0.6%  (samples=31, inner-reps=78)
-  [N analysis] med=0.0000018 s  min=0.0000018  max=0.0000018  CV=0.1%  (samples=31, inner-reps=3655)
+  [N total] med=0.0001269 s  min=0.0001264  max=0.0001275  CV=0.2%  (samples=31, inner-reps=71)
+  [N analysis] med=0.0000018 s  min=0.0000018  max=0.0000019  CV=0.3%  (samples=31, inner-reps=4099)
   [N16] bit-exact against the C++ reference (128 outputs): PASSED | gas 278289
-  [N16 total] med=0.0001201 s  min=0.0001198  max=0.0001214  CV=0.3%  (samples=31, inner-reps=83)
-  [N16 analysis] med=0.0000018 s  min=0.0000018  max=0.0000018  CV=0.1%  (samples=31, inner-reps=4209)
+  [N16 total] med=0.0001198 s  min=0.0001195  max=0.0001205  CV=0.2%  (samples=31, inner-reps=84)
+  [N16 analysis] med=0.0000018 s  min=0.0000018  max=0.0000018  CV=0.2%  (samples=31, inner-reps=3895)
   [M] bit-exact against the C++ reference (128 outputs): PASSED | gas 233447
-  [M total] med=0.0000821 s  min=0.0000820  max=0.0000823  CV=0.1%  (samples=31, inner-reps=117)
-  [M analysis] med=0.0000001 s  min=0.0000001  max=0.0000001  CV=0.2%  (samples=31, inner-reps=18657)
+  [M total] med=0.0000822 s  min=0.0000820  max=0.0000824  CV=0.1%  (samples=31, inner-reps=121)
+  [M analysis] med=0.0000001 s  min=0.0000001  max=0.0000001  CV=0.3%  (samples=31, inner-reps=14904)
   [M] static gas count of the program (copies, one XMATMUL, memory): 233447 | measured 233447: equal
-  [H total] med=0.0000202 s  min=0.0000200  max=0.0000203  CV=0.3%  (samples=31, inner-reps=257)
-  [H analysis] med=0.0000001 s  min=0.0000001  max=0.0000001  CV=0.3%  (samples=31, inner-reps=16448)
-  [H16 total] med=0.0000087 s  min=0.0000087  max=0.0000090  CV=0.7%  (samples=31, inner-reps=529)
-  [H16 analysis] med=0.0000001 s  min=0.0000001  max=0.0000001  CV=0.2%  (samples=31, inner-reps=20000)
-  [Hm total] med=0.0000088 s  min=0.0000087  max=0.0000089  CV=0.5%  (samples=31, inner-reps=600)
-  [Hm analysis] med=0.0000001 s  min=0.0000001  max=0.0000001  CV=0.2%  (samples=31, inner-reps=18940)
+  [H total] med=0.0000209 s  min=0.0000204  max=0.0000213  CV=1.3%  (samples=31, inner-reps=249)
+  [H analysis] med=0.0000001 s  min=0.0000001  max=0.0000001  CV=0.5%  (samples=31, inner-reps=15625)
+  [H16 total] med=0.0000087 s  min=0.0000087  max=0.0000088  CV=0.3%  (samples=31, inner-reps=490)
+  [H16 analysis] med=0.0000001 s  min=0.0000001  max=0.0000001  CV=0.3%  (samples=31, inner-reps=20000)
+  [Hm total] med=0.0000089 s  min=0.0000088  max=0.0000089  CV=0.3%  (samples=31, inner-reps=530)
+  [Hm analysis] med=0.0000001 s  min=0.0000001  max=0.0000001  CV=0.2%  (samples=31, inner-reps=19231)
 ---- I = 1024 ----
 Bytecode: S=183107 B=161946 N=2187 N16=2174 M=39 bytes | calldata 1585216 bytes | 128 neurons x 1024 inputs = 131072 multiply-accumulates
   [H] harness (copies and return only): PASSED | gas 640286 (8-lane map) | gas 187238 (16-lane map) | gas 187315 (matrix-view map)
   [S] bit-exact against the C++ reference (128 outputs): PASSED | gas 979068
-  [S total] med=0.0004004 s  min=0.0003994  max=0.0004031  CV=0.3%  (samples=31, inner-reps=26)
-  [S analysis] med=0.0001332 s  min=0.0001329  max=0.0001338  CV=0.2%  (samples=31, inner-reps=71)
+  [S total] med=0.0004008 s  min=0.0003985  max=0.0004031  CV=0.2%  (samples=31, inner-reps=26)
+  [S analysis] med=0.0001328 s  min=0.0001326  max=0.0001345  CV=0.3%  (samples=31, inner-reps=74)
   [B] bit-exact against the C++ reference (128 outputs): PASSED | gas 1216670
-  [B total] med=0.0004997 s  min=0.0004981  max=0.0005105  CV=0.5%  (samples=31, inner-reps=21)
-  [B analysis] med=0.0001120 s  min=0.0001120  max=0.0001123  CV=0.1%  (samples=31, inner-reps=88)
+  [B total] med=0.0005015 s  min=0.0004999  max=0.0005041  CV=0.2%  (samples=31, inner-reps=20)
+  [B analysis] med=0.0001118 s  min=0.0001117  max=0.0001128  CV=0.2%  (samples=31, inner-reps=87)
   [N] bit-exact against the C++ reference (128 outputs): PASSED | gas 844062
-  [N total] med=0.0001648 s  min=0.0001643  max=0.0001658  CV=0.2%  (samples=31, inner-reps=61)
-  [N analysis] med=0.0000018 s  min=0.0000018  max=0.0000019  CV=0.3%  (samples=31, inner-reps=4153)
+  [N total] med=0.0001655 s  min=0.0001645  max=0.0001661  CV=0.2%  (samples=31, inner-reps=61)
+  [N analysis] med=0.0000018 s  min=0.0000018  max=0.0000019  CV=0.1%  (samples=31, inner-reps=3921)
   [N16] bit-exact against the C++ reference (128 outputs): PASSED | gas 392038
-  [N16 total] med=0.0001563 s  min=0.0001558  max=0.0001579  CV=0.3%  (samples=31, inner-reps=64)
-  [N16 analysis] med=0.0000018 s  min=0.0000018  max=0.0000018  CV=0.2%  (samples=31, inner-reps=4311)
+  [N16 total] med=0.0001563 s  min=0.0001559  max=0.0001570  CV=0.2%  (samples=31, inner-reps=60)
+  [N16 analysis] med=0.0000018 s  min=0.0000018  max=0.0000019  CV=0.3%  (samples=31, inner-reps=4181)
   [M] bit-exact against the C++ reference (128 outputs): PASSED | gas 335690
-  [M total] med=0.0001060 s  min=0.0001058  max=0.0001074  CV=0.3%  (samples=31, inner-reps=92)
-  [M analysis] med=0.0000001 s  min=0.0000001  max=0.0000001  CV=0.3%  (samples=31, inner-reps=15823)
+  [M total] med=0.0001074 s  min=0.0001070  max=0.0001076  CV=0.1%  (samples=31, inner-reps=93)
+  [M analysis] med=0.0000001 s  min=0.0000001  max=0.0000001  CV=0.3%  (samples=31, inner-reps=12255)
   [M] static gas count of the program (copies, one XMATMUL, memory): 335690 | measured 335690: equal
-  [H total] med=0.0000278 s  min=0.0000277  max=0.0000283  CV=0.5%  (samples=31, inner-reps=191)
-  [H analysis] med=0.0000001 s  min=0.0000001  max=0.0000001  CV=1.0%  (samples=31, inner-reps=18940)
-  [H16 total] med=0.0000113 s  min=0.0000112  max=0.0000114  CV=0.5%  (samples=31, inner-reps=382)
-  [H16 analysis] med=0.0000001 s  min=0.0000001  max=0.0000001  CV=0.3%  (samples=31, inner-reps=20000)
-  [Hm total] med=0.0000114 s  min=0.0000114  max=0.0000116  CV=0.3%  (samples=31, inner-reps=412)
-  [Hm analysis] med=0.0000001 s  min=0.0000001  max=0.0000001  CV=0.3%  (samples=31, inner-reps=20000)
+  [H total] med=0.0000282 s  min=0.0000280  max=0.0000289  CV=0.6%  (samples=31, inner-reps=182)
+  [H analysis] med=0.0000001 s  min=0.0000001  max=0.0000001  CV=0.7%  (samples=31, inner-reps=10594)
+  [H16 total] med=0.0000121 s  min=0.0000121  max=0.0000123  CV=0.4%  (samples=31, inner-reps=357)
+  [H16 analysis] med=0.0000001 s  min=0.0000001  max=0.0000001  CV=0.5%  (samples=31, inner-reps=15061)
+  [Hm total] med=0.0000127 s  min=0.0000126  max=0.0000129  CV=0.3%  (samples=31, inner-reps=411)
+  [Hm analysis] med=0.0000001 s  min=0.0000001  max=0.0000001  CV=0.4%  (samples=31, inner-reps=17606)
 ---- I = 2048 ----
 Bytecode: S=367427 B=325914 N=2323 N16=2190 M=39 bytes | calldata 3170368 bytes | 128 neurons x 2048 inputs = 262144 multiply-accumulates
   [H] harness (copies and return only): PASSED | gas 2345150 (8-lane map) | gas 640286 (16-lane map) | gas 640428 (matrix-view map)
   [S] bit-exact against the C++ reference (128 outputs): PASSED | gas 3019996
-  [S total] med=0.0008077 s  min=0.0008043  max=0.0008130  CV=0.3%  (samples=31, inner-reps=13)
-  [S analysis] med=0.0002656 s  min=0.0002652  max=0.0002681  CV=0.2%  (samples=31, inner-reps=38)
+  [S total] med=0.0008095 s  min=0.0008065  max=0.0008128  CV=0.2%  (samples=31, inner-reps=13)
+  [S analysis] med=0.0002653 s  min=0.0002645  max=0.0002684  CV=0.3%  (samples=31, inner-reps=38)
   [B] bit-exact against the C++ reference (128 outputs): PASSED | gas 3494974
-  [B total] med=0.0010164 s  min=0.0010088  max=0.0010215  CV=0.3%  (samples=31, inner-reps=10)
-  [B analysis] med=0.0002243 s  min=0.0002238  max=0.0002247  CV=0.1%  (samples=31, inner-reps=45)
+  [B total] med=0.0010161 s  min=0.0010113  max=0.0010212  CV=0.2%  (samples=31, inner-reps=10)
+  [B analysis] med=0.0002236 s  min=0.0002232  max=0.0002240  CV=0.1%  (samples=31, inner-reps=45)
   [N] bit-exact against the C++ reference (128 outputs): PASSED | gas 2745534
-  [N total] med=0.0003305 s  min=0.0003289  max=0.0003322  CV=0.2%  (samples=31, inner-reps=28)
-  [N analysis] med=0.0000018 s  min=0.0000018  max=0.0000019  CV=0.2%  (samples=31, inner-reps=3397)
+  [N total] med=0.0003332 s  min=0.0003311  max=0.0003395  CV=0.9%  (samples=31, inner-reps=30)
+  [N analysis] med=0.0000018 s  min=0.0000018  max=0.0000019  CV=0.2%  (samples=31, inner-reps=2660)
   [N16] bit-exact against the C++ reference (128 outputs): PASSED | gas 1041694
-  [N16 total] med=0.0003117 s  min=0.0003100  max=0.0003131  CV=0.3%  (samples=31, inner-reps=33)
-  [N16 analysis] med=0.0000018 s  min=0.0000018  max=0.0000019  CV=0.1%  (samples=31, inner-reps=3969)
+  [N16 total] med=0.0003109 s  min=0.0003099  max=0.0003120  CV=0.2%  (samples=31, inner-reps=33)
+  [N16 analysis] med=0.0000018 s  min=0.0000018  max=0.0000019  CV=0.4%  (samples=31, inner-reps=3013)
   [M] bit-exact against the C++ reference (128 outputs): PASSED | gas 936259
-  [M total] med=0.0002171 s  min=0.0002167  max=0.0002190  CV=0.2%  (samples=31, inner-reps=47)
-  [M analysis] med=0.0000001 s  min=0.0000001  max=0.0000001  CV=0.6%  (samples=31, inner-reps=20000)
+  [M total] med=0.0002179 s  min=0.0002170  max=0.0002205  CV=0.3%  (samples=31, inner-reps=47)
+  [M analysis] med=0.0000001 s  min=0.0000001  max=0.0000001  CV=0.7%  (samples=31, inner-reps=11161)
   [M] static gas count of the program (copies, one XMATMUL, memory): 936259 | measured 936259: equal
-  [H total] med=0.0000617 s  min=0.0000612  max=0.0000633  CV=0.7%  (samples=31, inner-reps=100)
-  [H analysis] med=0.0000001 s  min=0.0000001  max=0.0000001  CV=0.4%  (samples=31, inner-reps=16448)
-  [H16 total] med=0.0000276 s  min=0.0000274  max=0.0000279  CV=0.4%  (samples=31, inner-reps=208)
-  [H16 analysis] med=0.0000001 s  min=0.0000001  max=0.0000001  CV=0.5%  (samples=31, inner-reps=20000)
-  [Hm total] med=0.0000277 s  min=0.0000275  max=0.0000280  CV=0.5%  (samples=31, inner-reps=229)
-  [Hm analysis] med=0.0000001 s  min=0.0000001  max=0.0000001  CV=0.3%  (samples=31, inner-reps=20000)
+  [H total] med=0.0000626 s  min=0.0000620  max=0.0000644  CV=0.9%  (samples=31, inner-reps=99)
+  [H analysis] med=0.0000001 s  min=0.0000001  max=0.0000001  CV=0.8%  (samples=31, inner-reps=7862)
+  [H16 total] med=0.0000275 s  min=0.0000274  max=0.0000279  CV=0.4%  (samples=31, inner-reps=217)
+  [H16 analysis] med=0.0000001 s  min=0.0000001  max=0.0000001  CV=0.6%  (samples=31, inner-reps=10870)
+  [Hm total] med=0.0000280 s  min=0.0000278  max=0.0000283  CV=0.4%  (samples=31, inner-reps=214)
+  [Hm analysis] med=0.0000001 s  min=0.0000001  max=0.0000001  CV=0.5%  (samples=31, inner-reps=15625)
 
 [CHECK] I = 784 reproduces the gas of rowmacc_wallclock (656224, 836751, 552463, 278289): PASSED
 
@@ -251,36 +251,36 @@ COMPUTE GAS = total gas minus harness gas (identical on every build)
   2048 |    2345150 |     640286 |     640428 |       674846 |      1149824 |       400384 |       401408 |       295831 | 1.69 | 2.87 |  1.68 |  2.28 |  1.35 |     1.527 |       1.531 |     1.129
 TIME, TOTAL of one call in ms (median; bytecode analysis, copies, computation and return)
      I |        S |        B |        N |      N16 |        M | copy-return 8 | copy-return 16 | copy-return M
-    16 |   0.0101 |   0.0098 |   0.0075 |   0.0077 |   0.0026 |        0.0004 |         0.0003 |        0.0003
-    32 |   0.0157 |   0.0173 |   0.0098 |   0.0103 |   0.0041 |        0.0007 |         0.0004 |        0.0004
-    64 |   0.0279 |   0.0327 |   0.0147 |   0.0150 |   0.0073 |        0.0014 |         0.0007 |        0.0007
-   128 |   0.0510 |   0.0632 |   0.0241 |   0.0243 |   0.0138 |        0.0029 |         0.0014 |        0.0014
-   256 |   0.0975 |   0.1237 |   0.0432 |   0.0428 |   0.0268 |        0.0053 |         0.0029 |        0.0029
-   512 |   0.1995 |   0.2492 |   0.0831 |   0.0801 |   0.0528 |        0.0122 |         0.0053 |        0.0053
-   784 |   0.3108 |   0.3860 |   0.1280 |   0.1201 |   0.0821 |        0.0202 |         0.0087 |        0.0088
-  1024 |   0.4004 |   0.4997 |   0.1648 |   0.1563 |   0.1060 |        0.0278 |         0.0113 |        0.0114
-  2048 |   0.8077 |   1.0164 |   0.3305 |   0.3117 |   0.2171 |        0.0617 |         0.0276 |        0.0277
+    16 |   0.0101 |   0.0099 |   0.0076 |   0.0078 |   0.0026 |        0.0004 |         0.0003 |        0.0003
+    32 |   0.0157 |   0.0174 |   0.0099 |   0.0103 |   0.0041 |        0.0007 |         0.0004 |        0.0004
+    64 |   0.0279 |   0.0330 |   0.0147 |   0.0150 |   0.0073 |        0.0015 |         0.0007 |        0.0007
+   128 |   0.0508 |   0.0635 |   0.0242 |   0.0244 |   0.0138 |        0.0029 |         0.0015 |        0.0015
+   256 |   0.0977 |   0.1243 |   0.0432 |   0.0428 |   0.0268 |        0.0053 |         0.0029 |        0.0029
+   512 |   0.1991 |   0.2500 |   0.0836 |   0.0800 |   0.0528 |        0.0125 |         0.0053 |        0.0053
+   784 |   0.3068 |   0.3817 |   0.1269 |   0.1198 |   0.0822 |        0.0209 |         0.0087 |        0.0089
+  1024 |   0.4008 |   0.5015 |   0.1655 |   0.1563 |   0.1074 |        0.0282 |         0.0121 |        0.0127
+  2048 |   0.8095 |   1.0161 |   0.3332 |   0.3109 |   0.2179 |        0.0626 |         0.0275 |        0.0280
 TIME, ANALYSIS in ms (median; the same bytecode behind a STOP: code analysis and call setup, nothing executed) and its share of the total
      I |        S |        B |        N |      N16 |        M | share S | share B | share N | share N16 | share M
-    16 |   0.0041 |   0.0026 |   0.0018 |   0.0018 |   0.0001 |   40.2% |   26.2% |   24.1% |     23.5% |    2.2%
-    32 |   0.0060 |   0.0043 |   0.0018 |   0.0018 |   0.0001 |   38.2% |   24.8% |   18.7% |     17.8% |    1.4%
-    64 |   0.0105 |   0.0077 |   0.0018 |   0.0018 |   0.0001 |   37.6% |   23.5% |   12.5% |     12.2% |    0.8%
-   128 |   0.0183 |   0.0150 |   0.0018 |   0.0018 |   0.0001 |   35.8% |   23.8% |    7.6% |      7.5% |    0.4%
-   256 |   0.0338 |   0.0287 |   0.0018 |   0.0018 |   0.0001 |   34.6% |   23.2% |    4.3% |      4.3% |    0.2%
-   512 |   0.0676 |   0.0567 |   0.0018 |   0.0018 |   0.0001 |   33.9% |   22.8% |    2.2% |      2.3% |    0.1%
-   784 |   0.1029 |   0.0861 |   0.0018 |   0.0018 |   0.0001 |   33.1% |   22.3% |    1.4% |      1.5% |    0.1%
-  1024 |   0.1332 |   0.1120 |   0.0018 |   0.0018 |   0.0001 |   33.3% |   22.4% |    1.1% |      1.2% |    0.1%
-  2048 |   0.2656 |   0.2243 |   0.0018 |   0.0018 |   0.0001 |   32.9% |   22.1% |    0.6% |      0.6% |    0.0%
+    16 |   0.0041 |   0.0026 |   0.0018 |   0.0018 |   0.0001 |   40.3% |   26.0% |   24.0% |     23.5% |    2.3%
+    32 |   0.0060 |   0.0043 |   0.0018 |   0.0018 |   0.0001 |   38.3% |   24.6% |   18.6% |     17.8% |    1.4%
+    64 |   0.0104 |   0.0077 |   0.0018 |   0.0018 |   0.0001 |   37.3% |   23.3% |   12.4% |     12.2% |    0.8%
+   128 |   0.0182 |   0.0150 |   0.0018 |   0.0018 |   0.0001 |   35.8% |   23.7% |    7.6% |      7.5% |    0.4%
+   256 |   0.0337 |   0.0287 |   0.0018 |   0.0018 |   0.0001 |   34.5% |   23.1% |    4.3% |      4.3% |    0.2%
+   512 |   0.0671 |   0.0567 |   0.0018 |   0.0018 |   0.0001 |   33.7% |   22.7% |    2.2% |      2.3% |    0.1%
+   784 |   0.1028 |   0.0860 |   0.0018 |   0.0018 |   0.0001 |   33.5% |   22.5% |    1.5% |      1.5% |    0.1%
+  1024 |   0.1328 |   0.1118 |   0.0018 |   0.0018 |   0.0001 |   33.1% |   22.3% |    1.1% |      1.2% |    0.1%
+  2048 |   0.2653 |   0.2236 |   0.0018 |   0.0018 |   0.0001 |   32.8% |   22.0% |    0.6% |      0.6% |    0.0%
 TIME, COMPUTE in ms = (total - analysis) of the path minus (total - analysis) of its copy-and-return program
      I |        S |        B |        N |      N16 |        M |   S/N |   B/N | S/N16 |   S/M |   N/M | ns/MAC S | ns/MAC B | ns/MAC N | ns/MAC N16 | ns/MAC M | ns/gas S | ns/gas B | ns/gas N | ns/gas N16 | ns/gas M
-    16 |   0.0057 |   0.0069 |   0.0053 |   0.0057 |   0.0023 |  1.06 |  1.28 |  1.00 |  2.45 |  2.32 |    2.760 |    3.350 |    2.612 |      2.765 |    1.128 |    0.601 |    0.576 |    0.522 |      0.503 |    0.717
-    32 |   0.0091 |   0.0124 |   0.0074 |   0.0081 |   0.0037 |  1.23 |  1.68 |  1.12 |  2.46 |  2.00 |    2.218 |    3.016 |    1.798 |      1.978 |    0.900 |    0.624 |    0.592 |    0.553 |      0.565 |    0.667
-    64 |   0.0160 |   0.0236 |   0.0115 |   0.0126 |   0.0066 |  1.40 |  2.06 |  1.28 |  2.42 |  1.73 |    1.954 |    2.880 |    1.398 |      1.533 |    0.808 |    0.644 |    0.608 |    0.589 |      0.613 |    0.653
-   128 |   0.0299 |   0.0453 |   0.0194 |   0.0211 |   0.0123 |  1.54 |  2.33 |  1.41 |  2.42 |  1.58 |    1.823 |    2.765 |    1.186 |      1.288 |    0.752 |    0.656 |    0.607 |    0.612 |      0.644 |    0.637
-   256 |   0.0585 |   0.0897 |   0.0361 |   0.0381 |   0.0239 |  1.62 |  2.49 |  1.53 |  2.45 |  1.51 |    1.785 |    2.739 |    1.102 |      1.164 |    0.728 |    0.674 |    0.613 |    0.641 |      0.665 |    0.632
-   512 |   0.1198 |   0.1804 |   0.0691 |   0.0730 |   0.0475 |  1.73 |  2.61 |  1.64 |  2.52 |  1.45 |    1.828 |    2.753 |    1.055 |      1.114 |    0.725 |    0.702 |    0.623 |    0.655 |      0.686 |    0.637
-   784 |   0.1878 |   0.2797 |   0.1060 |   0.1096 |   0.0733 |  1.77 |  2.64 |  1.71 |  2.56 |  1.45 |    1.871 |    2.787 |    1.056 |      1.092 |    0.731 |    0.718 |    0.633 |    0.672 |      0.690 |    0.644
-  1024 |   0.2395 |   0.3599 |   0.1352 |   0.1432 |   0.0945 |  1.77 |  2.66 |  1.67 |  2.53 |  1.43 |    1.827 |    2.746 |    1.031 |      1.093 |    0.721 |    0.707 |    0.624 |    0.663 |      0.699 |    0.637
-  2048 |   0.4805 |   0.7305 |   0.2670 |   0.2823 |   0.1893 |  1.80 |  2.74 |  1.70 |  2.54 |  1.41 |    1.833 |    2.787 |    1.018 |      1.077 |    0.722 |    0.712 |    0.635 |    0.667 |      0.703 |    0.640
+    16 |   0.0056 |   0.0069 |   0.0054 |   0.0057 |   0.0023 |  1.05 |  1.29 |  0.99 |  2.44 |  2.32 |    2.747 |    3.385 |    2.617 |      2.766 |    1.127 |    0.598 |    0.582 |    0.523 |      0.503 |    0.716
+    32 |   0.0091 |   0.0125 |   0.0074 |   0.0081 |   0.0037 |  1.23 |  1.69 |  1.12 |  2.46 |  2.00 |    2.212 |    3.051 |    1.802 |      1.974 |    0.901 |    0.622 |    0.599 |    0.555 |      0.564 |    0.667
+    64 |   0.0160 |   0.0239 |   0.0115 |   0.0126 |   0.0066 |  1.40 |  2.08 |  1.28 |  2.44 |  1.74 |    1.959 |    2.915 |    1.399 |      1.534 |    0.804 |    0.645 |    0.616 |    0.589 |      0.614 |    0.650
+   128 |   0.0298 |   0.0457 |   0.0195 |   0.0211 |   0.0123 |  1.53 |  2.34 |  1.41 |  2.42 |  1.59 |    1.817 |    2.788 |    1.191 |      1.287 |    0.750 |    0.654 |    0.612 |    0.615 |      0.644 |    0.635
+   256 |   0.0588 |   0.0903 |   0.0361 |   0.0381 |   0.0239 |  1.63 |  2.50 |  1.54 |  2.46 |  1.51 |    1.793 |    2.756 |    1.101 |      1.164 |    0.729 |    0.678 |    0.617 |    0.640 |      0.665 |    0.632
+   512 |   0.1195 |   0.1809 |   0.0693 |   0.0730 |   0.0475 |  1.72 |  2.61 |  1.64 |  2.52 |  1.46 |    1.823 |    2.760 |    1.057 |      1.113 |    0.724 |    0.700 |    0.624 |    0.657 |      0.685 |    0.636
+   784 |   0.1832 |   0.2748 |   0.1042 |   0.1093 |   0.0733 |  1.76 |  2.64 |  1.68 |  2.50 |  1.42 |    1.826 |    2.739 |    1.038 |      1.089 |    0.730 |    0.701 |    0.622 |    0.661 |      0.688 |    0.644
+  1024 |   0.2398 |   0.3616 |   0.1355 |   0.1424 |   0.0947 |  1.77 |  2.67 |  1.68 |  2.53 |  1.43 |    1.829 |    2.759 |    1.034 |      1.086 |    0.722 |    0.708 |    0.627 |    0.665 |      0.695 |    0.638
+  2048 |   0.4816 |   0.7300 |   0.2688 |   0.2817 |   0.1900 |  1.79 |  2.72 |  1.71 |  2.54 |  1.42 |    1.837 |    2.785 |    1.025 |      1.075 |    0.725 |    0.714 |    0.635 |    0.671 |      0.702 |    0.642
 
 *** ALL CHECKS PASSED -> gas is valid; timing numbers are valid for this build ***
